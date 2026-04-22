@@ -5,9 +5,6 @@
 ```
 你：我正在使用子智能体驱动开发来执行这个计划。
 
-[先读取并执行 superpowers:using-git-worktrees]
-[在隔离工作区中继续后续步骤]
-
 [一次性读取计划文件：docs/superpowers/plans/feature-plan.md]
 [提取全部 5 个任务的完整文本和上下文]
 [用所有任务创建 TodoWrite]

@@ -35,6 +35,6 @@
 
 ## 提示词模板
 
-- `./prompts/implementer-prompt.md` - 分派实现子智能体
-- `./prompts/spec-reviewer-prompt.md` - 分派规格合规审查子智能体
-- `./prompts/code-quality-reviewer-prompt.md` - 分派代码质量审查子智能体
+- `../prompts/implementer-prompt.md` - 分派实现子智能体
+- `../prompts/spec-reviewer-prompt.md` - 分派规格合规审查子智能体
+- `../prompts/code-quality-reviewer-prompt.md` - 分派代码质量审查子智能体
