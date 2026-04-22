@@ -3,6 +3,10 @@ name: superpowers
 description: 当任务涉及代码库探索、需求拆解、方案权衡、实现修改、问题排查、测试验证或多步骤协同时使用。该技能作为总入口，先判断场景，再路由到对应的 superpowers 子技能。
 ---
 
+<SUBAGENT-STOP>
+如果你是作为子智能体被分派来执行特定任务的，跳过此技能。
+</SUBAGENT-STOP>
+
 # Superpowers
 
 ## 目标
