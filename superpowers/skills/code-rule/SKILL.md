@@ -1,146 +1,185 @@
 ---
 name: code-rule
 description: >-
-  Use when establishing frontend coding standards for a team, reviewing code
-  compliance, updating standards after framework/tech-stack upgrades, onboarding
-  new members to conventions, or refactoring legacy codebases. Covers Vue/HTML/
-  CSS/JavaScript conventions, project structure, and maintainability optimization.
+  当需要在 AI 编写前端代码时主动约束输出风格、为前端团队建立编码规范、审查代码是否
+  符合规范、在框架或技术栈升级后更新规范，或推动遗留前端代码库按规范重构时使用。
+  覆盖 Vue、HTML、CSS、JavaScript、项目结构，以及可维护性优化相关规则。
 ---
 
-# Frontend Code Standards
+# 前端编码规范
 
-## Overview
+## 核心判断
 
-Define, review, enforce, and optimize frontend coding standards across 5 phases.
-Core goal: enforceable rules across naming, structure, Vue/HTML/CSS/JS conventions,
-comments, high cohesion/low coupling, infrastructure unification, and performance.
+这个技能不是“罗列所有前端习惯用法”，而是把前端规范变成一套可执行、可检查、可持续更新的规则。
 
-## When to Use
+如果任务已经进入前端代码编写阶段，就要先用这个技能约束 AI 的实现方式，再开始写代码。
 
-- Team needs standards from scratch
-- Code review for standards compliance (combine with chinese-code-review)
-- Framework/tech-stack upgrade requires standards update
-- Onboarding new team members to conventions
-- Legacy codebase refactoring to meet standards
+进入这个技能后，要先判断当前任务是在：实现代码、定义规范、审查合规、补齐自动化，还是推动遗留代码逐步收敛。
 
-**Do NOT use for:** backend languages (Java/Go/Python), infrastructure config (Docker/CI/CD), project management.
+## 什么时候用
 
-## Reference Files (load on demand)
+- AI 即将编写或修改前端代码，需要先按团队规范约束实现
+- 团队要从零建立前端编码规范
+- 代码审查需要判断是否符合既有规范
+- 框架、UI 库或构建工具升级后要同步更新规范
+- 新成员加入，需要快速理解团队约定
+- 遗留前端代码库要逐步收敛到统一规范
 
-- `references/coding-standards.md` — full 7-chapter spec: General, Vue, HTML, CSS, JS, Comments, Project Structure
-- `references/optimization-dimensions.md` — maintainability guide: cohesion/coupling, toolchain unification, component library, performance
+## 不适用场景
 
-## Execution Flow
+- 后端语言规范，如 Java、Go、Python
+- Docker、CI/CD、基础设施配置本身
+- 纯项目管理流程，不涉及代码规则落地
 
-### Phase 1: Diagnose
-- Identify framework (Vue/React/other)
-- Check existing standards docs
-- Check ESLint/Prettier config coverage
-- Sample-audit code for actual compliance
-- Record findings by severity
+## 核心原则
 
-### Phase 2: Define
-- Naming: camelCase variables, hyphen-case classes, kebab-case files, pinyin-acronym for business terms
-- Directory: components/ utils/ api/ styles/
-- Vue: file order, component naming, Props typing, lifecycle hooks
-- CSS: no ID/!important (common excepted), z-index ≤150, hex colors, no max-height
-- JS: is-prefix booleans, forEach/map, minimize 3rd-party libs
-- Comments: file header, JSDoc, TODO markers
-- Infrastructure: unified framework/UI lib/build tool, component library, docs
-- Git conventions (see chinese-commit-conventions)
+- 规范必须可执行，而不只是可阅读
+- 在开始实现前先约束写法，不要写完后再补规范
+- 默认参考阿里巴巴前端规范，再结合当前项目约束做最小必要调整
+- 主文件只保留控制逻辑，详细规则放进 references
+- 先识别硬规则，再处理软规则
+- 自动化优先于口头约束
+- 不要只盯格式，还要覆盖结构、复用、耦合和性能
+- 遗留项目采用渐进式收敛，不一次性硬压全部规则
 
-### Phase 3: Configure (Automation)
-- ESLint — standard rulesets + custom rules
-- Prettier — 2-space indent, quotes, semicolons
-- StyleLint — CSS/SCSS/LESS checks
-- Husky + lint-staged — pre-commit formatting/linting
-- commitlint — commit message format
-- .editorconfig + VS Code workspace settings
+## References 读取条件
 
-### Phase 4: Enforce & Review
-- pre-commit: lint-staged blocks non-compliant code
-- Code Review: per-section checklist
-- CI: lint + typecheck + test must pass before merge
-- Tag issues: **[MUST FIX]** naming/security/logic, **[SHOULD FIX]** readability/perf, **[FYI]** style/alternatives
+| 文件 | 什么时候读 |
+|------|-----------|
+| `references/coding-standards.md` | 需要查看 Vue、HTML、CSS、JavaScript、注释、目录结构等具体编码规则时；默认按阿里巴巴前端规范作为基础参考 |
+| `references/optimization-dimensions.md` | 需要评估高内聚低耦合、工具链统一、组件库建设或性能优化时 |
 
-### Phase 5: Optimize
-- Audit cohesion/coupling periodically
-- Evaluate framework/UI lib/build tool upgrade needs
-- Analyze perf metrics (HTTP requests, CDN, lazy loading, code splitting)
-- Build and refine shared component library
-- Keep documentation current
+## 执行流程
 
-## Quick Checklists
+### 阶段 1：诊断现状
 
-### General
-- [ ] UTF-8
-- [ ] camelCase variables
-- [ ] hyphen-case classes
-- [ ] pinyin-acronym for business terms
-- [ ] Comments explain "why" not "what"
-- [ ] 2-space indent
-- [ ] Formatted before commit
-- [ ] Empty data: `--`
+- 判断当前是在“直接写代码”还是“制定/审查规范”
+- 识别当前框架与技术栈，如 Vue、React 或其他变体
+- 检查项目里是否已有规范文档、lint 配置和格式化配置
+- 抽样审查代码，判断文档规范和实际代码是否一致
+- 按严重程度记录问题：命名、结构、样式、逻辑、可维护性、性能
 
-### Vue
-- [ ] `<template>` → `<script>` → `<style>` order
-- [ ] kebab-case filenames
-- [ ] PascalCase component names
-- [ ] Props: typed + commented
-- [ ] Test ID: `module-feature-type`
-- [ ] Hooks: props → data → computed → watch → created → mounted → methods
+### 阶段 2：实现前约束
 
-### CSS
-- [ ] No ID/!important (common excepted)
-- [ ] No inline styles
-- [ ] z-index ≤150 (modals excepted)
-- [ ] No 999~9999 range
-- [ ] Omit unit for 0
-- [ ] Hex colors (rgba for transparency)
-- [ ] No `max-height`
-- [ ] No redundant inherited styles
+- 在开始写前端代码前，先明确当前实现必须遵守的命名、结构、样式和注释规则
+- 把“函数都需要添加注释”视为默认硬规则；对外暴露函数、业务函数、工具函数、组件方法都不能裸写
+- 先读取 `references/coding-standards.md` 中与当前任务直接相关的部分，不要把整份参考文件全搬进上下文
+- 如果当前任务涉及组件拆分、耦合治理、工具链统一或性能策略，再补充读取 `references/optimization-dimensions.md`
+- 在实现过程中持续自查，而不是等代码写完再统一返工
 
-### JS
-- [ ] `is` prefix for booleans
-- [ ] Variables at function top
-- [ ] Multiple `if` over if-else if
-- [ ] Prefer forEach/map
-- [ ] Minimize 3rd-party libs
-- [ ] Single-responsibility methods
+### 阶段 3：定义或修正规范
 
-### Comments
-- [ ] File header: author, date, module, description, version
-- [ ] Single-line: `// ` (space after)
-- [ ] TODO for incomplete features
-- [ ] JSDoc: method, param types, return type
+- 先定义硬规则：命名、目录结构、组件边界、代码组织、自动化要求
+- 再定义软规则：注释风格、可读性、推荐模式、替代方案
+- 具体编码细则直接读取 `references/coding-standards.md`
+- 如果任务涉及可维护性和性能，补充读取 `references/optimization-dimensions.md`
 
-### Cohesion & Coupling
-- [ ] Single-responsibility components
-- [ ] Props/Events communication
-- [ ] No circular dependencies
+### 阶段 4：配置自动化
 
-### Infrastructure
-- [ ] Unified framework / UI lib / build tool
-- [ ] Shared component library
-- [ ] Technical documentation
+- ESLint：承载 JavaScript 或 TypeScript 规则
+- Prettier：统一格式化行为
+- StyleLint：承载 CSS、SCSS、LESS 规则
+- Husky 与 lint-staged：把规范前置到提交前
+- commitlint、.editorconfig、工作区设置：补齐工程统一性
 
-## Skill Combinations
+不要把“有文档”误当成“已落地”。没有自动化约束，规范只能算建议。
 
-| Skill | Scenario |
-|-------|----------|
-| chinese-code-review | Add standards check during review with Chinese feedback |
-| chinese-documentation | Write standards docs in Chinese doc conventions |
-| chinese-commit-conventions | Git commit requirements |
-| writing-plans | Plan large-scale standards refactoring |
-| subagent-driven-development | Parallelize standards checking |
-| verification-before-completion | Verify compliance after refactoring |
+### 阶段 5：执行与审查
 
-## Red Lines
+- 编写代码时按当前任务相关规则实时约束输出
+- 提交前阻止明显不合规代码进入仓库
+- 代码审查按分类检查：命名、结构、样式、逻辑、复用、性能
+- CI 至少执行 lint、typecheck、测试等必要检查
+- 审查结论按优先级标记：`[必须修复]`、`[建议修改]`、`[仅供参考]`
 
-> Violating the letter of these rules violates their spirit.
+中文团队审查时，叠加 `chinese-code-review`。
 
-- **Don't** document standards without enforcement tooling
-- **Don't** apply ALL rules at once to legacy codebases. Phase: hard rules first, soft rules later
-- **Don't** focus only on formatting while ignoring architecture
-- **Don't** ignore component encapsulation and code reuse
-- **Don't** leave standards unchanged after framework/tech-stack upgrades
+### 阶段 6：持续优化
+
+- 周期性审查高内聚低耦合情况
+- 判断是否需要统一框架、UI 库或构建工具
+- 评估共享组件库是否可继续沉淀
+- 根据实际性能指标决定懒加载、拆包、CDN 等策略
+- 规范文档和自动化规则要一起更新，不能脱节
+
+## 快速检查
+
+### 通用
+
+- [ ] 文件编码统一
+- [ ] 命名规则统一
+- [ ] 注释解释“为什么”，不是重复“做了什么”
+- [ ] 格式化规则已自动执行
+- [ ] 空数据展示规则统一
+
+### Vue / 组件层
+
+- [ ] 文件结构顺序统一
+- [ ] 文件名与组件名规范统一
+- [ ] Props、事件、状态边界清晰
+- [ ] 测试选择器命名一致
+- [ ] 生命周期或组合逻辑组织稳定
+
+### CSS / 样式层
+
+- [ ] 没有滥用 ID、`!important`、行内样式
+- [ ] z-index 有明确上限和例外规则
+- [ ] 颜色、单位、继承样式约定统一
+- [ ] 没有历史遗留的样式魔法数
+
+### JavaScript / TypeScript
+
+- [ ] 布尔命名清晰
+- [ ] 方法职责单一
+- [ ] 集合处理、条件分支、第三方库使用有统一约定
+- [ ] 业务逻辑和视图逻辑没有过度耦合
+- [ ] 每个函数都有注释，至少说明用途、关键参数和返回值
+
+### 注释与文档
+
+- [ ] 文件头、JSDoc、TODO 规则统一
+- [ ] 注释格式稳定，不制造噪音
+- [ ] 函数注释不是可选项；新增和修改函数都要补齐注释
+- [ ] 规范文档与实际代码一致
+
+### 可维护性
+
+- [ ] 组件职责单一
+- [ ] 通信方式清楚
+- [ ] 没有循环依赖和隐藏耦合
+
+## 技能组合
+
+| 技能 | 场景 |
+|------|------|
+| `chinese-code-review` | 在中文团队里做规范性代码审查 |
+| `chinese-documentation` | 输出或更新中文规范文档 |
+| `chinese-commit-conventions` | 规范提交信息和 git 流程 |
+| `writing-plans` | 规划大规模规范改造或分阶段治理 |
+| `executing-plans` | 已经有实现计划，需要在执行每个代码任务时持续遵守规范 |
+| `subagent-driven-development` | 并行检查多目录、多模块规范问题 |
+| `verification-before-completion` | 在改造后执行收尾验证 |
+
+## 红线
+
+- 不要等代码写完后才想起套规范
+- 不要写无注释函数，尤其是业务函数、工具函数和组件方法
+- 不要只有规范文档，没有自动化执行手段
+- 不要在遗留项目里一次性强推全部规则，先硬后软、先主后次
+- 不要把规范工作缩减成纯格式化问题
+- 不要忽略组件封装、复用和架构边界
+- 不要在框架或技术栈升级后长期放任规范过期
+
+**违反字面规则，就是违反规则精神。**
+
+## 最终清单
+
+- [ ] 如果任务涉及写代码，已先读取当前实现直接相关的规范
+- [ ] 已明确以阿里巴巴前端规范为基础参考
+- [ ] 已判断当前任务是建规范、查合规、补自动化还是做遗留治理
+- [ ] 已按需读取 `references/coding-standards.md`
+- [ ] 涉及优化时已按需读取 `references/optimization-dimensions.md`
+- [ ] 已区分硬规则与软规则
+- [ ] 已确认当前新增或修改的函数都补齐注释
+- [ ] 已确认规范是否有自动化承载
+- [ ] 已明确后续要叠加的其他技能

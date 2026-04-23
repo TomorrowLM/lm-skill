@@ -163,11 +163,13 @@ digraph process {
 - 分派修复子智能体并提供具体指令
 - 不要尝试手动修复（上下文污染）
 
-## 集成
+## 技能集成
 
 选择本技能后，不要只读取本文件就开始执行。下面这些集成技能不是“背景参考”，而是分阶段生效的硬依赖。
 
-### 用户指令覆盖
+### 前置技能
+
+#### 用户指令覆盖
 
 如果用户明确要求不要创建 worktree，例如为了继续复用当前浏览器会话、直接观察当前工作区里的页面变化，控制者应服从该要求。由于本技能现在默认就留在当前工作区，这类要求只需要被记录和遵守，不需要再把它当作对默认流程的例外。
 
@@ -177,7 +179,7 @@ digraph process {
 2. 完成 worktree 建立后再开始实现
 3. 其余关于计划、子代理分派、审查和验证的要求仍然有效
 
-### 进入本技能后的必做顺序
+#### 进入本技能后的必做顺序
 
 1. **开始实现前：** 默认留在当前工作区；只有在用户明确要求隔离工作区，或当前任务确实需要切到独立 worktree 时，才读取 `superpowers:using-git-worktrees`。
 2. **开始分派任务前：** 确认当前存在可执行计划；如果计划尚未产出或不够具体，先回到 `superpowers:writing-plans`。
@@ -187,7 +189,7 @@ digraph process {
 6. **所有任务完成后：** 先读取并执行 `superpowers:verification-before-completion`，确认整体实现通过验证。
 7. **准备收尾前：** 先读取 `superpowers:finishing-a-development-branch`，再进入收尾和交付。
 
-### 阶段门槛
+#### 阶段门槛
 
 - 没有真实创建并分派隔离子代理，不能开始把当前流程表述为 `subagent-driven-development`。
 - 如果当前流程已经明确选择隔离工作区，但没有完成 `using-git-worktrees`，不能开始实现。
@@ -197,15 +199,17 @@ digraph process {
 - 没有经过 `verification-before-completion`，不能标记任务完成、进入下一个任务或宣称整体完成。
 - 没有进入 `finishing-a-development-branch`，不能把开发流程视为已收尾。
 
-**必需的工作流技能：**
+#### 前置技能清单
+
 - **superpowers:using-git-worktrees** - 可选：当用户明确要求隔离工作区，或当前任务确实需要切到独立 worktree 时使用
 - **superpowers:writing-plans** - 创建本技能执行的计划
-- **superpowers:requesting-code-review** - 审查子智能体的代码审查模板
-- **superpowers:verification-before-completion** - 标记任务完成、进入下一个任务或整体收尾前执行验证
-- **superpowers:finishing-a-development-branch** - 所有任务完成后收尾
+- **superpowers:requesting-code-review** - 提供规格审查与代码质量审查的组织模板
+- **superpowers:test-driven-development** - 通过分派说明显式施加给实现子智能体
+- **superpowers:executing-plans** - 当实际工作由当前主会话顺序执行，而不是分派隔离子智能体时，改用该替代流程
 
-**子智能体应使用：**
-- **superpowers:test-driven-development** - 子智能体对每个任务遵循 TDD
+### 后置技能
 
-**替代工作流：**
-- **superpowers:executing-plans** - 用于并行会话而非同会话执行
+#### 后置技能清单
+
+- **superpowers:verification-before-completion** - 每个任务完成后和整体完成前都要执行
+- **superpowers:finishing-a-development-branch** - 整体验证通过后进入收尾

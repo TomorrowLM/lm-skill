@@ -95,6 +95,10 @@ skills/
   skill-name/
     SKILL.md
     references/
+      templates/
+      examples/
+      prompts/
+      guides/
     scripts/
     assets/
 ```
@@ -116,7 +120,7 @@ skills/
 
 ### 目录红线
 
-- `SKILL.md` 超过 300 行就应主动拆分，不要继续堆
+- `SKILL.md` 超过 250 行就应主动拆分，不要继续堆
 - `references/` 目录本身只放子目录，不直接放散落文件
 - 不要创建 README、CHANGELOG、INSTALLATION、QUICK_REFERENCE 这类面向人的辅助文档
 - 不要让信息在 SKILL.md 和 references 中重复出现
@@ -137,6 +141,8 @@ skills/
 - 用祈使语气，减少歧义
 - 一个优秀示例胜过多个平庸示例
 - 不要写填空模板，要写可直接适配的具体模式
+- 如果技能包含“红线”，统一写成三级标题（`###`）
+- 如果技能包含“技能集成”，统一先写一个二级标题 `## 技能集成`，再拆成三级标题 `### 前置技能` 和 `### 后置技能`
 - 所有 references 都从 SKILL.md 直接引用，禁止 A -> B -> C 深链
 - 超过 100 行的 references 文件，顶部加目录帮助预览
 
@@ -236,6 +242,12 @@ skills/
 - [ ] 检查是否有可下沉到 references 的展开内容
 - [ ] 反复测试直到无法再轻易绕过
 
-## 前置技能
+## 技能集成
+
+### 前置技能
 
 - `superpowers:test-driven-development`：定义红-绿-重构的基础纪律；本技能只负责把它迁移到文档写作。
+
+### 集成其他技能
+
+- 按需与调试、计划、验证、中文文档或中文审查类技能组合，但不要把组合关系写成泛泛列表；只保留会影响执行顺序的集成项。
