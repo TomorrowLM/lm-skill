@@ -6,3 +6,7 @@
 
 # git/ 目录下的符号链接视图层 - 必须作为 symlink 存储
 /git/** text=auto eol=lf
+
+# 根目录下 gitnexus-* 反向链接 - 必须作为 symlink 存储
+/gitnexus-* text=auto eol=lf
+

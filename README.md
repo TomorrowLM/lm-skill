@@ -1,10 +1,12 @@
 # lm-skill
 
-本目录包含两组技能：**GitNexus 系列**（代码智能）和 **页面工作流 + 开发协作系列**。
+本目录包含三组技能：**GitNexus 系列**（代码智能）、**页面工作流系列**和 **开发协作系列（superpowers）**。
 
 ---
 
 ## GitNexus 系列
+
+> **物理位置：`gitnexus/` 目录**（根目录下的 `gitnexus-*` 为反向符号链接，保持向后兼容）
 
 基于知识图谱的代码智能工具集，提供代码理解、影响分析、安全重构等能力。
 
@@ -17,6 +19,8 @@
 | `gitnexus-pr-review` | **PR 审查**。自动分析 PR 变更的爆炸半径、检查缺失的测试覆盖、评估合并风险 |
 | `gitnexus-refactoring` | **安全重构**。跨文件协调重命名、提取模块、拆分服务，基于调用图保证一致性 |
 | `gitnexus-cli` | **CLI 操作**。索引管理（analyze）、状态查询（status）、清理（clean）、生成文档（wiki）等命令行操作 |
+
+> 入口方式：通过 `gitnexus-guide` 路由，或作为 superpowers 的叠加增强层使用（见 superpowers README）。
 
 ---
 
