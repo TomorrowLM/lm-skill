@@ -3,6 +3,12 @@ name: workflow-runner
 description: "在 Claude Code / OpenClaw / Cursor 中直接运行 agency-orchestrator YAML 工作流——无需 API key，使用当前会话的 LLM 作为执行引擎。当用户提供 .yaml 工作流文件或要求多角色协作完成任务时触发。"
 ---
 
+> **⚠ 状态：可选扩展（非核心工作流）**
+>
+> 本技能强依赖 `agency-orchestrator` / `agency-agents-zh` 外部生态包，不属于 superpowers 核心工程工作流体系。
+> 仅当用户明确提供 `.yaml` 工作流文件或要求运行多角色协作时触发。
+> 若项目未安装 `agency-agents-zh`，本技能将无法执行。
+
 # 工作流执行器：在 AI 工具内运行多角色编排
 
 直接在当前会话中执行 agency-orchestrator 的 YAML 工作流，无需配置 API key。当前 LLM 就是执行引擎——依次扮演每个角色完成任务。

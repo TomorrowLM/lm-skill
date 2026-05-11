@@ -112,54 +112,19 @@ function calculateDiscount(level: MemberLevel, amount: number): number {
 
 ## Commit Message 中英双语格式
 
-### 推荐格式
+> **完整规范（类型表、模板、subject/body/footer、BREAKING CHANGE 标注、changelog 自动生成）请参见 `chinese-commit-conventions` 技能。**
+>
+> 审查时关注以下要点即可：
 
-团队内部项目使用中文 commit message，采用约定式提交（Conventional Commits）的中文版：
+### 审查时需检查
 
-```
-<类型>(<范围>): <简要描述>
-
-<详细说明（可选）>
-
-<关联信息（可选）>
-```
-
-### 类型对照表
-
-| 类型 | 含义 | 示例 |
-|------|------|------|
-| feat | 新功能 | feat(用户): 新增手机号登录功能 |
-| fix | 修复 Bug | fix(支付): 修复微信支付回调重复处理的问题 |
-| docs | 文档变更 | docs: 更新 API 接口文档 |
-| style | 代码格式 | style: 统一缩进为 2 个空格 |
-| refactor | 重构 | refactor(订单): 拆分订单服务，提取公共逻辑 |
-| perf | 性能优化 | perf(列表): 虚拟滚动优化长列表渲染性能 |
-| test | 测试 | test(auth): 补充登录模块单元测试 |
-| chore | 构建/工具 | chore: 升级 Node.js 至 v20 |
-
-### 示例
-
-```
-fix(支付): 修复支付宝异步回调签名校验失败的问题
-
-原因：升级 SDK 后签名算法从 RSA 变为 RSA2，但回调校验仍使用旧算法。
-方案：回调处理中同时兼容 RSA 和 RSA2 签名校验。
-
-Closes #1234
-```
-
-### 面向国际社区的项目
-
-如果项目面向国际社区或有外籍成员，commit message 用英文，PR 描述中可附加中文说明：
-
-```
-fix(payment): fix Alipay async callback signature verification failure
-
-The SDK upgrade changed the signature algorithm from RSA to RSA2,
-but the callback handler still used the old algorithm.
-
-Closes #1234
-```
+- [ ] type 是否正确（feat/fix/refactor/...）
+- [ ] subject 是否为动宾短语，不超过 50 字符
+- [ ] subject 末尾无句号
+- [ ] body 是否说明了变更原因和方案（如有）
+- [ ] 不兼容变更是否标注了 BREAKING CHANGE
+- [ ] 相关 Issue 是否已关联
+- [ ] 中英文混排时空格处理正确
 
 ## 常见反模式与对策
 
