@@ -92,8 +92,6 @@ description: >-
 - CI 至少执行 lint、typecheck、测试等必要检查
 - 审查结论按优先级标记：`[必须修复]`、`[建议修改]`、`[仅供参考]`
 
-中文团队审查时，叠加 `chinese-code-review`。
-
 ### 阶段 6：持续优化
 
 - 周期性审查高内聚低耦合情况
@@ -152,7 +150,6 @@ description: >-
 
 | 技能 | 场景 |
 |------|------|
-| `chinese-code-review` | 在中文团队里做规范性代码审查 |
 | `chinese-documentation` | 输出或更新中文规范文档 |
 | `git-commit-conventions` | 规范提交信息和 git 流程 |
 | `writing-plans` | 规划大规模规范改造或分阶段治理 |

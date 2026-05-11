@@ -31,7 +31,6 @@ superpowers 主流程（不变）
     │               否 → 正常继续
     │
     └── 叠加增强层（并行，不阻塞主流程）
-            ├── chinese-code-review
             ├── git-commit-conventions
             ├── git-workflow
             ├── code-rule
@@ -128,8 +127,7 @@ verification-before-completion → requesting-code-review[+gitnexus] → git-fin
 
 **#6. 中文团队代码审查**
 ```
-using-superpowers → requesting-code-review[+gitnexus] + chinese-code-review →
-receiving-code-review + chinese-code-review → verification-before-completion
+using-superpowers → requesting-code-review[+gitnexus] → receiving-code-review → verification-before-completion
 ```
 
 其余 7 条链路不变。
@@ -163,7 +161,6 @@ receiving-code-review + chinese-code-review → verification-before-completion
 | 场景 | 优先级 | 理由 |
 |------|--------|------|
 | gitnexus + code-rule | 并行 | 图谱 + 规范，不冲突 |
-| gitnexus + chinese-code-review | 并行 | 影响分析 + 中文表达，互补 |
 | gitnexus + requesting-code-review | gitnexus 先 | pr-review 需要先拿到影响数据再写意见 |
 
 ### 5.2 加载顺序

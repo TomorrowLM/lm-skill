@@ -112,7 +112,6 @@ digraph skill_flow {
 
 | 场景 | 调用技能 |
 |------|---------|
-| 代码审查且团队使用中文沟通 | **superpowers:chinese-code-review** |
 | 使用 Gitee/Coding/极狐 GitLab | **git-workflow** |
 | 编写中文技术文档或 README | **superpowers:chinese-documentation** |
 | 编写 git commit message（中文项目） | **git-commit-conventions** |
@@ -123,7 +122,7 @@ digraph skill_flow {
 - commit 历史中有中文 → 使用中文提交规范
 - 用户用中文交流 → 所有输出使用中文，优先考虑中国特色技能
 
-中国特色技能与翻译技能**叠加使用**，不互斥。例如：做代码审查时，同时使用 requesting-code-review（流程）+ chinese-code-review（风格）。
+中国特色技能与翻译技能**叠加使用**，不互斥。
 
 ## 技能类型
 
