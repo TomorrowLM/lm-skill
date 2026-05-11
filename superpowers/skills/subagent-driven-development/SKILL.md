@@ -55,7 +55,7 @@ digraph when_to_use {
 
 默认不建立隔离工作区，直接在当前工作区内分派隔离子代理并推进计划。
 
-**按需进入：** 如果用户明确要求隔离工作区，或当前任务确实需要把实现工作切到独立 worktree 中，才进入 `superpowers:using-git-worktrees`。否则不要把它当作默认前置步骤。
+**按需进入：** 如果用户明确要求隔离工作区，或当前任务确实需要把实现工作切到独立 worktree 中，才进入 `git-worktrees`。否则不要把它当作默认前置步骤。
 
 **与 Executing Plans（并行会话）的对比：**
 - 同一会话（无上下文切换）
@@ -89,7 +89,7 @@ digraph process {
     "还有剩余任务?" [shape=diamond];
     "分派最终代码审查子智能体审查整体实现" [shape=box];
     "使用 superpowers:verification-before-completion 验证整体实现" [shape=box style=filled fillcolor=lightblue];
-    "使用 superpowers:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
+    "使用 git-finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
     "读取计划，提取所有任务的完整文本，记录上下文，创建 TodoWrite" -> "分派实现子智能体 (./references/prompts/implementer-prompt.md)";
     "分派实现子智能体 (./references/prompts/implementer-prompt.md)" -> "实现子智能体有疑问?";
@@ -110,7 +110,7 @@ digraph process {
     "还有剩余任务?" -> "分派实现子智能体 (./references/prompts/implementer-prompt.md)" [label="是"];
     "还有剩余任务?" -> "分派最终代码审查子智能体审查整体实现" [label="否"];
     "分派最终代码审查子智能体审查整体实现" -> "使用 superpowers:verification-before-completion 验证整体实现";
-    "使用 superpowers:verification-before-completion 验证整体实现" -> "使用 superpowers:finishing-a-development-branch";
+    "使用 superpowers:verification-before-completion 验证整体实现" -> "使用 git-finishing-a-development-branch";
 }
 ```
 
@@ -131,7 +131,7 @@ digraph process {
 
 **绝不：**
 - 未经用户明确同意就在 main/master 分支上开始实现
-- 在当前流程已经明确选择隔离工作区后，跳过 `superpowers:using-git-worktrees` 就直接开始实现
+- 在当前流程已经明确选择隔离工作区后，跳过 `git-worktrees` 就直接开始实现
 - 跳过 `superpowers:verification-before-completion` 就标记任务完成、进入下一个任务或宣称整体完成
 - 在没有真实分派隔离子代理的情况下，宣告自己正在使用 `subagent-driven-development`
 - 把主会话直接实现的结果描述成“子代理完成的任务”
@@ -173,7 +173,7 @@ digraph process {
 
 如果用户明确要求不要创建 worktree，例如为了继续复用当前浏览器会话、直接观察当前工作区里的页面变化，控制者应服从该要求。由于本技能现在默认就留在当前工作区，这类要求只需要被记录和遵守，不需要再把它当作对默认流程的例外。
 
-如果用户明确要求建立隔离工作区，或你判断当前任务必须切到独立 worktree，再进入 `using-git-worktrees`。此时：
+如果用户明确要求建立隔离工作区，或你判断当前任务必须切到独立 worktree，再进入 `git-worktrees`。此时：
 
 1. 要明确告诉用户：当前将切到隔离工作区执行，这是对默认流程的增强，而不是默认行为
 2. 完成 worktree 建立后再开始实现
@@ -181,27 +181,27 @@ digraph process {
 
 #### 进入本技能后的必做顺序
 
-1. **开始实现前：** 默认留在当前工作区；只有在用户明确要求隔离工作区，或当前任务确实需要切到独立 worktree 时，才读取 `superpowers:using-git-worktrees`。
+1. **开始实现前：** 默认留在当前工作区；只有在用户明确要求隔离工作区，或当前任务确实需要切到独立 worktree 时，才读取 `git-worktrees`。
 2. **开始分派任务前：** 确认当前存在可执行计划；如果计划尚未产出或不够具体，先回到 `superpowers:writing-plans`。
 3. **分派实现子智能体时：** 在分派说明里明确要求实现子智能体遵循 `superpowers:test-driven-development`。
 4. **进入正式审查前：** 先读取 `superpowers:requesting-code-review`，按其审查模板和节奏组织审查上下文。
 5. **标记任务完成或进入下一个任务前：** 先读取并执行 `superpowers:verification-before-completion`，确认当前任务已有新鲜验证证据。
 6. **所有任务完成后：** 先读取并执行 `superpowers:verification-before-completion`，确认整体实现通过验证。
-7. **准备收尾前：** 先读取 `superpowers:finishing-a-development-branch`，再进入收尾和交付。
+7. **准备收尾前：** 先读取 `git-finishing-development-branch`，再进入收尾和交付。
 
 #### 阶段门槛
 
 - 没有真实创建并分派隔离子代理，不能开始把当前流程表述为 `subagent-driven-development`。
-- 如果当前流程已经明确选择隔离工作区，但没有完成 `using-git-worktrees`，不能开始实现。
+- 如果当前流程已经明确选择隔离工作区，但没有完成 `git-worktrees`，不能开始实现。
 - 没有来自 `writing-plans` 的可执行任务清单，不能开始分派子智能体。
 - 没有对实现子智能体显式施加 `test-driven-development`，不能宣称当前流程符合本技能要求。
 - 没有进入 `requesting-code-review` 的审查模板流程，不能把规格审查和代码质量审查视为完整。
 - 没有经过 `verification-before-completion`，不能标记任务完成、进入下一个任务或宣称整体完成。
-- 没有进入 `finishing-a-development-branch`，不能把开发流程视为已收尾。
+- 没有进入 `git-finishing-development-branch`，不能把开发流程视为已收尾。
 
 #### 前置技能清单
 
-- **superpowers:using-git-worktrees** - 可选：当用户明确要求隔离工作区，或当前任务确实需要切到独立 worktree 时使用
+- **git-worktrees** - 可选：当用户明确要求隔离工作区，或当前任务确实需要切到独立 worktree 时使用
 - **superpowers:writing-plans** - 创建本技能执行的计划
 - **superpowers:requesting-code-review** - 提供规格审查与代码质量审查的组织模板
 - **superpowers:test-driven-development** - 通过分派说明显式施加给实现子智能体
@@ -212,4 +212,4 @@ digraph process {
 #### 后置技能清单
 
 - **superpowers:verification-before-completion** - 每个任务完成后和整体完成前都要执行
-- **superpowers:finishing-a-development-branch** - 整体验证通过后进入收尾
+- **git-finishing-development-branch** - 整体验证通过后进入收尾

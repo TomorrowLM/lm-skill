@@ -154,7 +154,7 @@ description: >-
 |------|------|
 | `chinese-code-review` | 在中文团队里做规范性代码审查 |
 | `chinese-documentation` | 输出或更新中文规范文档 |
-| `chinese-commit-conventions` | 规范提交信息和 git 流程 |
+| `git-commit-conventions` | 规范提交信息和 git 流程 |
 | `writing-plans` | 规划大规模规范改造或分阶段治理 |
 | `executing-plans` | 已经有实现计划，需要在执行每个代码任务时持续遵守规范 |
 | `subagent-driven-development` | 并行检查多目录、多模块规范问题 |

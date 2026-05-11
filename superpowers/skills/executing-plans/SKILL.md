@@ -131,8 +131,8 @@ $ git commit -m "feat: 添加用户输入验证（任务 2/5）"
 ### 步骤 4：完成开发
 
 所有任务完成并验证后：
-- 宣布："我正在使用 finishing-a-development-branch 技能来完成此工作。"
-- **必需子技能：** 使用 superpowers:finishing-a-development-branch
+- 宣布："我正在使用 git-finishing-development-branch 技能来完成此工作。"
+- **必需子技能：** 使用 git-finishing-development-branch
 - 按照该技能的指引验证测试、展示选项、执行选择
 
 **完成报告模板：**
@@ -159,7 +159,7 @@ $ git commit -m "feat: 添加用户输入验证（任务 2/5）"
 - 任务 3：Redis 配置从 env 改为 config.yaml（经伙伴同意）
 
 ### 下一步
-按 finishing-a-development-branch 技能处理合并/PR
+按 git-finishing-development-branch 技能处理合并/PR
 ```
 
 ## 何时停下来求助
@@ -194,9 +194,9 @@ $ git commit -m "feat: 添加用户输入验证（任务 2/5）"
 ## 集成
 
 **必需的工作流技能：**
-- **superpowers:using-git-worktrees** - 必需：开始前建立隔离的工作空间
+- **git-worktrees** - 必需：开始前建立隔离的工作空间
 - **superpowers:writing-plans** - 创建此技能要执行的计划
-- **superpowers:finishing-a-development-branch** - 所有任务完成后收尾开发
+- **git-finishing-development-branch** - 所有任务完成后收尾开发
 
 **按场景叠加的技能：**
 - **superpowers:code-rule** - 当任务会编写或修改前端代码时，先读取并按规范约束实现

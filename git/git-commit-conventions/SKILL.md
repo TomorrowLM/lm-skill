@@ -1,6 +1,6 @@
 ---
-name: chinese-commit-conventions
-description: 中文 Git 提交规范 — 适配国内团队的 commit message 规范和 changelog 自动化
+name: git-commit-conventions
+description: Git 提交规范 — 适配国内团队的 commit message 规范和 changelog 自动化
 ---
 
 # 中文 Git 提交规范

@@ -112,7 +112,7 @@ function calculateDiscount(level: MemberLevel, amount: number): number {
 
 ## Commit Message 中英双语格式
 
-> **完整规范（类型表、模板、subject/body/footer、BREAKING CHANGE 标注、changelog 自动生成）请参见 `chinese-commit-conventions` 技能。**
+> **完整规范（类型表、模板、subject/body/footer、BREAKING CHANGE 标注、changelog 自动生成）请参见 `git-commit-conventions` 技能。**
 >
 > 审查时关注以下要点即可：
 

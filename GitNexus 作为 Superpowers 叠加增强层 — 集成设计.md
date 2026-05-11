@@ -32,8 +32,8 @@ superpowers 主流程（不变）
     │
     └── 叠加增强层（并行，不阻塞主流程）
             ├── chinese-code-review
-            ├── chinese-commit-conventions
-            ├── chinese-git-workflow
+            ├── git-commit-conventions
+            ├── git-workflow
             ├── code-rule
             └── gitnexus ← 新增，单入口
 ```
@@ -68,7 +68,7 @@ superpowers 主流程（不变）
 | verification-before-completion | 几乎不用 | 关注测试通过与否 |
 | requesting-code-review | 强互补 | 代码质量 + 影响范围双维度 |
 | receiving-code-review | 几乎不用 | 处理反馈是改代码 |
-| finishing-a-development-branch | 几乎不用 | 收尾是 git 操作 |
+| git-finishing-development-branch | 几乎不用 | 收尾是 git 操作 |
 
 ## 3. 触发信号
 
@@ -117,13 +117,13 @@ superpowers 主流程（不变）
 ```
 using-superpowers → brainstorming → writing-plans[+gitnexus] → code-rule →
 subagent-driven-development[+gitnexus] → verification-before-completion →
-requesting-code-review[+gitnexus] → receiving-code-review → finishing-a-development-branch
+requesting-code-review[+gitnexus] → receiving-code-review → git-finishing-development-branch
 ```
 
 **#4. Bug 修复**
 ```
 using-superpowers → systematic-debugging[+gitnexus] → test-driven-development →
-verification-before-completion → requesting-code-review[+gitnexus] → finishing-a-development-branch
+verification-before-completion → requesting-code-review[+gitnexus] → git-finishing-development-branch
 ```
 
 **#6. 中文团队代码审查**

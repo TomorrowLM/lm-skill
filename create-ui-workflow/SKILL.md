@@ -212,7 +212,7 @@ description: "当需要根据 page.json 和 UI 图片创建页面时使用，尤
 2. 在执行 `create_ui_mcp` 之前，每个 `requests` 项都已经有 `apiName`
 3. `create_ui_mcp` 返回了期望的顶层字段：`type`、`description`、`page`、`instruction`
 4. `instruction.tasks` 与页面和子组件的目标文件一致
-5. `instruction.tasks[].requirements` 能体现 `depends` 与 `requirements` 的信息
+5. `instruction.tasks[].requirements` 能体现 `depends` 与 `requirements` 的信息66
 6. 当前业务页面对应的 `return.json` 目标结构与实际运行时返回结构一致
 
 ## 常见失败模式

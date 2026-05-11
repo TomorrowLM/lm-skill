@@ -1,6 +1,6 @@
 ---
-name: chinese-git-workflow
-description: 适配国内 Git 平台和团队习惯的工作流规范——Gitee、Coding、极狐 GitLab、CNB 全覆盖
+name: git-workflow
+description: Git 工作流规范 — 适配国内平台和团队习惯（Gitee、Coding、极狐 GitLab、CNB）
 ---
 
 # 国内 Git 工作流规范
@@ -179,7 +179,7 @@ dev/zhangsan/feat-login      # 个人开发分支
 
 ## 中文 Commit Message 规范
 
-> **详细规范（类型表、模板、subject/body/footer 格式、BREAKING CHANGE、issue 关联、commitlint 配置、husky 集成）请参见 `chinese-commit-conventions` 技能。**
+> **详细规范（类型表、模板、subject/body/footer 格式、BREAKING CHANGE、issue 关联、commitlint 配置、husky 集成）请参见 `git-commit-conventions` 技能。**
 >
 > 以下仅保留本技能特有的国内平台 issue 关联格式速查：
 

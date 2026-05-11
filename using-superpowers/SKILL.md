@@ -113,9 +113,9 @@ digraph skill_flow {
 | 场景 | 调用技能 |
 |------|---------|
 | 代码审查且团队使用中文沟通 | **superpowers:chinese-code-review** |
-| 使用 Gitee/Coding/极狐 GitLab | **superpowers:chinese-git-workflow** |
+| 使用 Gitee/Coding/极狐 GitLab | **git-workflow** |
 | 编写中文技术文档或 README | **superpowers:chinese-documentation** |
-| 编写 git commit message（中文项目） | **superpowers:chinese-commit-conventions** |
+| 编写 git commit message（中文项目） | **git-commit-conventions** |
 | 构建 MCP 服务器/工具 | **superpowers:mcp-builder** |
 
 **判断依据：**
