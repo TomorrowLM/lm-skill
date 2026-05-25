@@ -22,15 +22,13 @@
   - FormProProps
   - FormFieldConfig
 
-基于 antd-mobile Form 组件封装，通过配置项快速生成表单，减少重复代码。
+基于 antd-mobile Form 组件封装，通过配置项快速生成表单，减少重复代码。核心在于表单项的配置 `FormFieldConfig[]`。
 
-核心在于表单项的配置 `FormFieldConfig[]`，FormItem 主要扩展了 4 个属性：`hide`、`readOnly`、`disabled`、`required`，均支持布尔值和函数（用于表单联动），函数参数为 `(values, formExtra, index)`。
+### 支持的表单项类型
 
-`templateOptions` 扩展了 `request` 属性，支持接口获取 options。支持 request 的组件：Select、Cascader、Radio、Checkbox。
+input、textarea、date、switch、radio、checkbox、select、remoltSelect、cascader、upload、file、selector、time、custom、header、signature、repeat
 
-完全继承 antd-mobile Form 的 API，在此基础上进行了以下扩展。
-
-**支持的表单项类型：** input、textarea、date、switch、radio、checkbox、select、remoltSelect、cascader、upload、file、selector、time、custom、header、signature、repeat
+### API
 
 **FormProProps：**
 
@@ -45,45 +43,201 @@
 | readOnly | boolean | 全局只读，Item 中的 readOnly 优先级更高 | false |
 | form | FormInstance | 表单实例 | 必传 |
 
+**FormFieldConfig：**
+
+完全继承 antd-mobile Form.Item 的 props，并扩展了以下属性：
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| type | string | 表单项类型 |
+| name | string | 表单项名称 |
+| label | string | 标签文本 |
+| hide | boolean \| ((values, formExtra, index) => boolean) | 是否隐藏（不渲染） |
+| readOnly | boolean \| ((values, formExtra, index) => boolean) | 是否只读 |
+| disabled | boolean \| ((values, formExtra, index) => boolean) | 是否禁用 |
+| required | boolean \| ((values, formExtra, index) => boolean) | 是否必填 |
+| dependencies | string[] | 依赖字段列表，值变化时触发本字段重新渲染（用于表单联动） |
+| templateOptions | object \| ((values, formExtra, index) => object) | 表单项组件的 props，扩展了 request 属性支持接口获取 options |
+
 **Examples：**
 
-Example 1 （json）：
-```json
-// FormFieldConfig[] 三层结构对应 <Form> → <Form.Item> → <Component>
-[
-   {
-      type: "input",
-      label: "名称",
-      name: "name",
-      required: true,
-      templateOptions: { ... }
-  },
-]
-```
+**基础用法：**
 
-Example 2 （表单联动）：
 ```tsx
-{
-  type: 'input',
-  name: 'otherField',
-  label: '其他字段',
-  hide: (values) => !values.enableOther,
-  required: (values) => values.enableOther,
+import { Form } from 'antd-mobile';
+import FormPro from '@/components/FormPro';
+
+const form = Form.useForm();
+
+const fieldsConfig = [
+  {
+    type: 'input',
+    name: 'name',
+    label: '姓名',
+    required: true,
+    templateOptions: {
+      placeholder: '请输入姓名',
+    },
+  },
+  {
+    type: 'select',
+    name: 'gender',
+    label: '性别',
+    templateOptions: {
+      options: [
+        { label: '男', value: 'male' },
+        { label: '女', value: 'female' },
+      ],
+    },
+  },
+];
+
+export default function MyForm() {
+  return (
+    <FormPro form={form} fieldsConfig={fieldsConfig} />
+  );
 }
 ```
 
-Example 3 （远程加载选项）：
+**表单联动（hide + required + dependencies）：**
+
 ```tsx
-{
-  type: 'select',
-  name: 'department',
-  label: '部门',
-  templateOptions: {
-    request: async () => {
-      const res = await fetch('/api/departments');
-      return res.data;
+const fieldsConfig = [
+  {
+    type: 'switch',
+    name: 'enableOther',
+    label: '是否启用其他字段',
+  },
+  {
+    type: 'input',
+    name: 'otherField',
+    label: '其他字段',
+    dependencies: ['enableOther'], // 监听 enableOther 变化
+    hide: (values) => !values.enableOther,
+    required: (values) => values.enableOther,
+  },
+];
+```
+
+**三路径条件表单：**
+
+```tsx
+const fieldsConfig = [
+  {
+    type: 'radio',
+    name: 'checkResult',
+    label: '执行结果',
+    templateOptions: {
+      options: [
+        { label: '合格', value: 10 },
+        { label: '不合格', value: 20 },
+      ],
     },
   },
+  // 路径A：依赖 checkResult = 10
+  {
+    type: 'textarea',
+    name: 'checkDescription',
+    label: '执行描述',
+    dependencies: ['checkResult'],
+    hide: (values) => values.checkResult !== 10,
+    required: (values) => values.checkResult === 10,
+  },
+  // 路径B/C：依赖 checkResult = 20
+  {
+    type: 'upload',
+    name: 'eventPictureUrlList',
+    label: '事件照片',
+    dependencies: ['checkResult'],
+    hide: (values) => values.checkResult !== 20,
+    required: (values) => values.checkResult === 20,
+  },
+  {
+    type: 'select',
+    name: 'level',
+    label: '事件等级',
+    dependencies: ['checkResult'],
+    hide: (values) => values.checkResult !== 20,
+    required: (values) => values.checkResult === 20,
+  },
+  // 子路径：依赖 checkResult + rectifyMode
+  {
+    type: 'input',
+    name: 'rectifyDays',
+    label: '整改时限',
+    dependencies: ['checkResult', 'rectifyMode'],
+    hide: (values) => values.checkResult !== 20 || values.rectifyMode !== 20,
+    required: (values) => values.checkResult === 20 && values.rectifyMode === 20,
+  },
+];
+```
+
+**远程加载选项：**
+
+```tsx
+const fieldsConfig = [
+  {
+    type: 'select',
+    name: 'department',
+    label: '部门',
+    templateOptions: {
+      request: async () => {
+        const res = await fetch('/api/departments');
+        return res.data;
+      },
+    },
+  },
+];
+```
+
+**重复表单项（Form.Array）：**
+
+```tsx
+const fieldsConfig = [
+  {
+    type: 'repeat',
+    name: 'items',
+    title: '项目',
+    addText: '添加项目',
+    children: [
+      {
+        type: 'input',
+        name: 'name',
+        label: '项目名称',
+        required: true,
+      },
+      {
+        type: 'input',
+        name: 'value',
+        label: '项目值',
+      },
+    ],
+  },
+];
+```
+
+**自定义表单项：**
+
+```tsx
+// 方式一：直接传入 children
+{
+  type: 'custom',
+  name: 'customField',
+  label: '自定义字段',
+  templateOptions: {
+    children: <CustomInput />,
+  },
+}
+
+// 方式二：注册自定义组件类型
+const fieldComponents = {
+  customInput: CustomInput,
+};
+
+{
+  type: 'customInput',
+  name: 'customField',
+  label: '自定义字段',
 }
 ```
 
