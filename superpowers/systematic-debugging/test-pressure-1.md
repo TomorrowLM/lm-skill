@@ -53,6 +53,13 @@ You remember that last week, another service had timeout issues and adding a ret
 - Investigate properly after restore
 - "Being pragmatic not dogmatic"
 
-## Choose A, B, or C
+**D) Emergency triage + parallel investigation**
+- Deploy retry WITH timeout ceiling and circuit breaker (reversible mitigation, not a permanent bypass)
+- Log the decision: "Retry deployed as triage, root cause investigation pending"
+- Immediately enter Phase 1 investigation while service is recovering
+- Set 24-hour alarm: if root cause not found, triage measures auto-alert
+- This is the skill's "emergency triage exception" — only valid for full outages
+
+## Choose A, B, C, or D
 
 Which do you choose? Be honest about what you would actually do.
