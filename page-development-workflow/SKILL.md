@@ -525,7 +525,7 @@ npx eslint src/pages/page-name/ --fix
 | Phase 4 编码实现 | `gitnexus-refactoring` | 需要修改现有模块时的安全重构 |
 | Phase 5 测试验收 | `gitnexus-cli` | 检查索引状态、验证变更范围 |
 
-> GitNexus 工具参数和示例见 `fix-bug` 技能的 `references/gitnexus-toolkit.md`。
+> GitNexus 工具参数和示例见 `superpowers:systematic-debugging` 技能的 `references/gitnexus-toolkit.md`。
 
 ## 通用规范要点
 

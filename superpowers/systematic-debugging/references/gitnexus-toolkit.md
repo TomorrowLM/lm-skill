@@ -1,6 +1,6 @@
 # GitNexus 工具速查
 
-本文件汇总 fix-bug 技能各阶段使用的 GitNexus 工具，包含完整参数和示例。
+本文件汇总 systematic-debugging 技能各阶段使用的 GitNexus 工具，包含完整参数和示例。
 
 ## 目录
 
