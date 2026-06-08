@@ -29,9 +29,24 @@ BASE_SHA=$(git rev-parse HEAD~1)  # 或 origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. 派遣 code-reviewer 子代理：**
+**2. 检查 GitNexus 索引（主会话执行，派遣前）：**
+
+> 此步骤由主会话在派遣子代理前完成，确保子代理拿到的索引是可用的。
+
+| 情况 | 判断方式 | 处理 |
+|------|---------|------|
+| 索引不存在 | context 返回 "No index found" | 跑 `npx gitnexus analyze` 建立索引 |
+| 索引过期 | context 返回 "Index is stale" | 跑 `npx gitnexus analyze` 重建索引 |
+| 索引最新 | context 返回正常数据 | 直接使用，无需处理 |
+
+> 可用 `npx gitnexus status` 查看索引时间和符号数量。重建后重新 READ `gitnexus://repo/{name}/context` 验证索引已加载。
+> 项目无 GitNexus 时跳过此步，子代理会自动走纯 diff 审查。
+
+**3. 派遣 code-reviewer 子代理：**
 
 使用 Task 工具，指定 superpowers:code-reviewer 类型，填写 `code-reviewer.md` 中的模板
+
+> **GitNexus 增强：** 子代理会自动使用已有索引执行影响分析——检测爆炸半径、漏改调用方和测试缺口。子代理只读取索引，不重建。无索引时自动跳过，走纯 diff 审查。
 
 **占位符说明：**
 - `{WHAT_WAS_IMPLEMENTED}` - 你刚完成的内容
@@ -40,7 +55,7 @@ HEAD_SHA=$(git rev-parse HEAD)
 - `{HEAD_SHA}` - 结束提交
 - `{DESCRIPTION}` - 简要说明
 
-**3. 处理反馈：**
+**4. 处理反馈：**
 - Critical 问题立即修复
 - Important 问题在继续之前修复
 - Minor 问题记录下来稍后处理
@@ -56,6 +71,9 @@ HEAD_SHA=$(git rev-parse HEAD)
 BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
 HEAD_SHA=$(git rev-parse HEAD)
 
+[主会话检查索引]
+  READ gitnexus://repo/my-app/context → 索引最新，直接使用
+
 [派遣 superpowers:code-reviewer 子代理]
   WHAT_WAS_IMPLEMENTED: 会话索引的验证和修复功能
   PLAN_OR_REQUIREMENTS: docs/superpowers/plans/deployment-plan.md 中的任务 2
@@ -65,11 +83,20 @@ HEAD_SHA=$(git rev-parse HEAD)
 
 [子代理返回]:
   优点：架构清晰，测试真实
+
+  影响范围：4 个符号，2 个文件，1 个执行流 | 风险 MEDIUM
+  | 变更符号        | d=1 调用方      | diff 中 | 测试 |
+  | verifyIndex     | indexManager    | ✅      | ✅   |
+  | repairIndex     | indexManager    | ✅      | ✅   |
+  | validateChecksum| checksumService | ❌ 漏改 | ✅   |
+
   问题：
+    Critical：checksumService 未更新 validateChecksum 调用签名
     Important：缺少进度指示器
     Minor：报告间隔使用了魔法数字 (100)
-  评估：可以继续
+  评估：修复 Critical 后可以继续
 
+你：[修复 checksumService 调用签名]
 你：[修复进度指示器]
 [继续任务 3]
 ```

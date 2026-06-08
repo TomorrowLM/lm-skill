@@ -5,9 +5,10 @@
 **你的任务：**
 1. 审查 {WHAT_WAS_IMPLEMENTED}
 2. 对照 {PLAN_OR_REQUIREMENTS} 进行比较
-3. 检查代码质量、架构、测试
-4. 按严重程度分类问题
-5. 评估生产就绪程度
+3. 使用 GitNexus 分析变更影响范围（如有索引）
+4. 检查代码质量、架构、测试
+5. 按严重程度分类问题
+6. 评估生产就绪程度
 
 ## 实现内容
 
@@ -15,7 +16,7 @@
 
 ## 需求/计划
 
-{PLAN_REFERENCE}
+{PLAN_OR_REQUIREMENTS}
 
 ## 待审查的 Git 范围
 
@@ -27,7 +28,29 @@ git diff --stat {BASE_SHA}..{HEAD_SHA}
 git diff {BASE_SHA}..{HEAD_SHA}
 ```
 
-## 审查清单
+## 第一步：GitNexus 影响分析
+
+> 前提：主会话已确保 GitNexus 索引可用。你只读取索引，不重建。如果索引不存在，跳过此步骤直接进入代码审查。
+
+```
+1. gitnexus_detect_changes({scope: "compare", base_ref: "{BASE_SHA}"})
+   → 获取变更符号列表和受影响的执行流
+
+2. 对每个非 trivial 变更符号：
+   gitnexus_impact({target: "<symbol>", direction: "upstream", includeTests: true})
+   → 检查 d=1 调用方是否在 diff 中、测试覆盖是否充分
+
+3. 对关键变更符号：
+   gitnexus_context({name: "<symbol>"})
+   → 理解其在业务流程中的角色
+```
+
+**重点关注：**
+- d=1 调用方存在于 diff 之外 → **漏改，标为 Important 或 Critical**
+- 受影响执行流无测试覆盖 → **测试缺口，标为 Important**
+- 变更符号超过 10 个或涉及多个流程 → **风险升级**
+
+## 第二步：审查清单
 
 **代码质量：**
 - 关注点分离是否清晰？
@@ -65,13 +88,26 @@ git diff {BASE_SHA}..{HEAD_SHA}
 ### 优点
 [做得好的地方？要具体。]
 
+### 影响范围（来自 GitNexus）
+
+**变更规模：** N 个符号，M 个文件，P 个执行流受影响
+
+**风险等级：** LOW / MEDIUM / HIGH / CRITICAL
+
+| 变更符号 | d=1 调用方 | 是否在 diff 中 | 测试覆盖 |
+|---------|-----------|-------------|----------|
+| symbolA | callerX   | ✅          | ✅       |
+| symbolB | callerY   | ❌ 漏改     | ❌ 无    |
+
+> 如无 GitNexus 索引，此节省略。
+
 ### 问题
 
 #### Critical（必须修复）
-[Bug、安全问题、数据丢失风险、功能异常]
+[Bug、安全问题、数据丢失风险、功能异常、d=1 调用方未更新]
 
 #### Important（应该修复）
-[架构问题、缺失功能、错误处理不足、测试缺口]
+[架构问题、缺失功能、错误处理不足、测试缺口、受影响流程无测试覆盖]
 
 #### Minor（可以改进）
 [代码风格、优化机会、文档改进]
@@ -89,7 +125,17 @@ git diff {BASE_SHA}..{HEAD_SHA}
 
 **可以合并吗？** [是/否/修复后可以]
 
-**理由：** [1-2 句话的技术评估]
+**理由：** [1-2 句话的技术评估，包含影响范围判断]
+
+## 风险等级参考（来自 GitNexus）
+
+| 信号 | 风险 |
+|------|------|
+| 变更 <3 个符号，0-1 个流程 | LOW |
+| 变更 3-10 个符号，2-5 个流程 | MEDIUM |
+| 变更 >10 个符号或涉及多个流程 | HIGH |
+| 涉及认证、支付或数据完整性代码 | CRITICAL |
+| d=1 调用方存在于 diff 之外 | 潜在破坏 — 标记 |
 
 ## 关键规则
 
@@ -115,7 +161,25 @@ git diff {BASE_SHA}..{HEAD_SHA}
 - 测试覆盖全面（18 个测试，覆盖所有边界情况）
 - 错误处理良好，有降级方案（summarizer.ts:85-92）
 
+### 影响范围（来自 GitNexus）
+
+**变更规模：** 5 个符号，3 个文件，2 个执行流受影响
+
+**风险等级：** MEDIUM
+
+| 变更符号 | d=1 调用方 | 是否在 diff 中 | 测试覆盖 |
+|---------|-----------|-------------|----------|
+| validatePayment | processCheckout | ✅ | ✅ |
+| validatePayment | webhookHandler | ❌ 漏改 | ❌ 无 |
+| PaymentInput | createPayment | ❌ 漏改 | ✅ |
+
 ### 问题
+
+#### Critical
+1. **webhookHandler 未更新**
+   - 文件：webhooks.ts:15（GitNexus d=1 分析）
+   - 问题：调用 validatePayment 但未适配新签名
+   - 修复：更新调用处，与 processCheckout 保持一致
 
 #### Important
 1. **CLI 包装器缺少帮助文本**
@@ -131,7 +195,7 @@ git diff {BASE_SHA}..{HEAD_SHA}
 #### Minor
 1. **进度指示器**
    - 文件：indexer.ts:130
-   - 问题：长时间操作没有"X / Y"计数器
+   - 问题：长时间操作没有“X / Y”计数器
    - 影响：用户不知道还要等多久
 
 ### 建议
@@ -142,5 +206,5 @@ git diff {BASE_SHA}..{HEAD_SHA}
 
 **可以合并：修复后可以**
 
-**理由：** 核心实现扎实，架构合理，测试充分。Important 问题（帮助文本、日期校验）容易修复，不影响核心功能。
+**理由：** 核心实现扎实，但 GitNexus 分析发现 webhookHandler 依赖旧签名未更新（Critical），修复后即可合并。
 ```
