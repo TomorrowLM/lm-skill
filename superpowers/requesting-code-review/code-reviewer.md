@@ -43,23 +43,12 @@ git diff {BASE_SHA}..{HEAD_SHA}
 
 > 前提：主会话已确保 GitNexus 索引可用。你只读取索引，不重建。如果索引不存在，跳过此步骤直接进入代码审查。
 
-```
-1. gitnexus_detect_changes({scope: "compare", base_ref: "{BASE_SHA}"})
-   → 获取变更符号列表和受影响的执行流
+按照 `gitnexus-impact-analysis` 技能的完整流程执行影响分析。审查场景下的重点关注：
 
-2. 对每个非 trivial 变更符号：
-   gitnexus_impact({target: "<symbol>", direction: "upstream", includeTests: true})
-   → 检查 d=1 调用方是否在 diff 中、测试覆盖是否充分
-
-3. 对关键变更符号：
-   gitnexus_context({name: "<symbol>"})
-   → 理解其在业务流程中的角色
-```
-
-**重点关注：**
 - d=1 调用方存在于 diff 之外 → **漏改，标为 Important 或 Critical**
 - 受影响执行流无测试覆盖 → **测试缺口，标为 Important**
 - 变更符号超过 10 个或涉及多个流程 → **风险升级**
+- diff 中包含常量/变量的删除或重命名 → **必须执行 grep 兜底验证**：对每个被删除/重命名的符号执行 `rg "SYMBOL_NAME"` 全局搜索，grep 发现 diff 外仍有引用则标为 **Critical（漏改）**。GitNexus 对 `export const` / `export let` 的 import 引用存在已知盲区，不能仅依赖 `gitnexus_impact` 的结果
 
 ## 第二步：审查清单
 
@@ -220,56 +209,4 @@ git diff {BASE_SHA}..{HEAD_SHA}
 
 ## 输出示例
 
-```
-### 优点
-- 数据库 schema 清晰，迁移规范（db.ts:15-42）
-- 测试覆盖全面（18 个测试，覆盖所有边界情况）
-- 错误处理良好，有降级方案（summarizer.ts:85-92）
-
-### 影响范围（来自 GitNexus）
-
-**变更规模：** 5 个符号，3 个文件，2 个执行流受影响
-
-**风险等级：** MEDIUM
-
-| 变更符号 | d=1 调用方 | 是否在 diff 中 | 测试覆盖 |
-|---------|-----------|-------------|----------|
-| validatePayment | processCheckout | ✅ | ✅ |
-| validatePayment | webhookHandler | ❌ 漏改 | ❌ 无 |
-| PaymentInput | createPayment | ❌ 漏改 | ✅ |
-
-### 问题
-
-#### Critical
-1. **webhookHandler 未更新**
-   - 文件：webhooks.ts:15（GitNexus d=1 分析）
-   - 问题：调用 validatePayment 但未适配新签名
-   - 修复：更新调用处，与 processCheckout 保持一致
-
-#### Important
-1. **CLI 包装器缺少帮助文本**
-   - 文件：index-conversations:1-31
-   - 问题：没有 --help 选项，用户无法发现 --concurrency
-   - 修复：添加 --help 分支，附带使用示例
-
-2. **日期校验缺失**
-   - 文件：search.ts:25-27
-   - 问题：无效日期静默返回空结果
-   - 修复：校验 ISO 格式，抛出带示例的错误
-
-#### Minor
-1. **进度指示器**
-   - 文件：indexer.ts:130
-   - 问题：长时间操作没有“X / Y”计数器
-   - 影响：用户不知道还要等多久
-
-### 建议
-- 添加进度报告以改善用户体验
-- 考虑用配置文件管理排除的项目（提高可移植性）
-
-### 评估
-
-**可以合并：修复后可以**
-
-**理由：** 核心实现扎实，但 GitNexus 分析发现 webhookHandler 依赖旧签名未更新（Critical），修复后即可合并。
-```
+参见：`references/examples/review-output.md`（包含函数变更和常量删除两种场景）
