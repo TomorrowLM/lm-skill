@@ -2,6 +2,17 @@
 
 你正在审查代码变更的生产就绪程度。
 
+## 审查模式判断
+
+检查 `{PLAN_OR_REQUIREMENTS}` 的内容：
+
+- **如果包含“针对审查反馈的修复”或类似问题列表** → 你正在执行 **Delta Review**，跳到下方「Delta Review 流程」
+- **否则** → 执行下方的「完整审查流程」
+
+---
+
+## 完整审查流程
+
 **你的任务：**
 1. 审查 {WHAT_WAS_IMPLEMENTED}
 2. 对照 {PLAN_OR_REQUIREMENTS} 进行比较
@@ -126,6 +137,60 @@ git diff {BASE_SHA}..{HEAD_SHA}
 **可以合并吗？** [是/否/修复后可以]
 
 **理由：** [1-2 句话的技术评估，包含影响范围判断]
+
+---
+
+## Delta Review 流程
+
+> 本次审查仅针对上一轮审查反馈的修复。不需要完整的影响分析和审查清单。
+
+**你的任务：**
+1. 审查修复 diff，确认上一轮报告的问题是否已解决
+2. 检查修复是否引入新问题
+3. 返回 PASS 或 FAIL
+
+### 上一轮审查问题
+
+{PLAN_OR_REQUIREMENTS}
+
+### 修复内容
+
+{DESCRIPTION}
+
+### 待审查的修复 diff
+
+**Base:** {BASE_SHA}
+**Head:** {HEAD_SHA}
+
+```bash
+git diff {BASE_SHA}..{HEAD_SHA}
+```
+
+### Delta Review 检查清单
+
+- 上一轮的每个 Critical/Important 问题是否已修复？
+- 修复代码是否正确（逻辑、边界、错误处理）？
+- 修复是否引入了新 bug 或新问题？
+
+### Delta Review 输出格式
+
+```
+### Delta Review 结果
+
+| 原始问题 | 状态 | 说明 |
+|---------|------|------|
+| [问题描述] | ✅ 已修复 / ❌ 未修复 | [具体说明] |
+
+### 新问题
+[如有，按 Critical/Important/Minor 分类列出]
+
+### 结论
+**PASS**（可以继续）/ **FAIL**（需要再修）
+
+**理由：** [1-2 句话说明]
+```
+
+---
 
 ## 风险等级参考（来自 GitNexus）
 
