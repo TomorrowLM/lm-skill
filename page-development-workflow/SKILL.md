@@ -150,7 +150,7 @@ npx eslint src/pages/page-name/ --fix           # 代码规范
 
 **自动化验证（必须有输出证据）：**
 - [ ] 所有单元测试通过（0 failures）
-- [ ] 每个行为测试先看到失败再看到通过（TDD 纪律）
+- [ ] TDD 红-绿-重构循环已遵循（见 `superpowers:test-driven-development` 验证清单）
 - [ ] 覆盖了边界情况（空数据、错误状态、加载状态）
 - [ ] TypeScript 类型检查通过（0 errors）
 - [ ] ESLint 检查通过（0 errors, 0 warnings）
@@ -166,6 +166,13 @@ npx eslint src/pages/page-name/ --fix           # 代码规范
 
 > **验收失败时：** 回到 Phase 4 修复问题，重新走 Phase 4 → Phase 5 循环，直到所有验收项通过。
 
+#### 代码审查（验收通过后）
+
+验收通过后、进入 Phase 6 之前，使用 `superpowers:requesting-code-review` 派遣 code-reviewer 子代理对页面代码做质量审查。
+
+- Critical/Important 问题修复后，重新走验收 → 审查循环
+- Minor 问题记录到 `// TODO(review)` 注释，集中清理
+
 ### Phase 6: 收尾
 
 验收通过后，使用 `git-commit-conventions` 提交代码，使用 `git-finishing-development-branch` 完成分支集成（合并/PR）。
@@ -179,6 +186,7 @@ npx eslint src/pages/page-name/ --fix           # 代码规范
 - `superpowers:subagent-driven-development` — 子代理驱动执行；Phase 4 推荐方式
 - `superpowers:executing-plans` — 内联执行；Phase 4 可选方式
 - `superpowers:verification-before-completion` — 提交前验证门控；Phase 5 内联执行
+- `superpowers:requesting-code-review` — 代码质量审查；Phase 5 验收通过后调用
 - `writing-doc` — 设计文档规范；Phase 2 调用
 - `git-commit-conventions` — Git 提交规范；Phase 6 调用
 - `git-finishing-development-branch` — 分支集成收尾；Phase 6 调用
