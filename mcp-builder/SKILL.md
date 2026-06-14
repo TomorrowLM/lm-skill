@@ -159,6 +159,8 @@ npx @modelcontextprotocol/inspector node dist/index.js
 
 **测试要点：** 每个 Tool 覆盖正常 + 异常路径、边界值、外部服务失败模拟。
 
+**TDD 集成：** 实现每个 Tool/Resource 的业务逻辑时，使用 `superpowers:test-driven-development` 的红-绿-重构循环——先写失败的测试，再写最少实现，再重构。
+
 ## 7. 安全考虑
 
 **权限控制：**
@@ -253,3 +255,6 @@ server.sendLoggingMessage({ level: "info", data: "处理中" });
 - [ ] README 含安装和配置说明
 - [ ] 提供客户端配置 JSON 示例
 - [ ] 遵循 semver，无硬编码密钥
+
+### 交付验证
+- [ ] 使用 `superpowers:verification-before-completion` 验证所有测试通过、构建成功，才能宣称完成

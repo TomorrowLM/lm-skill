@@ -171,6 +171,7 @@ Task("修复 tool-approval-race-conditions.test.ts 的失败")
 2. **检查冲突** - 智能体是否编辑了同一段代码？
 3. **运行完整套件** - 验证所有修复协同工作
 4. **抽查** - 智能体可能犯系统性错误
+5. **完成声明验证** - 使用 `superpowers:verification-before-completion` 的门控方法论（运行验证命令、阅读输出、带证据陈述结论），不能凭智能体报告“成功”就宣称完成
 
 ## 实际效果
 

@@ -23,6 +23,9 @@ description: "完成任务、实现重要功能或合并前使用，用于验证
 
 ## 如何请求
 
+**0. 前置验证：**
+在派遣审查子代理之前，先使用 `superpowers:verification-before-completion` 确认当前工作有新鲜的验证证据（测试通过、构建成功）。不要派遣审查子代理来审查未验证的代码。
+
 **1. 获取 git SHA：**
 ```bash
 BASE_SHA=$(git rev-parse HEAD~1)  # 或 origin/main

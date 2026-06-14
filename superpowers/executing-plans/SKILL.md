@@ -127,6 +127,7 @@ $ git commit -m "feat: 添加用户输入验证（任务 2/5）"
 ### 步骤 4：完成开发
 
 所有任务完成并验证后：
+- 使用 `superpowers:verification-before-completion` 对所有任务做最终验证门控（运行完整测试套件、检查构建、逐项核对需求清单），确认整体实现有新鲜的验证证据
 - 宣布："我正在使用 git-finishing-development-branch 技能来完成此工作。"
 - **必需子技能：** 使用 git-finishing-development-branch
 - 按照该技能的指引验证测试、展示选项、执行选择
@@ -191,4 +192,6 @@ $ git commit -m "feat: 添加用户输入验证（任务 2/5）"
 **必需的工作流技能：**
 - **git-worktrees** - 必需：开始前建立隔离的工作空间
 - **superpowers:writing-plans** - 创建此技能要执行的计划
+- **superpowers:test-driven-development** - 计划中包含测试先行的任务时，执行阶段委托此技能的红-绿-重构循环
+- **superpowers:verification-before-completion** - 所有任务完成后的最终验证门控
 - **git-finishing-development-branch** - 所有任务完成后收尾开发
