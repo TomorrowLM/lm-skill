@@ -339,6 +339,17 @@ PASS
 
 不能全部勾选？你跳过了 TDD。从头开始。
 
+## TDD 完成后的衔接
+
+TDD 的红-绿-重构验证的是**每个行为的正确性**（测试先失败后通过）。
+
+但这不等同于**任务完成**。所有 TDD 循环结束后，必须委托 `superpowers:verification-before-completion` 做完成声明验证：
+
+- TDD 验证：每个测试红-绿循环已走完 → 证明代码做了正确的事
+- verification-before-completion 验证：所有证据新鲜且完整 → 证明你有权说"完成了"
+
+跳过 verification-before-completion 直接宣称完成，等于用技术正确性替代了需求满足度——测试全过不代表需求全实现。
+
 ## 遇到困难时
 
 | 问题 | 解决方案 |
