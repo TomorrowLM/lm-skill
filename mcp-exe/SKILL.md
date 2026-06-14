@@ -194,50 +194,47 @@ CallMcpTool:
 # Step 3：等待页面加载完成（draw.io 是重应用，需 10-30 秒）
 # 如果弹出"所有修改均将会丢失！"对话框，点击"放弃更改"
 # 先用 take_snapshot 确认对话框存在，然后：
-CallMcpTool:
-  server_name: "browser-use"
-  tool_name: "click"
-  arguments:
-    uid: "对话框上放弃更改按钮的uid"
-
+# CallMcpTool:
+#   server_name: "browser-use"
+#   tool_name: "click"
+#   arguments:
+#     uid: "对话框上放弃更改按钮的uid"
+#
 # Step 4：通过菜单触发导出
 # 点击"绘图"按钮打开主菜单
-CallMcpTool:
-  server_name: "browser-use"
-  tool_name: "click"
-  arguments:
-    uid: "绘图按钮的uid（在 take_snapshot 快照中查找）"
-
+# CallMcpTool:
+#   server_name: "browser-use"
+#   tool_name: "click"
+#   arguments:
+#     uid: "绘图按钮的uid（在 take_snapshot 快照中查找）"
+#
 # Step 5：点击"导出为" → "PNG..." 打开导出对话框
-CallMcpTool:
-  server_name: "browser-use"
-  tool_name: "click"
-  arguments:
-    uid: "导出为菜单项的uid"
-# 然后点击 PNG... 子菜单项
-CallMcpTool:
-  server_name: "browser-use"
-  tool_name: "click"
-  arguments:
-    uid: "PNG...菜单项的uid"
-
+# CallMcpTool:
+#   server_name: "browser-use"
+#   tool_name: "click"
+#   arguments:
+#     uid: "导出为菜单项的uid"
+# # 然后点击 PNG... 子菜单项
+# CallMcpTool:
+#   server_name: "browser-use"
+#   tool_name: "click"
+#   arguments:
+#     uid: "PNG...菜单项的uid"
+#
 # Step 6：在导出对话框中确认导出设置，点击"导出"
-CallMcpTool:
-  server_name: "browser-use"
-  tool_name: "click"
-  arguments:
-    uid: "导出按钮的uid"
+# CallMcpTool:
+#   server_name: "browser-use"
+#   tool_name: "click"
+#   arguments:
+#     uid: "导出按钮的uid"
 
-# Step 7：在保存对话框中点击"保存"，PNG 将下载到本地
-CallMcpTool:
-  server_name: "browser-use"
-  tool_name: "click"
-  arguments:
-    uid: "保存按钮的uid"
+# Step 7：在保存对话框中提示用户手动下载
+# 路径：绘图按钮 → 导出为 → PNG... → 导出 → 保存（手动操作）
+# 文件保存位置："设备"，默认下载到 ~/Downloads/未命名绘图.drawio.png
 
-# Step 8：移动导出的 PNG 到桌面（draw.io 默认保存到 ~/Downloads）
-Bash:
-  command: mv ~/Downloads/未命名绘图.drawio.png ~/Desktop/流程图.png
+# Step 8：下载完成后手动移动到桌面（可选）
+# Bash:
+#   mv ~/Downloads/未命名绘图.drawio.png ~/Desktop/流程图.png
 ```
 
 > **注意**：
