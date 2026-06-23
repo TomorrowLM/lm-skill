@@ -4,10 +4,15 @@
 
 ## 审查模式判断
 
-检查 `{PLAN_OR_REQUIREMENTS}` 的内容：
+检查上下文确定审查模式：
 
-- **如果包含“针对审查反馈的修复”或类似问题列表** → 你正在执行 **Delta Review**，跳到下方「Delta Review 流程」
-- **否则** → 执行下方的「完整审查流程」
+- **如果提供了 `{BASE_SHA}` 和 `{HEAD_SHA}`** → 检查 `{GITNEXUS_DATA}` 内容
+  - **`{GITNEXUS_DATA}` 包含实际数据** → **模式 A：完整审查**（git diff + 注入的影响分析）
+  - **`{GITNEXUS_DATA}` 为“无 GitNexus 数据”或未提供** → **模式 B：diff 审查**（仅 git diff）
+- **如果未提供 SHA，但提供了附件文件** → **模式 C：附件审查**（静态走读）
+- **如果 `{PLAN_OR_REQUIREMENTS}` 包含“针对审查反馈的修复”** → **Delta Review**，跳到下方「Delta Review 流程」
+
+> 模式 C 时：跳过 git diff 和 GitNexus 步骤，不输出「影响范围」章节，开头声明「本次审查为附件静态走读」。
 
 ---
 
@@ -16,7 +21,7 @@
 **你的任务：**
 1. 审查 {WHAT_WAS_IMPLEMENTED}
 2. 对照 {PLAN_OR_REQUIREMENTS} 进行比较
-3. 使用 GitNexus 分析变更影响范围（如有索引）
+3. 基于主会话注入的 GitNexus 数据分析变更影响范围（如有）
 4. 检查代码质量、架构、测试
 5. 按严重程度分类问题
 6. 评估生产就绪程度
@@ -29,8 +34,9 @@
 
 {PLAN_OR_REQUIREMENTS}
 
-## 待审查的 Git 范围
+## 待审查的变更范围
 
+**模式 A/B：**
 **Base:** {BASE_SHA}
 **Head:** {HEAD_SHA}
 
@@ -39,11 +45,21 @@ git diff --stat {BASE_SHA}..{HEAD_SHA}
 git diff {BASE_SHA}..{HEAD_SHA}
 ```
 
-## 第一步：GitNexus 影响分析
+**模式 C：**
+直接使用主会话提供的附件文件内容作为审查范围，不执行 git diff。
 
-> 前提：主会话已确保 GitNexus 索引可用。你只读取索引，不重建。如果索引不存在，跳过此步骤直接进入代码审查。
+## 第一步：GitNexus 影响分析（仅模式 A）
 
-按照 `gitnexus-impact-analysis` 技能的完整流程执行影响分析。审查场景下的重点关注：
+> **重要：你（子代理）无法调用 MCP 工具。** 主会话已完成所有 MCP 调用，结果注入在下方的 `{GITNEXUS_DATA}` 中。你只需引用该数据分析，不要尝试自行调用 MCP。
+> 如果 `{GITNEXUS_DATA}` 为“无 GitNexus 数据”，跳过此步，直接进入第二步。
+
+## 主会话注入的 GitNexus 数据
+
+{GITNEXUS_DATA}
+
+## 影响分析审查要点
+
+基于上述注入数据，重点关注：
 
 - d=1 调用方存在于 diff 之外 → **漏改，标为 Important 或 Critical**
 - 受影响执行流无测试覆盖 → **测试缺口，标为 Important**
@@ -95,7 +111,9 @@ git diff {BASE_SHA}..{HEAD_SHA}
 ### 优点
 [做得好的地方？要具体。]
 
-### 影响范围（来自 GitNexus）
+### 影响范围（来自注入的 GitNexus 数据，仅模式 A）
+
+> 模式 B/C 时省略此节，直接跳到「问题」章节。
 
 **变更规模：** N 个符号，M 个文件，P 个执行流受影响
 
@@ -105,8 +123,6 @@ git diff {BASE_SHA}..{HEAD_SHA}
 |---------|-----------|-------------|----------|
 | symbolA | callerX   | ✅          | ✅       |
 | symbolB | callerY   | ❌ 漏改     | ❌ 无    |
-
-> 如无 GitNexus 索引，此节省略。
 
 ### 问题
 
@@ -188,7 +204,7 @@ git diff {BASE_SHA}..{HEAD_SHA}
 
 ---
 
-## 风险等级参考（来自 GitNexus）
+## 风险等级参考（来自 GitNexus 注入数据，仅模式 A）
 
 | 信号 | 风险 |
 |------|------|

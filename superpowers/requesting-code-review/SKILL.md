@@ -1,13 +1,11 @@
 ---
 name: requesting-code-review
-description: "完成任务、实现重要功能或合并前使用，用于验证工作成果是否符合要求。当你在不确定代码是否就绪、需要第二视角检查、或准备提交前想确认影响范围时使用。"
+description: "使用 CodeReview 子代理对代码变更进行系统性审查和影响分析。支持完整审查（含 GitNexus 影响分析）、diff 审查和附件审查三种模式。在子代理驱动开发中每个任务完成后、重要功能实现后、合并到 main 前、重构前、复杂 bug 修复后使用。"
 ---
 
 # 请求代码审查
 
-派遣 CodeReview 子代理来在问题扩散之前发现它们。审查者获得的是精心组织的评估上下文——绝不是你的会话历史。这样可以让审查者专注于工作成果而非你的思考过程，同时保留你自己的上下文以便继续工作。
-
-**核心原则：** 早审查，勤审查。
+派遣 CodeReview 子代理在问题扩散前发现它们。审查者获得的是精心组织的评估上下文，而非完整的会话历史。**核心原则：早审查，勤审查。**
 
 ## 何时请求审查
 
@@ -21,152 +19,102 @@ description: "完成任务、实现重要功能或合并前使用，用于验证
 - 重构之前（建立基线）
 - 修复复杂 bug 之后
 
-## 如何请求
+## 审查模式
 
-**0. 前置验证：**
-在派遣审查子代理之前，先使用 `superpowers:verification-before-completion` 确认当前工作有新鲜的验证证据（测试通过、构建成功）。不要派遣审查子代理来审查未验证的代码。
+在开始审查前执行环境探测，根据结果选择模式。
 
-**1. 获取 git SHA：**
+### 环境探测
+
+| 步骤 | 操作 | 说明 |
+|------|------|------|
+| 1. 探测终端 | 执行 `npx gitnexus analyze`，失败后等待 2 秒重试一次 | 确认终端可用；同时刷新索引 |
+| 2. 探测 MCP | 检查 GitNexus MCP 工具列表中是否有 `detect_changes` | 确认完整审查能力是否就绪 |
+| 3. 确认附件 | 检查用户是否提供了附件文件（粘贴代码、拖拽文件等） | 作为模式 C 的判断依据。若降级后仍无附件，先询问审查范围 |
+
+### 模式选择
+
+| 模式 | 条件 | 审查方式 |
+|------|------|----------|
+| **A. 完整审查** | 终端可用 + GitNexus MCP 可用 | git diff + GitNexus 影响分析 + CodeReview 子代理 |
+| **B. diff 审查** | 终端可用 + GitNexus MCP 不可用 | git diff + CodeReview 子代理（无影响分析） |
+| **C. 附件审查** | 终端不可用（重试后确认）+ 用户提供了附件 | 静态走读。开头声明「本次审查为附件静态走读，未执行 git diff 和 GitNexus 影响分析」，不输出影响范围章节 |
+
+## 审查流程
+
+### 0. 前置验证（仅模式 A/B）
+先使用 `superpowers:verification-before-completion` 确认测试通过、构建成功，不得审查未验证代码。
+
+### 1. 获取变更范围
+
+**模式 A/B：**
 ```bash
 BASE_SHA=$(git rev-parse HEAD~1)  # 或 origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. 检查 GitNexus 索引（主会话执行，派遣前）：**
+**模式 C：** 跳过，直接使用附件文件作为审查范围。
 
-> 此步骤由主会话在派遣子代理前完成，确保子代理拿到的索引是可用的。
+### 2. 收集影响数据（仅模式 A，主会话执行）
 
-| 情况 | 判断方式 | 处理 |
-|------|---------|------|
-| 索引不存在 | context 返回 "No index found" | 跑 `npx gitnexus analyze` 建立索引 |
-| 索引过期 | context 返回 "Index is stale" | 跑 `npx gitnexus analyze` 重建索引 |
-| 索引最新 | context 返回正常数据 | 直接使用，无需处理 |
+> 子代理无法调用 MCP 工具。主会话完成所有 MCP 调用，结果以文本注入子代理 prompt。
 
-> 可用 `npx gitnexus status` 查看索引时间和符号数量。重建后重新 READ `gitnexus://repo/{name}/context` 验证索引已加载。
-> 项目无 GitNexus 时跳过此步，子代理会自动走纯 diff 审查。
+| 步骤 | 操作 | 说明 |
+|------|------|------|
+| 刷新索引 | `npx gitnexus analyze` | 环境探测已执行则跳过，否则单独执行 |
+| 确认仓库 | MCP `gitnexus.list_repos` | 确认索引就绪 |
+| 变更影响 | MCP `gitnexus.detect_changes` | 获取变更符号、受影响流程、风险等级 |
+| 深入分析 | 对高风险符号调 `gitnexus.impact` | 获取 d=1~3 调用链 |
+| 补充上下文 | 对关键符号调 `gitnexus.context` | 获取完整调用关系 |
 
-**3. 派遣 code-reviewer 子代理：**
+所有结果收集为文本，作为 `{GITNEXUS_DATA}` 注入。
 
-使用 CodeReview 子代理，将 `code-reviewer.md` 模板内容填入 prompt
+### 3. 派遣 code-reviewer 子代理
 
-> **GitNexus 增强：** 子代理会自动使用已有索引执行影响分析——检测爆炸半径、漏改调用方和测试缺口。子代理只读取索引，不重建。无索引时自动跳过，走纯 diff 审查。
+使用 CodeReview 子代理，将 `code-reviewer.md` 模板填入 prompt。占位符按模式注入：
 
-**占位符说明：**
-- `{WHAT_WAS_IMPLEMENTED}` - 你刚完成的内容
-- `{PLAN_OR_REQUIREMENTS}` - 预期功能（无正式计划时填："无正式计划，审查重点放在代码质量、架构合理性和明显 bug"）
-- `{BASE_SHA}` - 起始提交
-- `{HEAD_SHA}` - 结束提交
-- `{DESCRIPTION}` - 简要说明
+| 占位符 | 说明 | 模式 A | 模式 B | 模式 C |
+|--------|------|--------|--------|--------|
+| `{WHAT_WAS_IMPLEMENTED}` | 刚完成的内容 | ✅ | ✅ | ✅ |
+| `{PLAN_OR_REQUIREMENTS}` | 预期功能。无正式计划填"无正式计划，审查重点放在代码质量、架构合理性和明显 bug" | ✅ | ✅ | ✅ |
+| `{BASE_SHA}` / `{HEAD_SHA}` | 起始/结束提交 | ✅ | ✅ | ❌ |
+| `{DESCRIPTION}` | 简要说明 | ✅ | ✅ | ✅ |
+| `{GITNEXUS_DATA}` | 影响分析结果 | 实际数据 | "无 GitNexus 数据" | 不填 |
 
-**4. 处理反馈：**
-- Critical 问题立即修复 → 修复后执行 delta review（见下方）
-- Important 问题在继续之前修复 → 修复后执行 delta review
-- Minor 问题记录到代码中 `// TODO(review): <描述>` 注释，或在项目 issue tracker 中标记 `code-review-minor` 标签，每 5 个任务或每批次结束时集中清理
-- 如果审查者有误，用技术理由反驳
+### 4. 处理反馈
 
-**5. Delta Review（修复后再审查）：**
+- **Critical**：立即修复 → delta review
+- **Important**：继续前修复 → delta review
+- **Minor**：记录 `// TODO(review): <描述>`，每 5 个任务或每批次结束时集中清理
+- **审查者有误**：用技术理由反驳，展示证明代码/测试
 
-> 修复 Critical/Important 问题后，不要直接继续。执行轻量级 delta review 确认修复到位。
+### 5. Delta Review
+
+修复 Critical/Important 后执行轻量级重审，确认修复到位：
 
 ```
-1. 获取修复 diff：
-   BASE_SHA=$(git rev-parse HEAD~N)  # N = 修复提交数
-   HEAD_SHA=$(git rev-parse HEAD)
-
-2. 派遣同一个 code-reviewer 子代理，填写：
+1. 获取修复 diff: BASE_SHA=$(git rev-parse HEAD~N) / HEAD_SHA=$(git rev-parse HEAD)
+2. 派遣同一子代理：
    WHAT_WAS_IMPLEMENTED: 针对审查反馈的修复
-   PLAN_OR_REQUIREMENTS: 上一轮审查报告中的 Critical/Important 问题列表
+   PLAN_OR_REQUIREMENTS: 上一轮 Critical/Important 问题列表
    DESCRIPTION: 修复了 N 个问题：[简要列出]
-
-3. 子代理只需审查修复 diff，确认：
-   - 原始问题是否已解决
-   - 修复是否引入新问题
-   - 返回：PASS（可以继续）/ FAIL（需要再修）
+3. 子代理仅审查修复 diff，确认原始问题已解决 + 无新问题
+   返回: PASS（可继续）/ FAIL（需再修）
 ```
 
-> 如果只有 Minor 问题，无需 delta review，直接继续。
+**FAIL 处理：** 第 1 次 → 修复重试 | 第 2 次 → 回退完整审查 | 第 3 次 → 暂停并请求指导
 
-**Delta Review FAIL 处理：**
-- 第 1 次 FAIL：根据反馈再次修复，重新执行 delta review
-- 第 2 次 FAIL：回退到完整审查（重新走步骤 3），获取更全面的诊断
-- 第 3 次仍 FAIL：暂停，向用户报告问题并请求指导
-
-## 示例
-
-```
-[刚完成任务 2：添加验证功能]
-
-你：让我在继续之前请求代码审查。
-
-BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
-HEAD_SHA=$(git rev-parse HEAD)
-
-[主会话检查索引]
-  READ gitnexus://repo/my-app/context → 索引最新，直接使用
-
-[派遣 CodeReview 子代理]
-  WHAT_WAS_IMPLEMENTED: 会话索引的验证和修复功能
-  PLAN_OR_REQUIREMENTS: docs/superpowers/plans/deployment-plan.md 中的任务 2
-  BASE_SHA: a7981ec
-  HEAD_SHA: 3df7661
-  DESCRIPTION: 添加了 verifyIndex() 和 repairIndex()，支持 4 种问题类型
-
-[子代理返回]:
-  优点：架构清晰，测试真实
-
-  影响范围：4 个符号，2 个文件，1 个执行流 | 风险 MEDIUM
-  | 变更符号        | d=1 调用方      | diff 中 | 测试 |
-  | verifyIndex     | indexManager    | ✅      | ✅   |
-  | repairIndex     | indexManager    | ✅      | ✅   |
-  | validateChecksum| checksumService | ❌ 漏改 | ✅   |
-
-  问题：
-    Critical：checksumService 未更新 validateChecksum 调用签名
-    Important：缺少进度指示器
-    Minor：报告间隔使用了魔法数字 (100)
-  评估：修复 Critical 后可以继续
-
-你：[修复 checksumService 调用签名]
-你：[修复进度指示器]
-你：[在 reportInterval 旁添加 // TODO(review): 提取魔法数字为常量]
-
-[Delta Review]
-  BASE_SHA=3df7661  # 审查时的 HEAD
-  HEAD_SHA=$(git rev-parse HEAD)
-  WHAT_WAS_IMPLEMENTED: 针对审查反馈的修复
-  PLAN_OR_REQUIREMENTS: Critical: checksumService 调用签名未更新 / Important: 缺少进度指示器
-  DESCRIPTION: 修复了 2 个问题
-
-[Delta Review CodeReview 子代理返回]: PASS — 原始问题已解决，未引入新问题
-[继续任务 3]
-```
-
-## 与工作流的集成
-
-**子代理驱动开发：**
-- 每个任务完成后审查
-- 在问题叠加之前发现它们
-- 修复后再进入下一个任务
-
-**执行计划：**
-- 每批（3 个任务）后审查
-- 获取反馈，修复，继续
-
-**临时开发：**
-- 合并前审查
-- 卡住时审查
+只有 Minor 则无需 delta review。
 
 ## 红线
 
 **绝不要：**
 - 因为"很简单"就跳过审查
-- 忽略 Critical 问题
-- 带着未修复的 Important 问题继续推进
-- 对合理的技术反馈进行争辩
+- 忽略 Critical 问题或带着未修复的 Important 继续推进
+- 对合理技术反馈进行争辩
+- 因工具偶发失败直接降级 — 必须重试 1 次再判定
 
-**如果审查者有误：**
-- 用技术理由反驳
-- 展示证明其可行的代码/测试
-- 要求澄清
+**如果审查者有误：** 用技术理由反驳，展示证明其可行的代码/测试，要求澄清。
 
-参见模板：requesting-code-review/code-reviewer.md
+---
+
+审查输出示例参见：`references/examples/review-output.md`
