@@ -85,7 +85,6 @@ function main() {
   const args = process.argv.slice(2);
   const combine = args.includes('--combine');
   const skillDirArg = args.find(a => !a.startsWith('--'));
-
   if (!skillDirArg) {
     console.error('Usage: render-graphs.js <skill-directory> [--combine]');
     console.error('');
