@@ -9,10 +9,11 @@ description: 当需要根据用户意图在本地技能之间选择、分派、�
 
 ## 路由顺序
 
-1. 判断用户目标是否能由本地技能直接覆盖。
-2. 如果能覆盖，读取对应 `SKILL.md` 并按该技能执行。
-3. 如果任务跨多个技能，先读取主导技能，再读取辅助技能。
-4. 如果本地没有匹配项，读取 `skills/find-skills` 并按其流程搜索外部技能。
+1. 判断用户目标是否在本地路由表领域内（仅 UI/视觉/React/查找技能）。
+2. 不在领域内，直接说明不归本技能管，不继续路由。
+3. 如果能覆盖，读取对应 `SKILL.md` 并按该技能执行。
+4. 如果任务跨多个技能，先读取主导技能，再读取辅助技能。
+5. 如果本地没有匹配项且用户明确要查找/安装新技能，读取 `skills/find-skills` 并按其流程搜索外部技能。
 
 ## 不适用边界
 
@@ -25,7 +26,7 @@ description: 当需要根据用户意图在本地技能之间选择、分派、�
 
 | 用户意图 | 主导技能 | 辅助技能 |
 | --- | --- | --- |
-| 根据 Figma 链接、节点或截图实现 UI/组件/页面 | `skills/figma-implement-design` | `skills/frontend-design`、`skills/vercel-react-best-practices` |
+| 根据 Figma 链接、节点或截图实现 UI/组件/页面 | `skills/figma-implement-design` | `skills/vercel-react-best-practices`；`skills/frontend-design`（仅设计稿未覆盖时） |
 | 创建新 UI、重塑页面视觉、提升审美和差异化 | `skills/frontend-design` | `skills/vercel-react-best-practices` |
 | 编写、审查或重构 React/Next.js 代码并关注性能 | `skills/vercel-react-best-practices` | - |
 | 查找某类 Agent Skill、问有没有现成能力、安装新技能 | `skills/find-skills` | - |
@@ -36,7 +37,7 @@ description: 当需要根据用户意图在本地技能之间选择、分派、�
 
 1. 用户当前明确要求优先于所有子技能建议。
 2. 项目既有约定优先于 Figma 输出和通用最佳实践。
-3. 有 Figma 输入时，`skills/figma-implement-design` 主导；`skills/frontend-design` 只处理视觉取舍，不覆盖设计稿事实。
+3. 有 Figma 输入时，`skills/figma-implement-design` 主导；`skills/frontend-design` 仅在设计稿未覆盖的视觉决策时加载，不默认跟随。
 4. `skills/vercel-react-best-practices` 只能约束实现质量和性能，不得破坏 Figma 验收、用户指定视觉或项目组件契约。
 5. 本地技能已覆盖时，不使用 `skills/find-skills` 做外部搜索。
 
@@ -44,9 +45,9 @@ description: 当需要根据用户意图在本地技能之间选择、分派、�
 
 当用户提供 Figma URL、节点 ID、设计稿截图或说“按设计稿实现”时：
 
-1. 先读取 `skills/figma-implement-design/SKILL.md`，把设计上下文、截图和素材作为实现依据。
-2. 如果涉及视觉取舍、设计系统映射或页面气质，再读取 `skills/frontend-design/SKILL.md`。
-3. 如果实现落在 React 或 Next.js 项目中，再读取 `skills/vercel-react-best-practices/SKILL.md` 检查性能模式。
+1. 读取 `skills/figma-implement-design/SKILL.md`，把设计上下文、截图和素材作为实现依据。
+2. 仅当 Figma 实现过程中出现设计稿未覆盖的视觉决策（配色方案、间距系统、动效风格等）时，才读取 `skills/frontend-design/SKILL.md`。
+3. 如果实现落在 React 或 Next.js 项目中，读取 `skills/vercel-react-best-practices/SKILL.md` 检查性能模式。
 
 ### 纯视觉设计
 

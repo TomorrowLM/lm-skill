@@ -24,6 +24,32 @@ Phase 1: 需求分析 → [用户确认] → Phase 2: 技术方案编写 → [�
 
 每个 `[用户确认]` 是一个硬性门控：展示当前阶段产出 → 等待用户回复 → 才能进入下一阶段。
 
+## 技能分发
+
+### skill-routing 子技能路由
+
+在本工作流中，仅 **UI/视觉/React 实现** 相关的技能选择委托 `skill-routing` 判断：当 Phase 涉及 Figma 设计稿落地、视觉方向取舍或 React/Next.js 性能实践时，读取 `lm-skill/skill-routing/SKILL.md`，按用户意图路由到其子技能（`skills/figma-implement-design`、`skills/frontend-design`、`skills/vercel-react-best-practices`）。
+
+> `skill-routing` 只路由其 `skills/` 目录下的子技能。gitnexus、brainstorming、writing-doc、token-saving、TDD、代码审查等技能不通过 skill-routing 分发，直接在对应 Phase 中按条件加载。
+
+### 其他技能
+
+以下技能由工作流各 Phase 按条件直接加载，不经过 skill-routing：
+
+| 技能 | 触发条件 | 使用阶段 |
+|------|---------|---------|
+| `brainstorming` | 从零开始的需求，无 Figma 无 Swagger | Phase 1 |
+| `gitnexus-exploring` | 项目已有 GitNexus 索引，探索可复用代码 | Phase 1 |
+| `writing-doc` | 用户未提供技术方案文档 | Phase 2 |
+| `gitnexus-impact-analysis` | 项目已有 GitNexus 索引，评估影响面 | Phase 3 |
+| `test-driven-development` | 编码阶段的 TDD 循环任务 | Phase 4 |
+| `executing-plans` | 多窗口并行或内联执行 | Phase 4 |
+| `subagent-driven-development` | 子代理驱动执行 | Phase 4 |
+| `gitnexus-refactoring` | 修改现有模块且有 GitNexus 索引 | Phase 4 |
+| `verification-before-completion` | 自动化验证门控 | Phase 5 |
+| `requesting-code-review` | 验收通过后代码审查 | Phase 5 |
+| `token-saving` | 任务可能消耗大量上下文（横切） | 任意阶段 |
+
 ## 标准工作流
 
 ### Phase 1: 需求分析与技术调研
@@ -32,8 +58,8 @@ Phase 1: 需求分析 → [用户确认] → Phase 2: 技术方案编写 → [�
 >
 > | 维度 | 内容 |
 > |------|------|
-> | **依赖 Skill** | `brainstorming`（如从零开始的需求）；`gitnexus-exploring`（已有 GitNexus 索引的项目，发现可复用组件） |
-> | **依赖 MCP** | `get_swagger_mcp`（接口文档）；`get_figma_data`（设计稿）；`gitnexus_query` / `gitnexus_context`（代码探索） |
+> | **依赖 Skill** | 见「技能分发」段（UI/视觉类 → skill-routing；其他 → 直接按条件加载） |
+> | **依赖 MCP** | 见「技能分发」段 |
 > | **输入** | 用户需求描述（可能包含 PRD / 设计稿链接 / 接口文档链接 / 原型图） |
 > | **产出** | brainstorming 设计共识 + 页面开发补充调研摘要；若涉及 Figma/Swagger 则附带 MCP 返回的数据摘要 |
 
@@ -105,8 +131,8 @@ Phase 1: 需求分析 → [用户确认] → Phase 2: 技术方案编写 → [�
 >
 > | 维度 | 内容 |
 > |------|------|
-> | **依赖 Skill** | `writing-doc`（用户未提供技术方案文档时按模板创建） |
-> | **依赖 MCP** | 无（主要使用 Phase 1 的产出和项目现有代码） |
+> | **依赖 Skill** | 见「技能分发」段（UI/视觉类 → skill-routing；其他 → 直接按条件加载） |
+> | **依赖 MCP** | 见「技能分发」段 |
 > | **输入** | Phase 1 确认后的设计共识、页面专属确认和补充调研摘要 |
 > | **产出** | 技术方案文档（组件拆分、hooks/utils、常量类型、接口字段均已明确）；或对用户提供的技术方案文档的审阅补充意见 |
 
@@ -145,8 +171,8 @@ Phase 1: 需求分析 → [用户确认] → Phase 2: 技术方案编写 → [�
 >
 > | 维度 | 内容 |
 > |------|------|
-> | **依赖 Skill** | `gitnexus-impact-analysis`（已有索引时评估影响面） |
-> | **依赖 MCP** | `gitnexus_impact`（已有索引时评估爆炸半径） |
+> | **依赖 Skill** | 见「技能分发」段（UI/视觉类 → skill-routing；其他 → 直接按条件加载） |
+> | **依赖 MCP** | 见「技能分发」段 |
 > | **输入** | Phase 2 确认后的技术方案文档 |
 > | **产出** | 实现计划文件；如需拆分，则生成多个子任务规格文件；文件统一保存到 `docs/design/YYYY-MM-DD-<topic>-design/spec/`；执行方式已选定 |
 > | **⚡ 决策点** | 规模判断（≥3 个独立模块 / token 不够 / 无共享依赖 → 触发拆分）；执行方式选择（多窗口并行 / 子代理驱动 / 内联执行 / 直接实现） |
@@ -229,8 +255,8 @@ gitnexus_impact({target: "<要修改或依赖的现有符号>", direction: "upst
 >
 > | 维度 | 内容 |
 > |------|------|
-> | **依赖 Skill** | `superpowers:executing-plans`（多窗口并行 / 内联执行）；`superpowers:subagent-driven-development`（子代理驱动）；`superpowers:test-driven-development`（TDD 循环任务） |
-> | **依赖 MCP** | `gitnexus_impact`（已有索引时，修改现有模块前评估） |
+> | **依赖 Skill** | 见「技能分发」段（UI/视觉类 → skill-routing；其他 → 直接按条件加载） |
+> | **依赖 MCP** | 见「技能分发」段 |
 > | **输入** | Phase 3 确认后的实现计划（单文件或多子任务规格文件） |
 > | **产出** | 可工作的代码 + 逐任务 git commit 记录；多窗口并行时各窗口独立提交、主窗口汇总审查 |
 > | **⚡ 决策点** | 拆分时第一个窗口先跑共享依赖（类型/API 层），其余窗口可并行启动 |
@@ -318,8 +344,8 @@ gitnexus_impact({target: "<要修改或依赖的现有符号>", direction: "upst
 >
 > | 维度 | 内容 |
 > |------|------|
-> | **依赖 Skill** | `superpowers:verification-before-completion`（自动化验证门控）；`superpowers:requesting-code-review`（验收通过后代码审查） |
-> | **依赖 MCP** | `gitnexus_detect_changes`（已有索引时验证变更范围） |
+> | **依赖 Skill** | 见「技能分发」段（UI/视觉类 → skill-routing；其他 → 直接按条件加载） |
+> | **依赖 MCP** | 见「技能分发」段 |
 > | **输入** | Phase 4 完成后的代码变更 + 提交记录 |
 > | **产出** | 验证通过的代码（lint / typecheck / test / build 全绿）；UI 手动验收记录；代码审查结论 |
 > | **⚡ 决策点** | 验收失败 → 回到 Phase 4 修复 → 重走 Phase 5；Critical/Important 审查问题 → 修复后重新验收 |
@@ -407,8 +433,8 @@ gitnexus_impact({target: "<要修改或依赖的现有符号>", direction: "upst
 >
 > | 维度 | 内容 |
 > |------|------|
-> | **依赖 Skill** | `git-commit-conventions`（提交信息规范）；`git-finishing-development-branch`（分支集成收尾，如项目允许） |
-> | **依赖 MCP** | 无 |
+> | **依赖 Skill** | 见「技能分发」段（UI/视觉类 → skill-routing；其他 → 直接按条件加载） |
+> | **依赖 MCP** | 见「技能分发」段 |
 > | **输入** | Phase 5 验证结果、代码审查结论、未提交变更 |
 > | **产出** | 已提交的代码、交付摘要、验证证据、遗留风险说明 |
 > | **⚡ 决策点** | 若需要 push、创建 MR/PR、合并或发布，必须先获得用户明确确认 |
