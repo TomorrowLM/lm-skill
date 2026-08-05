@@ -1,6 +1,6 @@
 # lm-skill
 
-本目录包含三组技能：**GitNexus 系列**（代码智能）、**页面工作流系列**和 **开发协作系列（superpowers）**。
+本目录包含五组技能：**GitNexus 系列**（代码智能）、**React/前端性能**、**页面工作流系列**、**开发协作系列（superpowers）**、**设计类技能** 和 **技能管理**。
 
 ---
 
@@ -24,6 +24,22 @@
 
 ---
 
+## React / 前端性能
+
+| 技能 | 描述 |
+|------|------|
+| `vercel-react-best-practices` | **React & Next.js 性能优化**。Vercel 官方出品，含 70+ 条规则分 8 个优先级类别（消除瀑布、Bundle 优化、SSR 性能、重渲染优化、JS 性能等）。源自 [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills)（MIT） |
+
+---
+
+## 效率与上下文管理
+
+| 技能 | 描述 |
+|------|------|
+| `token-saving` | **Token 节省与上下文压缩**。面向长文档、多文件探索、日志分析、网页调研、Figma/UI 还原、多代理协作和长对话续接，按预算分层获取上下文，减少无效 token。 |
+
+---
+
 ## 页面工作流系列
 
 | 技能 | 描述 |
@@ -38,3 +54,22 @@
 |------|------|
 | `superpowers` | **前端开发者总路由中心**。根据任务场景（头脑风暴→方案设计→编码实现→调试→审查→交付）自动分流到 15+ 子技能，覆盖完整开发生命周期 |
 | `using-superpowers` | **技能使用规范**。确立在任何对话/澄清/操作之前优先调用 Skill 工具的强制规则，并提供多平台（Claude Code / Copilot CLI / Hermes / Gemini CLI）的技能加载方式 |
+| `webapp-testing` | **Web 应用测试**。基于 Playwright 的本地 Web 应用交互测试工具，支持截图、DOM 检查、浏览器日志、服务生命周期管理。源自 [anthropics/skills](https://github.com/anthropics/skills)（Apache 2.0） |
+
+---
+
+## 设计类技能
+
+| 技能 | 描述 |
+|------|------|
+| `frontend-design` | **前端视觉设计**。提供有辨识度的、有意图的视觉设计指导，涵盖美学方向、字体排版、配色方案、布局策略和文案撰写。帮助构建不像模板化默认产物的独特 UI。源自 [anthropics/skills](https://github.com/anthropics/skills)（Apache 2.0） |
+| `figma-implement-design` | **Figma 设计还原**。将 Figma 设计稿按 1:1 像素级精度转化为生产就绪代码。支持 Figma MCP 集成、设计 Token 映射、7 步结构化工作流。源自 [openai/skills](https://github.com/openai/skills) |
+
+---
+
+## 技能管理
+
+| 技能 | 描述 |
+|------|------|
+| `skill-creator` | **技能创建与优化**。创建、修改、评估、迭代优化 Agent Skill 的完整方法论。包含撰写→测试→评估→改进循环，支持定量基准测试和描述触发优化。源自 [anthropics/skills](https://github.com/anthropics/skills)（Apache 2.0） |
+| `writing-skills` | **技能编写**。专门用于技能文档编写、修订和压力验证 |

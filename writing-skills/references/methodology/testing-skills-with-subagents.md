@@ -12,7 +12,7 @@
 
 **必需背景：** 在使用此技能前，你必须理解 superpowers:test-driven-development。该技能定义了基本的红-绿-重构循环。本技能提供技能专用的测试格式（压力场景、合理化借口表）。
 
-**完整示例：** 参见 ../examples/CLAUDE_MD_TESTING.md 了解测试 CLAUDE.md 文档变体的完整测试方案。
+**完整示例：** 参见 ../examples/end-to-end-walkthrough.md 了解从零到交付的完整测试流程。
 
 ## 何时使用
 

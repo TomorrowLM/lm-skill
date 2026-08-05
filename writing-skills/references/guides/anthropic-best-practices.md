@@ -1,61 +1,8 @@
-# 技能编写最佳实践
+# 技能编写补充参考
 
-> 学习如何编写 Claude 能发现并成功使用的有效技能。
+> 本文只保留 SKILL.md 中未覆盖的内容：自由度光谱详述、多模型测试、命名约定、描述人称之为第三人称要求。核心原则和目录结构见 SKILL.md。
 
-好的技能是简洁、结构良好、并经过真实使用测试的。本指南提供实用的编写决策，帮助你编写 Claude 能发现并有效使用的技能。
-
-关于技能工作原理的概念背景，请参阅[技能概述](/en/docs/agents-and-tools/agent-skills/overview)。
-
-## 核心原则
-
-### 简洁是关键
-
-[上下文窗口](https://platform.claude.com/docs/en/build-with-claude/context-windows)是公共资源。你的技能与 Claude 需要知道的所有其他内容共享上下文窗口，包括：
-
-* 系统提示
-* 对话历史
-* 其他技能的元数据
-* 你的实际请求
-
-并非技能中的每个 token 都有即时成本。启动时，只有所有技能的元数据（name 和 description）被预加载。Claude 只在技能变得相关时才读取 SKILL.md，并且只在需要时才读取额外文件。然而，在 SKILL.md 中保持简洁仍然很重要：一旦 Claude 加载它，每个 token 都在与对话历史和其他上下文竞争。
-
-**默认假设**：Claude 已经非常聪明
-
-只添加 Claude 还不知道的上下文。对每条信息进行质疑：
-
-* "Claude 真的需要这个解释吗？"
-* "我能假设 Claude 知道这个吗？"
-* "这段话值得它的 token 成本吗？"
-
-**好的示例：简洁**（约 50 个 token）：
-
-````markdown  theme={null}
-## 提取 PDF 文本
-
-使用 pdfplumber 进行文本提取：
-
-```python
-import pdfplumber
-
-with pdfplumber.open("file.pdf") as pdf:
-    text = pdf.pages[0].extract_text()
-```
-````
-
-**差的示例：太冗长**（约 150 个 token）：
-
-```markdown  theme={null}
-## 提取 PDF 文本
-
-PDF（便携式文档格式）文件是一种常见的文件格式，包含文本、图像和其他内容。
-要从 PDF 中提取文本，你需要使用一个库。有很多 PDF 处理库可用，
-但我们推荐 pdfplumber，因为它易于使用且处理大多数情况都很好。
-首先，你需要使用 pip 安装它。然后你可以使用下面的代码……
-```
-
-简洁版本假设 Claude 知道什么是 PDF 以及库是如何工作的。
-
-### 设置适当的自由度
+## 设置适当的自由度
 
 将具体程度与任务的脆弱性和可变性相匹配。
 
@@ -123,81 +70,40 @@ python scripts/migrate.py --verify --backup
 不要修改命令或添加额外参数。
 ````
 
-**类比**：把 Claude 想象成一个探索路径的机器人：
+**类比**：把 AI 想象成一个探索路径的机器人：
 
 * **两侧是悬崖的窄桥**：只有一条安全的路。提供具体的护栏和精确的指令（低自由度）。例如：必须按确切顺序运行的数据库迁移。
-* **没有障碍的开阔地**：很多路径都能成功。给出大方向，信任 Claude 找到最佳路线（高自由度）。例如：方案取决于上下文的代码审查。
+* **没有障碍的开阔地**：很多路径都能成功。给出大方向，信任 AI 找到最佳路线（高自由度）。例如：方案取决于上下文的代码审查。
 
-### 用你计划使用的所有模型测试
+## 用你计划使用的所有模型测试
 
 技能作为模型的补充，因此效果取决于底层模型。用你计划使用的所有模型测试你的技能。
 
-**按模型的测试考虑**：
-
-* **Claude Haiku**（快速、经济）：技能是否提供了足够的指导？
-* **Claude Sonnet**（平衡）：技能是否清晰高效？
-* **Claude Opus**（强大推理）：技能是否避免了过度解释？
+* **Haiku**（快速、经济）：技能是否提供了足够的指导？
+* **Sonnet**（平衡）：技能是否清晰高效？
+* **Opus**（强大推理）：技能是否避免了过度解释？
 
 对 Opus 完美工作的内容可能对 Haiku 需要更多细节。如果你计划跨多个模型使用技能，瞄准对所有模型都适用的指令。
 
-## 技能结构
+## 命名约定
 
-<Note>
-  **YAML Frontmatter**：SKILL.md 的 frontmatter 支持两个字段：
+使用一致的命名模式使技能更容易引用和讨论。推荐使用**动名词形式**（动词 + -ing）或**名词短语**。
 
-  * `name` - 技能的可读名称（最多 64 个字符）
-  * `description` - 技能做什么以及何时使用的一行描述（最多 1024 个字符）
+好的示例："Processing PDFs"、"Analyzing spreadsheets"、"PDF Processing"
 
-  完整的技能结构细节请参阅[技能概述](/en/docs/agents-and-tools/agent-skills/overview#skill-structure)。
-</Note>
+避免：模糊的名称如 "Helper"、"Utils"、"Tools"
 
-### 命名约定
-
-使用一致的命名模式使技能更容易引用和讨论。我们推荐使用**动名词形式**（动词 + -ing）作为技能名称，因为这清楚地描述了技能提供的活动或能力。
-
-**好的命名示例（动名词形式）**：
-
-* "Processing PDFs"
-* "Analyzing spreadsheets"
-* "Managing databases"
-* "Testing code"
-* "Writing documentation"
-
-**可接受的替代方案**：
-
-* 名词短语："PDF Processing"、"Spreadsheet Analysis"
-* 动作导向："Process PDFs"、"Analyze Spreadsheets"
-
-**避免**：
-
-* 模糊的名称："Helper"、"Utils"、"Tools"
-* 过于通用："Documents"、"Data"、"Files"
-* 技能集合中命名模式不一致
-
-一致的命名便于：
-
-* 在文档和对话中引用技能
-* 一眼就能理解技能的作用
-* 组织和搜索多个技能
-* 维护专业、连贯的技能库
-
-### 编写有效的描述
+## 编写有效的描述
 
 `description` 字段用于技能发现，应包含技能做什么以及何时使用。
 
-<Warning>
-  **始终用第三人称写**。描述被注入系统提示中，不一致的人称视角会导致发现问题。
+**始终用第三人称写**。描述被注入系统提示中，不一致的人称视角会导致发现问题。
 
-  * **好的：** "Processes Excel files and generates reports"
-  * **避免：** "I can help you process Excel files"
-  * **避免：** "You can use this to process Excel files"
-</Warning>
+* **好的：** "Processes Excel files and generates reports"
+* **避免：** "I can help you process Excel files"
+* **避免：** "You can use this to process Excel files"
 
-**具体且包含关键术语**。同时包含技能做什么和何时使用的具体触发条件/上下文。
-
-每个技能只有一个描述字段。描述对技能选择至关重要：Claude 使用它从可能 100 多个可用技能中选择正确的技能。你的描述必须提供足够的细节让 Claude 知道何时选择此技能，而 SKILL.md 的其余部分提供实现细节。
-
-有效的示例：
+具体且包含关键术语。同时包含技能做什么和何时使用的具体触发条件。每个技能只有一个描述字段，描述对技能选择至关重要。
 
 **PDF 处理技能：**
 
