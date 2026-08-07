@@ -72,6 +72,9 @@ page.screenshot(path='/tmp/inspect.png', full_page=True)
 content = page.content()
 page.locator('button').all()
 ```
+
+> **页面开发工作流内使用时：** 截图应存放到当前功能文件夹的 `assets/screenshots/` 目录，而非 `/tmp/`。详见 `page-development-workflow` 的统一目录结构约定。
+
 2. Identify selectors from inspection results
 3. Execute actions using discovered selectors
 

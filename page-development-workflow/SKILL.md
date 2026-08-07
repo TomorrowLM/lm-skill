@@ -475,7 +475,7 @@ gitnexus_impact({target: "<要修改或依赖的现有符号>", direction: "upst
 
 **前置条件（必须满足）：**
 - `agent-orchestrator-mcp` 已在 MCP 配置中注册
-- 子任务规格文件已保存到 `docs/design/YYYY-MM-DD-<topic>-design/spec/` 目录
+- 子任务规格文件已保存到 `docs/design/YYYY-MM-DD-<topic>-design/spec/` 目录（`<module>-spec.md`）
 - 共享依赖（公共类型、API 服务层）已识别为独立任务或在第一个子任务中
 
 **执行流程：**
@@ -522,6 +522,7 @@ agent_summarize_results
 - 共享依赖任务必须先完成，再启动依赖它的任务
 - 同批次无依赖任务可一批 `agent_open_task_chats` 全部打开
 - 禁止将修改同一文件的任务放入同一批次
+- **`resultFile` 必传：** 调用 `agent_create_task` / `agent_create_tasks` 时必须显式传 `resultFile`，指向 `docs/design/YYYY-MM-DD-<topic>-design/.agent-orchestrator/results/<编号>-result.md`，确保子任务结果归入功能文件夹
 
 **子 Agent 纪律：**
 - 不继承主窗口上下文，只靠 Prompt 文件和 `inputFiles` 了解任务
@@ -573,6 +574,8 @@ agent_summarize_results
 - [ ] TypeScript 类型检查通过（0 errors）
 - [ ] ESLint 检查通过（0 errors, 0 warnings）
 - [ ] 构建通过（exit 0）
+
+> **证据落盘：** 自动化验证的命令输出、截图和手动验收记录汇总写入 `docs/design/YYYY-MM-DD-<topic>-design/evidence/phase5-verification.md`。
 
 **UI 手动验证：**
 
@@ -677,6 +680,29 @@ agent_summarize_results
 ## 通用规范要点
 
 ### 目录结构
+
+**统一功能文件夹：** 一个功能的所有非代码产物（文档、设计稿、截图、图表、验证证据）集中存放在 `docs/design/YYYY-MM-DD-<topic>-design/` 下：
+
+```
+docs/design/YYYY-MM-DD-<topic>-design/
+├── index.md                        ← Phase 2: 技术方案文档
+├── spec/                           ← Phase 3: 实现计划
+│   ├── implementation-plan.md      ← 不拆分时
+│   └── <module>-spec.md            ← 拆分时，多份子任务规格
+├── assets/                         ← 静态资源
+│   ├── figma/                      ← Figma 设计稿截图、标注图、下载的图标/插画
+│   ├── screenshots/                ← 浏览器截图（验收截图、webapp-testing）
+│   └── diagrams/                   ← 思维导图、流程图（mermaid/drawio 导出）
+├── evidence/                       ← 验证证据
+│   └── phase5-verification.md      ← Phase 5: 自动化验证结果、手动验收记录
+└── .agent-orchestrator/            ← agent-orchestrator-mcp 编排产物
+    ├── tasks.json                  ← 任务记录
+    └── results/                    ← 子任务执行结果
+```
+
+> **跨技能约束：** mcp-exe、webapp-testing、figma-implement-design 等产生静态文件的技能，在本工作流内输出到对应 `assets/` 子目录，不再散落到桌面/tmp。
+
+**业务代码目录：**
 
 ```
 src/

@@ -179,6 +179,8 @@ CallMcpTool:
     fullPage: true
 ```
 
+> **页面开发工作流内使用时：** 截图和图表应存放到当前功能文件夹的 `assets/` 子目录，而非桌面。详见 `page-development-workflow` 的统一目录结构约定。
+
 **对 `drawio-mcp`（在线编辑器）：**
 
 ```plaintext
@@ -362,6 +364,8 @@ CallMcpTool:
 ```
 
 > 返回每个任务的 `id`、`promptFile`、`resultFile`。`resultFile` 未指定时默认写入 `.agent-results/task-<uuid>.md`。
+>
+> **页面开发工作流内使用时：** `resultFile` 必须显式指定，指向 `docs/design/YYYY-MM-DD-<topic>-design/.agent-orchestrator/results/<module>-result.md`，确保子任务结果归入功能文件夹。详见 `page-development-workflow` 的统一目录结构约定。
 
 #### Step 2：打开子聊天窗口
 
@@ -377,7 +381,7 @@ CallMcpTool:
       - "task-<uuid-3>"
 ```
 
-> 服务端会为每个任务生成 `.agent-orchestrator/prompts/task-<uuid>.md`，通过 VS Code CLI 打开 `code chat --mode agent --reuse-window --add-file <promptFile>`，并将状态更新为 `running`。
+> 服务端通过 VS Code CLI 打开 `code chat --mode agent --reuse-window --add-file <specFile>` 直接加载 spec 文件，并将状态更新为 `running`。
 
 **执行编排规则：**
 - 共享层任务（类型/API）先打开并等待完成，再打开依赖它的页面任务

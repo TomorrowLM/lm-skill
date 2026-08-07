@@ -93,6 +93,8 @@ IMPORTANT: Follow these asset rules:
 - DO NOT use or create placeholders if a `localhost` source is provided
 - Assets are served through the Figma MCP server's built-in assets endpoint
 
+> **页面开发工作流内使用时：** 需要落盘的 Figma 截图、标注图、图标文件应保存到当前功能文件夹的 `assets/figma/` 目录，便于和设计方案文档及代码一同归档。详见 `page-development-workflow` 的统一目录结构约定。
+
 ### Step 5: Translate to Project Conventions
 
 Translate the Figma output into this project's framework, styles, and conventions.
