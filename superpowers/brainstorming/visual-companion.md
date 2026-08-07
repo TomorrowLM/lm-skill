@@ -36,11 +36,16 @@
 # 启动服务器并持久化（原型保存到项目中）
 scripts/start-server.sh --project-dir /path/to/project
 
+# 当能识别需求目录时，直接保存到该需求目录下
+scripts/start-server.sh --screen-dir /path/to/project/docs/design/feature-name/brainstorm
+
 # 返回：{"type":"server-started","port":52341,"url":"http://localhost:52341",
 #           "screen_dir":"/path/to/project/.superpowers/brainstorm/12345-1706000000"}
 ```
 
 保存响应中的 `screen_dir`。告诉用户打开该 URL。
+
+**目录选择优先级：** 如果用户给了需求目录，或输入文件位于 `docs/design/<需求名>/`、`docs/prod/<需求名>/`，优先使用该目录下的 `brainstorm/` 作为 `--screen-dir`。无法判断需求目录时，再使用 `--project-dir` 的 `.superpowers/brainstorm/` 兜底。
 
 **查找连接信息：** 服务器将其启动 JSON 写入 `$SCREEN_DIR/.server-info`。如果你在后台启动了服务器且没有捕获 stdout，读取该文件以获取 URL 和端口。使用 `--project-dir` 时，检查 `<project>/.superpowers/brainstorm/` 获取会话目录。
 
