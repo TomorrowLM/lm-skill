@@ -72,14 +72,14 @@
 
 编排顺序：
 
-1. 用 `agent_create_tasks` 创建任务，必须显式传 `resultFile`。
-2. 先打开共享层任务。
-3. 等共享层完成。
-4. 再打开无依赖的页面层或功能层任务。
-5. 等全部完成。
-6. 汇总结果。
-7. 审查结果；不合格则请求返工。
-8. 通过后进入 Phase 5。
+1. 用 `agent_create_tasks` 批量创建所有任务，必须显式传 `resultFile`。注意：`agent_create_tasks` 只创建任务记录，不会自动打开聊天窗口。
+2. 用 `agent_open_task_chats` 为待执行任务打开 VS Code 聊天窗口（通过 `code chat --mode agent --add-file <spec>` 启动）。
+3. **有共享层依赖时**：先打开共享层任务 → 等共享层完成 → 再打开功能层任务。
+4. **无共享依赖时**：可以一次性打开所有任务聊天窗。
+5. 用 `agent_wait_for_tasks` 等待全部任务完成。
+6. 用 `agent_summarize_results` 汇总结果。
+7. 审查结果；不合格则用 `agent_request_rework` 请求返工。
+8. 通过后用 `agent_mark_task_reviewed` 标记，进入 Phase 5。
 
 `resultFile` 规则：
 
@@ -92,6 +92,15 @@ docs/design/YYYY-MM-DD-<topic>-design/.agent-orchestrator/results/<编号>-resul
 - 禁止把修改同一文件的任务放在同一并行批次。
 - 禁止共享层未完成就启动依赖它的任务。
 - 禁止子 Agent 提交、推送、删除文件或执行破坏性操作。
+
+### ⚠️ 常见遗漏
+
+| 遗漏 | 后果 | 正确做法 |
+|------|------|----------|
+| 只调 `agent_create_tasks`，不调 `agent_open_task_chats` | 任务记录存在但子聊天窗未打开，`wait_for_tasks` 永远等不到结果 | 创建后立即 `agent_open_task_chats` |
+| 只调 `agent_open_task_chats`，不调 `agent_wait_for_tasks` | 聊天窗打开但主窗口不等待，无法汇总 | 打开后立即 `agent_wait_for_tasks` |
+| 忘记调 `agent_summarize_results` | 结果分散在各 resultFile，主窗口看不到汇总 | 等待完成后 `agent_summarize_results` |
+| 不审查直接标记通过 | 子 Agent 产出有 bug 进入 Phase 5 | 逐条审查，不合格 `agent_request_rework` |
 
 ## 内联执行
 

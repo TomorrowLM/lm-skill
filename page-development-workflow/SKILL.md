@@ -157,6 +157,7 @@ Phase 6 收尾交付
 - 涉及同一文件、同一 symbol、同一 API 契约、同一共享样式或同一全局状态时禁止并行。
 - TDD 任务必须读取 `test-driven-development` 并按红-绿-重构执行。
 - 多窗口 / MCP 编排 / 子代理 / 内联执行细节见 `references/phase4-execution-modes.md`。
+- **MCP 编排时**必须先读取 `mcp-exe/references/agent-orchestrator-mcp.md`，按 Step 1→2→3→4→5 完整流程执行，禁止跳过 `agent_open_task_chats`。
 
 结束时产出可工作的代码和变更记录，然后进入 Phase 5。
 

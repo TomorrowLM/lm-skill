@@ -67,15 +67,19 @@
 完成标志：
 
 - [ ] 已向用户展示执行方式选项并获得确认。
-- [ ] 只允许串行前置任务在确认前置执行；并行批次必须在用户选择方式后启动。
-
-完成标志：
-
+- [ ] 只允许串行前置任务在确认前执行；并行批次必须在用户选择方式后启动。
 - [ ] 已按计划顺序执行。
 - [ ] 只并行计划中明确允许的批次。
 - [ ] TDD 任务已遵循红-绿-重构。
 - [ ] 每个并行批次后已完成合流检查。
 - [ ] 变更范围记录清楚。
+
+### MCP 编排附加检查项
+
+- [ ] 已读取 `mcp-exe/references/agent-orchestrator-mcp.md`。
+- [ ] `agent_create_tasks` → `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` 四步完整执行，无跳过。
+- [ ] 各任务结果已审查，不合格的已返工。
+- [ ] 已通过的任务已标记 `agent_mark_task_reviewed`。
 
 ## Phase 5：测试验收
 
