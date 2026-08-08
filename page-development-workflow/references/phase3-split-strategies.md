@@ -5,7 +5,7 @@
 ## 计划落盘规则
 
 - 不拆分：写入 `docs/design/YYYY-MM-DD-<topic>-design/spec/implementation-plan.md`。
-- 拆分：写入多个 `docs/design/YYYY-MM-DD-<topic>-design/spec/<module>-spec.md`。
+- 拆分：写入多个 `docs/design/YYYY-MM-DD-<topic>-design/spec/<NNx>-<module>-spec.md`，其中 `NN` 为两位数字序号（01、02、03…），反映执行顺序；同一批次内可并行的子任务用字母后缀区分（如 `02a`、`02b`）。
 - `spec/` 只存放可执行交付物，不存放整体技术方案。
 - `implementation-plan.md` 与 `<module>-spec.md` 默认二选一；除非用户明确要求保留总计划。
 

@@ -84,7 +84,7 @@
 `resultFile` 规则：
 
 ```text
-docs/design/YYYY-MM-DD-<topic>-design/.agent-orchestrator/results/<编号>-result.md
+docs/design/YYYY-MM-DD-<topic>-design/results/<编号>-result.md
 ```
 
 禁止事项：

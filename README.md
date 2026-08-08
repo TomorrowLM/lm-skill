@@ -34,11 +34,9 @@ docs/design/YYYY-MM-DD-<topic>-design/
 │
 ├── evidence/                           ← verification-before-completion
 │   └── phase5-verification.md          ←   Phase 5 自动化验证 + 手动验收记录
-│
-└── .agent-orchestrator/                ← subagent-driven-development / dispatching-parallel-agents
-    ├── tasks.json                      ←   任务编排记录
-    └── results/                        ←   子任务执行结果
-        └── <id>-result.md
+├── results/                            ← subagent-driven-development / dispatching-parallel-agents
+│   └── <id>-result.md                  ←   子任务执行结果
+└── tasks.json                          ←   任务编排记录
 ```
 
 | 产物 | 产出技能 | 落点 |
@@ -50,8 +48,8 @@ docs/design/YYYY-MM-DD-<topic>-design/
 | 浏览器截图 | `webapp-testing`、`mcp-exe` | `assets/screenshots/` |
 | 思维导图 / 流程图 | `mcp-exe` | `assets/diagrams/` |
 | 验证证据 | `verification-before-completion` | `evidence/phase5-verification.md` |
-| 任务编排记录 | `subagent-driven-development`、`dispatching-parallel-agents` | `.agent-orchestrator/tasks.json` |
-| 子任务结果 | `subagent-driven-development`、`dispatching-parallel-agents` | `.agent-orchestrator/results/<id>-result.md` |
+| 任务编排记录 | `subagent-driven-development`、`dispatching-parallel-agents` | `tasks.json` |
+| 子任务结果 | `subagent-driven-development`、`dispatching-parallel-agents` | `results/<id>-result.md` |
 | 业务代码（页面/组件/API） | `page-development-workflow`（Phase 4） | `src/pages/`、`src/services/` 等 |
 
 > **跨技能约束：** `mcp-exe`、`webapp-testing`、`figma-implement-design` 在页面开发工作流内必须输出到对应 `assets/` 子目录，不再散落到桌面/tmp。

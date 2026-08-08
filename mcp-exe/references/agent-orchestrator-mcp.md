@@ -65,9 +65,9 @@ CallMcpTool:
           - "docs/design/2026-08-06-xxx-design/spec/detail-page-spec.md"
 ```
 
-> 返回每个任务的 `id`、`promptFile`、`resultFile`。`resultFile` 未指定时默认写入 `.agent-results/task-<uuid>.md`。
+> 返回每个任务的 `id`、`promptFile`、`resultFile`。`resultFile` 未指定时从 `inputFiles` 推断需求目录，写入 `docs/design|prod/<需求目录>/results/task-<uuid>.md`；无法推断时写入 `docs/results/task-<uuid>.md`。
 >
-> **页面开发工作流内使用时：** `resultFile` 必须显式指定，指向 `docs/design/YYYY-MM-DD-<topic>-design/.agent-orchestrator/results/<module>-result.md`，确保子任务结果归入功能文件夹。详见 `page-development-workflow` 的统一目录结构约定。
+> **页面开发工作流内使用时：** `resultFile` 必须显式指定，指向 `docs/design/YYYY-MM-DD-<topic>-design/results/<module>-result.md`，确保子任务结果归入功能文件夹。详见 `page-development-workflow` 的统一目录结构约定。
 
 ## Step 2：打开子聊天窗口
 

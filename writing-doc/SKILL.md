@@ -28,7 +28,7 @@ description: 当需要编写或补全前端技术方案、页面级实现方案�
 
 当 sync docs 触发时，执行以下流程：
 
-1. **读取待同步列表**：读取 `docs/.doc-sync-commits`，获取所有待同步的 commit hash
+1. **读取待同步列表**：读取 `docs/pages/.doc-sync-commits`，获取所有待同步的 commit hash
 2. **逐个获取 diff**：对每个 hash 执行 `git show --stat <hash>` 和 `git show <hash>` 获取变更信息
 3. **匹配受影响文档**：根据变更文件路径，判断 `docs/design/` 和 `docs/prod/` 中哪些文档需要更新：
    - `src/pages/<page>/**` → `docs/design/<对应设计文档>` 和 `docs/prod/<对应生产文档>`
@@ -39,7 +39,7 @@ description: 当需要编写或补全前端技术方案、页面级实现方案�
 4. **编写文档**：使用「页面功能总结模板」更新受影响文档
 5. **列出变更方案**：向用户展示本次变更影响哪些文档、建议如何更新
 6. **等待确认后执行**：用户确认后逐个更新文档
-7. **清空 hash 列表**：所有文档同步完成后，将 `docs/.doc-sync-commits` 恢复为空（仅保留注释头）
+7. **清空 hash 列表**：所有文档同步完成后，将 `docs/pages/.doc-sync-commits` 恢复为空（仅保留注释头）
 
 > 若 hash 已被垃圾回收，对应的 hash 行跳过并标注 "hash not found"，警告用户该 commit 可能已被 rebase 或清理。
 

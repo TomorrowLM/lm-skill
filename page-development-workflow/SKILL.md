@@ -59,6 +59,7 @@ Phase 6 收尾交付
 | 文件 | 何时读取 |
 |------|----------|
 | `references/phase-gates.md` | 进入任一 Phase 前，查看输入、产出、完成标志和门控 |
+| `references/pages-registry.md` | Phase 2 注册页面到 `pages.yaml` 时，查看 schema 和约束 |
 | `references/phase3-split-strategies.md` | Phase 3 需要设计拆分方案、实现计划、并行编排时 |
 | `references/phase4-execution-modes.md` | Phase 4 需要多窗口、MCP 编排、子代理或内联执行时 |
 | `references/phase5-verification.md` | Phase 5 选择验证命令、记录证据、做 UI 验收时 |
@@ -102,6 +103,7 @@ Phase 6 收尾交付
 - 用户已有技术方案时，审阅并补充实现细节。
 - 用户没有技术方案时，读取 `writing-doc` 并创建方案文档。
 - 默认落盘到 `docs/design/YYYY-MM-DD-<topic>-design/index.md`。
+- 方案中涉及的每个页面必须已在 `docs/pages/pages.yaml` 中注册；若不存在则提示用户先补充页面条目。`pages.yaml` 的 schema 和约束见 `references/pages-registry.md`。
 - 提交用户审查前，清理占位符、内部矛盾、歧义和范围膨胀。
 
 结束时展示技术方案摘要和文档路径，等待用户确认。
@@ -110,7 +112,7 @@ Phase 6 收尾交付
 
 目标：把技术方案拆成可执行计划，明确串行、并行和合流检查点。
 
-必须先读取 `references/phase3-split-strategies.md`。
+必须先读取 `references/phase3-split-strategies.md`。进入 Phase 3 时，先向用户确认已读取该文件，再展示拆分方案。
 
 硬性要求：
 
@@ -118,7 +120,7 @@ Phase 6 收尾交付
 - 每个方案包含子任务、产出文件、执行方式、优点、风险和推荐排序。
 - 等用户选择拆分方案和执行方式后，再生成实现计划。
 - 不拆分：写入 `docs/design/YYYY-MM-DD-<topic>-design/spec/implementation-plan.md`。
-- 拆分：写入多个 `docs/design/YYYY-MM-DD-<topic>-design/spec/<module>-spec.md`。
+- 拆分：写入多个 `docs/design/YYYY-MM-DD-<topic>-design/spec/<module>-spec.md`，按执行顺序编号（01、02、03…）；同一批次内可并行的子任务用字母后缀区分（如 02a、02b）
 
 如需要修改现有模块且项目已有 GitNexus 索引，先做影响面分析；HIGH / CRITICAL 风险必须提醒用户后再继续。
 
@@ -165,7 +167,7 @@ Phase 6 收尾交付
 
 目标：用证据证明实现可用，不凭感觉宣布完成。
 
-必须先读取 `references/phase5-verification.md` 和 `verification-before-completion`。
+必须先读取 `references/phase5-verification.md` 和 `verification-before-completion`。进入 Phase 5 时，先向用户确认已读取这两份文件，再执行验证命令。
 
 验收内容：
 
@@ -191,6 +193,7 @@ Phase 6 收尾交付
 - 检查未提交变更，确认只包含本次需求范围。
 - 如用户授权，按项目提交规范提交；否则说明未提交原因。
 - 输出修改内容、验证证据、文档路径、遗留风险和建议下一步。
+- **执行 `npm run sync:designs`（如存在）同步 `docs/pages/pages.yaml`**，确保本次 design 版本已注册到页面索引中。
 
 push、创建 MR/PR、合并、发布、删除分支等共享或难回滚操作，必须再次获得用户明确确认。
 
@@ -219,17 +222,15 @@ push、创建 MR/PR、合并、发布、删除分支等共享或难回滚操作�
 docs/design/YYYY-MM-DD-<topic>-design/
 ├── index.md
 ├── spec/
-│   ├── implementation-plan.md
-│   └── <module>-spec.md
+│   ├── implementation-plan.md          # 不拆分时
+│   └── NNx-<module>-spec.md            # 拆分时；NN=01,02,03... 按执行顺序
+│                                       # 并行批次用字母后缀：02a, 02b
 ├── assets/
 │   ├── figma/
 │   ├── screenshots/
 │   └── diagrams/
-├── evidence/
-│   └── phase5-verification.md
-└── .agent-orchestrator/
-    ├── tasks.json
-    └── results/
+└── evidence/
+    └── phase5-verification.md
 ```
 
 `spec/` 只放可执行交付物，不放整体技术方案。
@@ -241,3 +242,13 @@ docs/design/YYYY-MM-DD-<topic>-design/
 - 类型集中到对应 `types.ts`，常量集中到 `consts.ts` 或项目约定的 constants 文件。
 - 优先复用项目已有组件和样式体系，避免重复造轮子。
 - 组件拆分适度，不为少量 JSX 过度抽象。
+
+## 最终自检
+
+Phase 6 结束前逐项核对，任一未通过不得交付：
+
+- [ ] `docs/pages/pages.yaml` 包含本次方案涉及的全部页面条目
+- [ ] `spec/` 下所有 spec 文件均已执行并有对应产物
+- [ ] `evidence/phase5-verification.md` 存在且包含 test / typecheck / lint / build 四项结果
+- [ ] 变更范围仅限本次需求，无无关文件改动
+- [ ] 交付摘要和遗留风险已输出
