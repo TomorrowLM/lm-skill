@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 # Start the brainstorm server and output connection info
-# Usage: start-server.sh [--project-dir <path>] [--screen-dir <path>] [--host <bind-host>] [--url-host <display-host>] [--foreground] [--background]
+# Usage: start-server.sh [--feature-dir <path>] [--session-name <name>] [--project-dir <path>] [--screen-dir <path>] [--host <bind-host>] [--url-host <display-host>] [--foreground] [--background]
 #
 # Starts server on a random high port, outputs JSON with URL.
 # Each session gets its own directory to avoid conflicts.
 #
 # Options:
+#   --feature-dir <path>  Store session files under <path>/.superpowers/<session-id>.
+#                         Prefer this when the current functional document directory is known.
+#   --session-name <name> Semantic kebab-case task name used in the session directory.
+#                         Required with --feature-dir.
 #   --project-dir <path>  Store session files under <path>/.superpowers/brainstorm/
 #                         instead of /tmp. Files persist after server stops.
 #   --screen-dir <path>   Store visual files directly in this directory.
-#                         Use for requirement-specific folders such as docs/design/<feature>/brainstorm.
+#                         Use when the final session directory is explicitly known.
 #   --host <bind-host>    Host/interface to bind (default: 127.0.0.1).
 #                         Use 0.0.0.0 in remote/containerized environments.
 #   --url-host <host>     Hostname shown in returned URL JSON.
@@ -20,6 +24,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Parse arguments
 PROJECT_DIR=""
+FEATURE_DIR=""
+SESSION_NAME=""
 SCREEN_DIR_OVERRIDE=""
 FOREGROUND="false"
 FORCE_BACKGROUND="false"
@@ -27,6 +33,14 @@ BIND_HOST="127.0.0.1"
 URL_HOST=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --feature-dir)
+      FEATURE_DIR="$2"
+      shift 2
+      ;;
+    --session-name)
+      SESSION_NAME="$2"
+      shift 2
+      ;;
     --project-dir)
       PROJECT_DIR="$2"
       shift 2
@@ -58,6 +72,16 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ -n "$FEATURE_DIR" && -z "$SESSION_NAME" ]]; then
+  echo '{"error": "--session-name is required with --feature-dir"}'
+  exit 1
+fi
+
+if [[ -n "$SESSION_NAME" && ! "$SESSION_NAME" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+  echo '{"error": "--session-name must use lowercase kebab-case"}'
+  exit 1
+fi
+
 if [[ -z "$URL_HOST" ]]; then
   if [[ "$BIND_HOST" == "127.0.0.1" || "$BIND_HOST" == "localhost" ]]; then
     URL_HOST="localhost"
@@ -82,10 +106,16 @@ if [[ "$FOREGROUND" != "true" && "$FORCE_BACKGROUND" != "true" ]]; then
 fi
 
 # Generate unique session directory
-SESSION_ID="$$-$(date +%s)"
+if [[ -n "$SESSION_NAME" ]]; then
+  SESSION_ID="${SESSION_NAME}-$(date +%Y%m%d-%H%M%S)"
+else
+  SESSION_ID="$$-$(date +%s)"
+fi
 
 if [[ -n "$SCREEN_DIR_OVERRIDE" ]]; then
   SCREEN_DIR="$SCREEN_DIR_OVERRIDE"
+elif [[ -n "$FEATURE_DIR" ]]; then
+  SCREEN_DIR="${FEATURE_DIR}/.superpowers/${SESSION_ID}"
 elif [[ -n "$PROJECT_DIR" ]]; then
   SCREEN_DIR="${PROJECT_DIR}/.superpowers/brainstorm/${SESSION_ID}"
 else
@@ -148,7 +178,7 @@ for i in {1..50}; do
       sleep 0.1
     done
     if [[ "$alive" != "true" ]]; then
-      echo "{\"error\": \"Server started but was killed. Retry in a persistent terminal with: $SCRIPT_DIR/start-server.sh${PROJECT_DIR:+ --project-dir $PROJECT_DIR} --host $BIND_HOST --url-host $URL_HOST --foreground\"}"
+      echo "{\"error\": \"Server started but was killed. Retry in a persistent terminal with: $SCRIPT_DIR/start-server.sh${SCREEN_DIR_OVERRIDE:+ --screen-dir $SCREEN_DIR_OVERRIDE}${FEATURE_DIR:+ --feature-dir $FEATURE_DIR}${SESSION_NAME:+ --session-name $SESSION_NAME}${PROJECT_DIR:+ --project-dir $PROJECT_DIR} --host $BIND_HOST --url-host $URL_HOST --foreground\"}"
       exit 1
     fi
     grep "server-started" "$LOG_FILE" | head -1

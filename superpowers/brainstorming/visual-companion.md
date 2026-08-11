@@ -33,30 +33,41 @@
 ## 启动会话
 
 ```bash
-# 启动服务器并持久化（原型保存到项目中）
-scripts/start-server.sh --project-dir /path/to/project
+# 已识别当前功能文档目录时，保存到该目录的 .superpowers/<会话ID>
+scripts/start-server.sh \
+  --feature-dir /path/to/project/docs/design/feature-name \
+  --session-name event-acceptance-tab-count
 
-# 当能识别需求目录时，直接保存到该需求目录下
-scripts/start-server.sh --screen-dir /path/to/project/docs/design/feature-name/brainstorm
+# 需要完全控制目录时，直接指定最终存放路径
+scripts/start-server.sh \
+  --screen-dir /path/to/project/docs/design/feature-name/.superpowers/custom-session
 
 # 返回：{"type":"server-started","port":52341,"url":"http://localhost:52341",
-#           "screen_dir":"/path/to/project/.superpowers/brainstorm/12345-1706000000"}
+#           "screen_dir":"/path/to/project/docs/design/feature-name/.superpowers/event-acceptance-tab-count-20260811-143205"}
 ```
 
 保存响应中的 `screen_dir`。告诉用户打开该 URL。
 
-**目录选择优先级：** 如果用户给了需求目录，或输入文件位于 `docs/design/<需求名>/`、`docs/prod/<需求名>/`，优先使用该目录下的 `brainstorm/` 作为 `--screen-dir`。无法判断需求目录时，再使用 `--project-dir` 的 `.superpowers/brainstorm/` 兜底。
+**功能文档目录识别：** 启动前先从当前会话上下文识别功能文档目录，包括用户附件、用户明确提供的路径、当前打开的需求文档，以及任务上下文引用的 `docs/design/<功能目录>` 或 `docs/prod/<功能目录>`。只有存在唯一且与当前任务匹配的目录时，才使用 `--feature-dir`。
 
-**查找连接信息：** 服务器将其启动 JSON 写入 `$SCREEN_DIR/.server-info`。如果你在后台启动了服务器且没有捕获 stdout，读取该文件以获取 URL 和端口。使用 `--project-dir` 时，检查 `<project>/.superpowers/brainstorm/` 获取会话目录。
+**无法确定时必须询问：** 如果没有功能文档目录、存在多个候选目录，或候选文档与当前任务明显不匹配，先让用户确认存放目录。不要自行回退到项目根目录、`docs/design/.superpowers/`、`<project>/.superpowers/` 或 `/tmp`。
 
-**注意：** 传入项目根目录作为 `--project-dir`，这样原型会持久化在 `.superpowers/brainstorm/` 中，不会因服务器重启而丢失。不传的话，文件会保存到 `/tmp` 并在清理时被删除。提醒用户将 `.superpowers/` 添加到 `.gitignore`（如果尚未添加）。
+**语义化会话名称：** 使用 `--feature-dir` 时必须同时传入 `--session-name`。从当前任务提炼简短、可辨识的英文 kebab-case 名称，例如 `event-acceptance-tab-count`；无法确定任务名称时先询问用户。最终目录格式为 `<功能文档目录>/.superpowers/<任务名称>-<YYYYMMDD-HHMMSS>`，禁止使用纯 PID、纯时间戳或无意义编号。
+
+**目录选择优先级：** 用户明确指定的最终目录 `--screen-dir` > 唯一匹配的功能文档目录 `--feature-dir` > 询问用户。`--project-dir` 仅用于用户明确要求保存到项目级公共目录的场景，不作为自动兜底。
+
+**查找连接信息：** 服务器将启动 JSON 写入 `$SCREEN_DIR/.server-info`。如果后台启动时没有捕获 stdout，在已确认的功能文档目录下检查 `<功能文档目录>/.superpowers/`，找到本次会话目录后读取该文件。
+
+**注意：** `--feature-dir` 会将原型持久化到功能文档目录的 `.superpowers/<任务名称>-<YYYYMMDD-HHMMSS>` 中，不会因服务器重启而丢失。提醒用户将 `.superpowers/` 添加到 `.gitignore`（如果尚未添加）。
 
 **按平台启动服务器：**
 
 **Claude Code (macOS / Linux)：**
 ```bash
 # 默认模式即可——脚本会自动将服务器放到后台
-scripts/start-server.sh --project-dir /path/to/project
+scripts/start-server.sh \
+  --feature-dir /path/to/project/docs/design/feature-name \
+  --session-name event-acceptance-tab-count
 ```
 
 **Claude Code (Windows)：**
@@ -64,7 +75,9 @@ scripts/start-server.sh --project-dir /path/to/project
 # Windows 会自动检测并使用前台模式，这会阻塞工具调用。
 # 在 Bash 工具调用上设置 run_in_background: true，
 # 让服务器在会话轮次之间存活。
-scripts/start-server.sh --project-dir /path/to/project
+scripts/start-server.sh \
+  --feature-dir /path/to/project/docs/design/feature-name \
+  --session-name event-acceptance-tab-count
 ```
 通过 Bash 工具调用时，设置 `run_in_background: true`。然后在下一轮读取 `$SCREEN_DIR/.server-info` 获取 URL 和端口。
 
@@ -72,14 +85,19 @@ scripts/start-server.sh --project-dir /path/to/project
 ```bash
 # Codex 会回收后台进程。脚本会自动检测 CODEX_CI 并
 # 切换到前台模式。正常运行即可——不需要额外标志。
-scripts/start-server.sh --project-dir /path/to/project
+scripts/start-server.sh \
+  --feature-dir /path/to/project/docs/design/feature-name \
+  --session-name event-acceptance-tab-count
 ```
 
 **Gemini CLI：**
 ```bash
 # 使用 --foreground 并在 shell 工具调用上设置 is_background: true，
 # 让进程在轮次之间存活
-scripts/start-server.sh --project-dir /path/to/project --foreground
+scripts/start-server.sh \
+  --feature-dir /path/to/project/docs/design/feature-name \
+  --session-name event-acceptance-tab-count \
+  --foreground
 ```
 
 **其他环境：** 服务器必须在会话轮次之间持续在后台运行。如果你的环境会回收分离的进程，使用 `--foreground` 并通过平台的后台执行机制启动命令。
@@ -88,7 +106,8 @@ scripts/start-server.sh --project-dir /path/to/project --foreground
 
 ```bash
 scripts/start-server.sh \
-  --project-dir /path/to/project \
+  --feature-dir /path/to/project/docs/design/feature-name \
+  --session-name event-acceptance-tab-count \
   --host 0.0.0.0 \
   --url-host localhost
 ```
@@ -283,7 +302,7 @@ scripts/start-server.sh \
 scripts/stop-server.sh $SCREEN_DIR
 ```
 
-如果会话使用了 `--project-dir`，原型文件会持久化在 `.superpowers/brainstorm/` 中以供日后参考。只有 `/tmp` 会话会在停止时被删除。
+如果会话使用了 `--feature-dir`，原型文件会持久化在功能文档目录的 `.superpowers/<任务名称>-<YYYYMMDD-HHMMSS>` 中以供日后参考。只有 `/tmp` 会话会在停止时被删除。
 
 ## 参考
 
