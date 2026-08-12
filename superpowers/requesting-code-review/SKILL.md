@@ -27,7 +27,7 @@ description: "使用 CodeReview 子代理对代码变更进行系统性审查和
 
 | 步骤 | 操作 | 说明 |
 |------|------|------|
-| 1. 探测终端 | 执行 `npx gitnexus analyze`，失败后等待 2 秒重试一次 | 确认终端可用；同时刷新索引 |
+| 1. 探测终端 | 执行 `npx gitnexus analyze --index-only`，失败后等待 2 秒重试一次 | 确认终端可用；同时刷新索引 |
 | 2. 探测 MCP | 检查 GitNexus MCP 工具列表中是否有 `detect_changes` | 确认完整审查能力是否就绪 |
 | 3. 确认附件 | 检查用户是否提供了附件文件（粘贴代码、拖拽文件等） | 作为模式 C 的判断依据。若降级后仍无附件，先询问审查范围 |
 
@@ -60,7 +60,7 @@ HEAD_SHA=$(git rev-parse HEAD)
 
 | 步骤 | 操作 | 说明 |
 |------|------|------|
-| 刷新索引 | `npx gitnexus analyze` | 环境探测已执行则跳过，否则单独执行 |
+| 刷新索引 | `npx gitnexus analyze --index-only` | 环境探测已执行则跳过，否则单独执行 |
 | 确认仓库 | MCP `gitnexus.list_repos` | 确认索引就绪 |
 | 变更影响 | MCP `gitnexus.detect_changes` | 获取变更符号、受影响流程、风险等级 |
 | 深入分析 | 对高风险符号调 `gitnexus.impact` | 获取 d=1~3 调用链 |

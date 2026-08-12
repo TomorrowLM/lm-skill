@@ -100,7 +100,7 @@ Task tool (general-purpose):
     - 上下文中已经提供了足够的代码结构信息
     - 索引不可用
 
-    **红线：你只读取索引，不重建。绝不执行 `npx gitnexus analyze`。**
+    **红线：你只读取索引，不重建。绝不执行 `npx gitnexus analyze --index-only`。**
 
     ## 当你力不从心时
 

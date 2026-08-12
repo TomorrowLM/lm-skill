@@ -53,7 +53,7 @@ description: 遇到任何 bug、测试失败或异常行为时使用，在提出
 
 **通过标准：** 能说出"bug 在哪个符号、属于哪个执行流、上下游是谁"。
 
-> 如果 GitNexus 提示 "Index is stale" → 先跑 `npx gitnexus analyze`。没有索引则跳过此步，直接进入第一阶段。
+> 如果 GitNexus 提示 "Index is stale" → 先跑 `npx gitnexus analyze --index-only`。没有索引则跳过此步，直接进入第一阶段。
 
 ### 第一阶段：根因调查
 

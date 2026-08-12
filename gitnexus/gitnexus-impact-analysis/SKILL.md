@@ -24,7 +24,7 @@ description: "当用户想知道修改某段代码会影响什么、需要在编
 5. 评估风险并向用户报告
 ```
 
-> 如果索引过期（"Index is stale"）→ 在终端执行 `npx gitnexus analyze` 重建索引。
+> 如果索引过期（"Index is stale"）→ 在终端执行 `npx gitnexus analyze --index-only` 重建索引。
 
 ## 检查清单
 

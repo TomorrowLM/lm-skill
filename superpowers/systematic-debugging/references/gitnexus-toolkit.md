@@ -165,4 +165,4 @@ gitnexus_rename({symbol_name: "validateUser", new_name: "authenticateUser", dry_
 | `gitnexus://repo/{name}/processes` | 所有执行流列表 | ~300 tokens |
 | `gitnexus://repo/{name}/schema` | 图 Schema（用于 Cypher 查询） | ~200 tokens |
 
-**提示：** 如果 context 提示 "Index is stale"，在终端运行 `npx gitnexus analyze` 重新索引。
+**提示：** 如果 context 提示 "Index is stale"，在终端运行 `npx gitnexus analyze --index-only` 重新索引。
