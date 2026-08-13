@@ -10,7 +10,7 @@
 | `agent_create_tasks` | 主 Agent | 批量创建多个编排任务 |
 | `agent_list_tasks` | 主 Agent | 列出工作区任务，可按状态过滤 |
 | `agent_get_task` | 主 Agent | 获取单个任务详情 |
-| `agent_open_task_chats` | 主 Agent | 为任务生成 Prompt 并通过 VS Code CLI 打开子聊天窗口 |
+| `agent_open_task_chats` | 主 Agent | 加载 spec + 任务 prompt（含返工原因），通过 VS Code CLI 打开子聊天窗口 |
 | `agent_wait_for_tasks` | 主 Agent | 阻塞等待多个任务完成（轮询状态 + 结果文件） |
 | `agent_poll_tasks` | 主 Agent | 非阻塞查看多个任务当前状态 |
 | `agent_complete_task` | 子 Agent | 写入结果并标记任务完成 |
@@ -26,7 +26,7 @@ Phase 3 产出子任务规格
        ↓
 Step 1: agent_create_tasks   → 批量创建任务，返回 taskIds
        ↓
-Step 2: agent_open_task_chats → 生成 Prompt 文件 + 打开子聊天窗口
+Step 2: agent_open_task_chats → 加载 spec + 任务 prompt，打开子聊天窗口
        ↓                          （任务状态自动变为 running）
 Step 3: agent_wait_for_tasks  → 阻塞等待所有子任务完成
        或 agent_poll_tasks    → 非阻塞查看进度
@@ -65,7 +65,7 @@ CallMcpTool:
           - "docs/design/2026-08-06-xxx-design/spec/detail-page-spec.md"
 ```
 
-> 返回每个任务的 `id`、`promptFile`、`resultFile`。`resultFile` 未指定时从 `inputFiles` 推断需求目录，写入 `docs/design|prod/<需求目录>/results/task-<uuid>.md`；无法推断时写入 `docs/results/task-<uuid>.md`。
+> 返回每个任务的 `id`、`resultFile`。`resultFile` 未指定时从 `inputFiles` 推断需求目录，写入 `docs/design|prod/<需求目录>/results/task-<uuid>.md`；无法推断时写入 `docs/results/task-<uuid>.md`。
 >
 > **页面开发工作流内使用时：** `resultFile` 必须显式指定，指向 `docs/design/YYYY-MM-DD-<topic>-design/results/<module>-result.md`，确保子任务结果归入功能文件夹。详见 `page-development-workflow` 的统一目录结构约定。
 
@@ -83,7 +83,7 @@ CallMcpTool:
       - "task-<uuid-3>"
 ```
 
-> 服务端通过 VS Code CLI 打开 `code chat --mode agent --reuse-window --add-file <specFile>` 直接加载 spec 文件，并将状态更新为 `running`。
+> 服务端通过 VS Code CLI 打开 `code chat --mode agent --reuse-window --add-file <specFile>`，把任务 `prompt` 与（返工任务时的）返工原因作为指令传给子 Agent，并将状态更新为 `running`。
 
 ### 执行编排规则
 
@@ -182,7 +182,7 @@ CallMcpTool:
     reason: "详情页缺少错误态和空态处理，请补充"
 ```
 
-> 标记返工后，需要重新 `agent_open_task_chats` → `agent_wait_for_tasks` → 审查。
+> `agent_request_rework` 会把返工原因写入任务；重新 `agent_open_task_chats` 时该原因随指令传给子 Agent，子 Agent 据此修正后重新 `agent_complete_task`。之后 `agent_wait_for_tasks` → 审查。
 
 ## 子 Agent 完成协议
 
