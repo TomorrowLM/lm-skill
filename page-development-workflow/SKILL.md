@@ -171,6 +171,11 @@ Phase 6 收尾交付
 - TDD 任务必须读取 `test-driven-development` 并按红-绿-重构执行。
 - 多窗口 / MCP 编排 / 子代理 / 内联执行细节见 `references/phase4-execution-modes.md`。
 - **MCP 编排时**必须先读取 `mcp-exe/references/agent-orchestrator-mcp.md`，按 Step 1→2→3→4→5 完整流程执行，禁止跳过 `agent_open_task_chats`。
+- 已确认计划内的遗漏执行项走返工，不创建新范围任务。
+- 新发现的实现细节只有在不改变已确认范围、接口契约、共享层和验收标准时，才能暂停说明并经用户确认后追加子任务。
+- MCP 返工时必须使用当前设计目录的 `reworks/<taskId>-rework-<N>.md` 平铺文件记录返工 prompt；`tasks.json` 中用 `rework` 记录当前返工，用 `reworks[]` 记录全部返工历史。
+- MCP 追加任务时必须先在当前设计目录 `spec/` 下新增子任务 md，再创建任务；追加任务必须显式指定 `resultFile` 到当前设计目录的 `results/`。
+- 新增页面、模块、接口、状态流、验收标准、共享层变更或 HIGH / CRITICAL 风险时，必须回到 Phase 3 更新计划并等待确认。
 
 结束时产出可工作的代码和变更记录，然后进入 Phase 5。
 
@@ -236,6 +241,11 @@ docs/design/YYYY-MM-DD-<topic>-design/
 │   ├── implementation-plan.md          # 不拆分时
 │   └── NNx-<module>-spec.md            # 拆分时；NN=01,02,03... 按执行顺序
 │                                       # 并行批次用字母后缀：02a, 02b
+├── tasks.json                          # MCP 编排任务状态，按需
+├── reworks/                            # MCP 返工 prompt，按需，文件平铺
+│   └── task-<uuid>-rework-<N>.md
+├── results/                            # MCP 子任务执行结果，按需
+│   └── <编号>-result.md
 ├── assets/
 │   ├── figma/
 │   ├── screenshots/
@@ -245,6 +255,14 @@ docs/design/YYYY-MM-DD-<topic>-design/
 ```
 
 `spec/` 只放可执行交付物，不放整体技术方案。
+
+MCP 编排产物规则：
+
+- 普通任务不生成 `prompts/` 文件夹；普通任务通过 `spec/*.md` 和 `tasks.json` 中的 `prompt` 字段提供上下文。
+- `tasks.json` 记录所有子任务状态；返工时 `rework` 指向当前返工，`reworks[]` 保留历史返工。
+- `reworks/` 只保存返工 prompt md，文件命名为 `task-<uuid>-rework-<N>.md`，直接平铺在 `reworks/` 下。
+- `results/` 保存子任务结果；返工完成后仍覆盖原任务的 `resultFile`，不另建返工结果文件。
+- 中途追加任务必须先新增 `spec/NNx-<module>-spec.md`，再创建任务并显式指定 `results/<编号>-result.md`。
 
 ## 业务代码组织原则
 
@@ -260,6 +278,7 @@ Phase 6 结束前逐项核对，任一未通过不得交付：
 
 - [ ] `docs/pages/pages.yaml` 包含本次方案涉及的全部页面条目
 - [ ] `spec/` 下所有 spec 文件均已执行并有对应产物
+- [ ] 如使用 MCP 编排，`tasks.json`、`results/`、`reworks/` 的状态和文件路径符合本次任务范围
 - [ ] `evidence/phase5-verification.md` 存在且包含 test / typecheck / lint / build 四项结果
 - [ ] 变更范围仅限本次需求，无无关文件改动
 - [ ] 交付摘要和遗留风险已输出

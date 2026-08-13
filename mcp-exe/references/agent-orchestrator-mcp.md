@@ -10,7 +10,7 @@
 | `agent_create_tasks` | 主 Agent | 批量创建多个编排任务 |
 | `agent_list_tasks` | 主 Agent | 列出工作区任务，可按状态过滤 |
 | `agent_get_task` | 主 Agent | 获取单个任务详情 |
-| `agent_open_task_chats` | 主 Agent | 加载 spec + 任务 prompt（含返工原因），通过 VS Code CLI 打开子聊天窗口 |
+| `agent_open_task_chats` | 主 Agent | 加载 spec + 任务 prompt；返工时额外挂载当前 `rework.promptFile`，通过 VS Code CLI 打开子聊天窗口 |
 | `agent_wait_for_tasks` | 主 Agent | 阻塞等待多个任务完成（轮询状态 + 结果文件） |
 | `agent_poll_tasks` | 主 Agent | 非阻塞查看多个任务当前状态 |
 | `agent_complete_task` | 子 Agent | 写入结果并标记任务完成 |
@@ -83,7 +83,11 @@ CallMcpTool:
       - "task-<uuid-3>"
 ```
 
-> 服务端通过 VS Code CLI 打开 `code chat --mode agent --reuse-window --add-file <specFile>`，把任务 `prompt` 与（返工任务时的）返工原因作为指令传给子 Agent，并将状态更新为 `running`。
+> 服务端通过 VS Code CLI 打开 `code chat --mode agent --reuse-window --add-file <specFile>`，把任务 `prompt` 作为指令传给子 Agent，并将状态更新为 `running`。
+>
+> 普通任务不生成 `prompts/` 文件夹；普通任务的可执行上下文来自 `spec/*.md` 和任务 `prompt` 字段。
+>
+> 返工任务会额外挂载当前 `rework.promptFile`，该文件位于当前设计目录的 `reworks/` 下。
 
 ### 执行编排规则
 
@@ -182,7 +186,76 @@ CallMcpTool:
     reason: "详情页缺少错误态和空态处理，请补充"
 ```
 
-> `agent_request_rework` 会把返工原因写入任务；重新 `agent_open_task_chats` 时该原因随指令传给子 Agent，子 Agent 据此修正后重新 `agent_complete_task`。之后 `agent_wait_for_tasks` → 审查。
+> `agent_request_rework` 会创建当前返工记录并写入 `tasks.json`：`rework` 表示当前返工，`reworks` 保留全部返工历史。每条返工记录包含 `reason`、实际发给子窗口的 `prompt`、返工文件路径 `promptFile`、`status` 和时间字段。
+>
+> 返工文件平铺写入当前需求目录：`docs/design|prod/<需求目录>/reworks/<taskId>-rework-<N>.md`。重新 `agent_open_task_chats` 时会挂载原 `spec` 和当前 `rework.promptFile`。子 Agent 返工后仍覆盖原 `resultFile`，再调用 `agent_complete_task`。之后 `agent_wait_for_tasks` → `agent_summarize_results` → 主 Agent 审查。
+
+### 返工数据结构
+
+`tasks.json` 中每个任务的返工字段示例：
+
+```json
+{
+  "id": "task-xxx",
+  "status": "rework_requested",
+  "reworkCount": 1,
+  "rework": {
+    "id": "rework-1",
+    "reason": "缺少错误态和空态处理，请补充",
+    "prompt": "请对任务 task-xxx 进行返工...",
+    "promptFile": "/workspace/docs/design/demo/reworks/task-xxx-rework-1.md",
+    "status": "requested",
+    "createdAt": "2026-08-13T00:00:00.000Z"
+  },
+  "reworks": [
+    {
+      "id": "rework-1",
+      "reason": "缺少错误态和空态处理，请补充",
+      "prompt": "请对任务 task-xxx 进行返工...",
+      "promptFile": "/workspace/docs/design/demo/reworks/task-xxx-rework-1.md",
+      "status": "requested",
+      "createdAt": "2026-08-13T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+返工状态同步规则：
+
+- `agent_request_rework`：`task.status = rework_requested`，当前 `rework.status = requested`，并追加到 `reworks[]`。
+- `agent_open_task_chats`：`task.status = running`，当前 `rework.status = running`。
+- `agent_complete_task`：`task.status = completed`，当前 `rework.status = completed`，并覆盖原 `resultFile`。
+
+## 中途追加任务
+
+中途追加任务只用于已确认范围内的新实现细节，不用于扩大需求范围。
+
+允许追加的条件：
+
+- 仍属于已确认需求、技术方案和实现计划范围。
+- 不改变接口契约、共享层、页面范围、状态流和验收标准。
+- 不影响已完成任务的主要产物。
+- 主 Agent 已暂停说明新增原因、任务边界、`spec` 文件路径、结果文件路径，并获得用户确认。
+
+编排方式：
+
+1. 先在当前设计目录的 `spec/` 下新增子任务规格，例如 `02c-xxx-spec.md`。
+2. 使用 `agent_create_task` 或 `agent_create_tasks` 创建追加任务。
+3. 将新增 `spec` 放入 `inputFiles`，并显式指定 `resultFile`，建议使用当前功能目录的 `results/<编号>-result.md`。
+4. 工具会根据 `inputFiles` 或 `resultFile` 把任务记录同步写入当前功能目录的 `tasks.json`。
+5. 调用 `agent_open_task_chats` 打开追加任务。
+6. 调用 `agent_wait_for_tasks` 等待完成。
+7. 调用 `agent_summarize_results`，把追加任务结果合并进当前批次。
+8. 主 Agent 审查；通过则 `agent_mark_task_reviewed`，不通过则 `agent_request_rework`。
+
+追加任务文件规则：
+
+- 必须先在当前设计目录 `spec/` 下生成新的子任务 md，例如 `05-added-task-spec.md`。
+- `resultFile` 必须显式指向当前设计目录 `results/<编号>-result.md`。
+- 创建任务后应检查当前设计目录 `tasks.json` 已追加新任务，不能覆盖已有任务。
+- 追加任务完成后应检查对应 `results/<编号>-result.md` 已生成并能被 `agent_summarize_results` 读取。
+
+必须回到计划阶段的情况：新增页面、模块、接口、状态流、验收标准，或影响共享层、全局状态、路由、构建配置和 HIGH / CRITICAL 风险。
 
 ## 子 Agent 完成协议
 
