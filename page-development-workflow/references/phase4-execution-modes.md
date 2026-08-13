@@ -11,6 +11,18 @@
 - TDD 任务必须使用红-绿-重构：先写失败测试，再写最少实现，再重构。
 - 每个并行批次完成后，按计划执行合流检查。
 
+## Phase 4 入口自检
+
+进入编码或编排前必须完成自检，任一不满足则暂停并回到 Phase 3 或等待用户确认。
+
+- Phase 1、Phase 2、Phase 3 均已获得用户确认。
+- `docs/design/YYYY-MM-DD-<topic>-design/index.md` 已存在并是当前方案来源。
+- `spec/` 下存在 `implementation-plan.md` 或拆分后的 `NNx-<module>-spec.md`。
+- 每个待执行任务都有明确输入 `spec`、任务边界和验收标准。
+- 使用 MCP 编排时，每个任务都已规划显式 `resultFile`。
+- 共享层、同文件修改、同接口契约和同全局状态依赖已识别。
+- 推进模式已确认：自动推进或手动确认。
+
 ## 推进模式
 
 Phase 4 开始前，必须向用户确认推进模式。推进模式决定任务之间的流转方式：
@@ -99,6 +111,7 @@ Phase 4 开始前，必须向用户确认推进模式。推进模式决定任务
 - `agent-orchestrator-mcp` 已注册。
 - 子任务规格文件已保存。
 - 共享依赖任务已识别。
+- 每个任务都有显式 `resultFile`，指向当前设计目录的 `results/<编号>-result.md`。
 
 编排顺序：
 
@@ -130,6 +143,7 @@ docs/design/YYYY-MM-DD-<topic>-design/
 ```
 
 - `tasks.json` 存储所有任务状态。
+- `tasks.json` 中普通任务的 `prompt` 记录原始任务要求；返工任务用 `rework` 记录当前返工，用 `reworks[]` 记录历史返工。
 - 普通任务不生成 `prompts/` 目录。
 - `reworks/` 只保存返工 prompt md，直接平铺，不按 taskId 建子目录。
 - `results/` 保存子任务结果；返工后仍覆盖原 `resultFile`。

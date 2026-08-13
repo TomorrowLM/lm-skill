@@ -66,6 +66,12 @@ Phase 6 收尾交付
 | `references/mcp-integration.md` | 用户提供 Swagger、OpenAPI、Figma 或其他 MCP 可读资源时 |
 | `references/code-examples.md` | Phase 4 需要 React + TypeScript 代码组织示例时 |
 
+引用规则：
+
+- 进入 Phase 3、Phase 4、Phase 5 时，必须读取对应 reference 后再执行该阶段。
+- 使用 MCP 编排时，同时读取 `references/phase4-execution-modes.md` 和 `mcp-exe/references/agent-orchestrator-mcp.md`。
+- 涉及 Swagger/OpenAPI、Figma 或其他 MCP 资源时，先读取 `references/mcp-integration.md`，再按需读取 `mcp-exe` 对应案例。
+
 ## Phase 1：需求分析与技术调研
 
 目标：把用户需求转成可确认的页面范围，不写方案、不写代码。
@@ -165,16 +171,14 @@ Phase 6 收尾交付
 执行规则：
 
 - 先读取实现计划里的执行编排。
+- 开始编码前必须按 `references/phase4-execution-modes.md` 完成 Phase 4 入口自检。
 - 只能并行计划中明确允许的批次。
 - 未标明可并行的任务默认串行。
 - 涉及同一文件、同一 symbol、同一 API 契约、同一共享样式或同一全局状态时禁止并行。
 - TDD 任务必须读取 `test-driven-development` 并按红-绿-重构执行。
 - 多窗口 / MCP 编排 / 子代理 / 内联执行细节见 `references/phase4-execution-modes.md`。
 - **MCP 编排时**必须先读取 `mcp-exe/references/agent-orchestrator-mcp.md`，按 Step 1→2→3→4→5 完整流程执行，禁止跳过 `agent_open_task_chats`。
-- 已确认计划内的遗漏执行项走返工，不创建新范围任务。
-- 新发现的实现细节只有在不改变已确认范围、接口契约、共享层和验收标准时，才能暂停说明并经用户确认后追加子任务。
-- MCP 返工时必须使用当前设计目录的 `reworks/<taskId>-rework-<N>.md` 平铺文件记录返工 prompt；`tasks.json` 中用 `rework` 记录当前返工，用 `reworks[]` 记录全部返工历史。
-- MCP 追加任务时必须先在当前设计目录 `spec/` 下新增子任务 md，再创建任务；追加任务必须显式指定 `resultFile` 到当前设计目录的 `results/`。
+- 已确认计划内的遗漏执行项走返工；返工和追加任务细节以 `references/phase4-execution-modes.md` 为准。
 - 新增页面、模块、接口、状态流、验收标准、共享层变更或 HIGH / CRITICAL 风险时，必须回到 Phase 3 更新计划并等待确认。
 
 结束时产出可工作的代码和变更记录，然后进入 Phase 5。
@@ -187,6 +191,7 @@ Phase 6 收尾交付
 
 验收内容：
 
+- 按 `references/phase5-verification.md` 完成 Phase 5 入口自检。
 - 读取 `package.json`，按项目脚本选择 test / typecheck / lint / build 命令。
 - 运行命令并阅读输出。
 - 记录自动化验证证据。
@@ -261,7 +266,7 @@ MCP 编排产物规则：
 - 普通任务不生成 `prompts/` 文件夹；普通任务通过 `spec/*.md` 和 `tasks.json` 中的 `prompt` 字段提供上下文。
 - `tasks.json` 记录所有子任务状态；返工时 `rework` 指向当前返工，`reworks[]` 保留历史返工。
 - `reworks/` 只保存返工 prompt md，文件命名为 `task-<uuid>-rework-<N>.md`，直接平铺在 `reworks/` 下。
-- `results/` 保存子任务结果；返工完成后仍覆盖原任务的 `resultFile`，不另建返工结果文件。
+- `results/` 保存每个任务的当前最终结果；返工完成后必须覆盖原任务的 `resultFile`，不另建返工结果文件。
 - 中途追加任务必须先新增 `spec/NNx-<module>-spec.md`，再创建任务并显式指定 `results/<编号>-result.md`。
 
 ## 业务代码组织原则

@@ -38,6 +38,23 @@ Step 5: 逐条审查
        └─ 不通过 → agent_request_rework → 重新等待
 ```
 
+## `tasks.json` 关键字段
+
+`tasks.json` 是当前需求目录下的任务状态账本。追加任务只能追加新项，不能覆盖已有任务。
+
+| 字段 | 说明 |
+|------|------|
+| `id` | 任务唯一 ID，通常为 `task-<uuid>`。 |
+| `title` | 任务标题，用于主窗口识别任务边界。 |
+| `prompt` | 创建任务时的原始任务要求；普通任务打开窗口时直接使用该字段，不生成 `prompts/` 文件夹。 |
+| `inputFiles` | 子任务输入文件，页面工作流内至少应包含对应 `spec/*.md`。 |
+| `resultFile` | 子任务当前最终结果文件；返工完成也必须覆盖该文件。 |
+| `status` | 当前任务状态：`pending`、`running`、`completed`、`failed`、`reviewed`、`rework_requested`。 |
+| `rework` | 当前最新一次返工记录，只在返工任务上存在。 |
+| `reworks` | 全部返工历史，按发生顺序追加。 |
+
+返工记录中 `promptFile` 必须指向 `reworks/task-<uuid>-rework-<N>.md`。普通任务没有 `promptFile`，也不生成 `prompts/` 目录。`reworks/` 只保存返工 prompt 历史，不保存返工结果；任务结果始终以 `resultFile` 为准。
+
 ## Step 1：创建任务
 
 主 Agent 根据 Phase 3 的子任务规格创建任务。推荐批量创建：
@@ -188,7 +205,7 @@ CallMcpTool:
 
 > `agent_request_rework` 会创建当前返工记录并写入 `tasks.json`：`rework` 表示当前返工，`reworks` 保留全部返工历史。每条返工记录包含 `reason`、实际发给子窗口的 `prompt`、返工文件路径 `promptFile`、`status` 和时间字段。
 >
-> 返工文件平铺写入当前需求目录：`docs/design|prod/<需求目录>/reworks/<taskId>-rework-<N>.md`。重新 `agent_open_task_chats` 时会挂载原 `spec` 和当前 `rework.promptFile`。子 Agent 返工后仍覆盖原 `resultFile`，再调用 `agent_complete_task`。之后 `agent_wait_for_tasks` → `agent_summarize_results` → 主 Agent 审查。
+> 返工文件平铺写入当前需求目录：`docs/design|prod/<需求目录>/reworks/<taskId>-rework-<N>.md`。重新 `agent_open_task_chats` 时会挂载原 `spec` 和当前 `rework.promptFile`。子 Agent 返工后必须覆盖原 `resultFile`，再调用 `agent_complete_task`。之后 `agent_wait_for_tasks` → `agent_summarize_results` → 主 Agent 审查。
 
 ### 返工数据结构
 

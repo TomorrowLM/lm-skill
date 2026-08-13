@@ -1,6 +1,9 @@
 ---
 name: mcp-exe
-description: 执行 MCP 工具的标准方法 — 发现可用工具、传递参数、处理结果。包含 get_swagger_mcp 等常见案例
+description: >-
+  当需要调用已注册 MCP 工具完成 Swagger/OpenAPI 查询、Figma 设计稿读取、图表生成、Agent 编排、多工具结果处理时使用。
+  用户提到 get_swagger_mcp、接口文档、设计稿 MCP、agent-orchestrator-mcp、创建/等待/汇总/返工子任务等场景必须触发。
+  不适用于普通终端命令、浏览器检索、文件编辑或无需 MCP 的代码修改。
 ---
 
 # 执行 MCP 工具
@@ -12,6 +15,7 @@ description: 执行 MCP 工具的标准方法 — 发现可用工具、传递参
 1. **先用后问** — 如果已知 MCP 服务器和工具名，直接调用，无需询问用户
 2. **原始输入** — 把用户给的原始值直接传入，不要自行预处理（如 Swagger URL 含 fragment 直接传）
 3. **一步到位** — 能用 MCP 工具完成的操作，不要手动模拟（WebFetch/curl/grep 探测等）
+4. **先读案例** — 命中下方案例时，先读取对应 reference，再调用工具或设计调用顺序
 
 ## 标准调用格式
 

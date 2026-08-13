@@ -11,6 +11,17 @@
 - 运行命令后必须阅读输出，不能只看退出码。
 - 声称通过前必须有输出证据。
 
+## Phase 5 入口自检
+
+进入测试验收前必须确认 Phase 4 已收口，任一不满足则回到 Phase 4 补齐。
+
+- `spec/` 下所有计划或子任务规格均已有对应执行产物。
+- 使用 MCP 编排时，`tasks.json` 中不存在 `pending`、`running`、`failed` 或 `rework_requested` 任务。
+- 使用 MCP 编排时，所有已完成任务都已由主 Agent 审查，通过项应标记为 `reviewed`。
+- 如存在 `reworks/`，当前返工必须已完成并覆盖原 `resultFile`。
+- `results/` 中的执行报告能对应到每个 `spec/*.md`。
+- Phase 4 没有遗留的新增范围、接口契约或验收标准变更；如有，必须回到 Phase 3。
+
 ## 命令选择
 
 常见命令按项目实际调整：
@@ -37,6 +48,8 @@
 ## 证据落盘模板
 
 保存到 `docs/design/YYYY-MM-DD-<topic>-design/evidence/phase5-verification.md`。
+
+`evidence/phase5-verification.md` 只在 Phase 5 生成；Phase 4 只生成 `tasks.json`、`results/` 和按需 `reworks/`。
 
 ```md
 # Phase 5 验证证据
