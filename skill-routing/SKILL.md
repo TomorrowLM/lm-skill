@@ -1,96 +1,95 @@
 ---
 name: skill-routing
-description: 当需要根据用户意图在本地技能之间选择、分派、流程选择、组合、串联技能或转交到合适子技能时使用；用户询问该读哪个 SKILL.md，尤其是 Figma 设计稿落地、前端视觉设计、React/Next.js 性能实践，或继续查找可安装技能时使用。
+description: >-
+  当需要判断应该使用哪个本地技能时使用——即用户意图不明确对应哪个技能，需要在多个候选技能之间做选择、组合或串联。
+  触发场景：用户说"帮我实现这个设计稿"但未指定用哪个技能、"这个页面做得好看一点"但不确定走视觉设计还是Figma流程、
+  用户问"有没有技能能帮我做X"需要判断本地覆盖还是外部搜索。
+  不触发：用户已明确指定技能名称、普通代码修改/修bug/改文案/加字段、解释代码含义、单文件小改动、
+  项目配置调整、lint/format/构建问题、纯知识问答（React怎么用、TypeScript类型怎么写）。
 ---
 
 # Skill Routing
 
-先在本地技能中路由；只有本地没有合适技能，或用户明确要查找/安装新技能时，才转到开放生态搜索。
+在本地技能中做路由决策。只有本地没有合适技能，或用户明确要查找/安装新技能时，才转到外部搜索。
 
-## 路由顺序
+## 核心原则
 
-1. 判断用户目标是否在本地路由表领域内（仅 UI/视觉/React/查找技能）。
-2. 不在领域内，直接说明不归本技能管，不继续路由。
-3. 如果能覆盖，读取对应 `SKILL.md` 并按该技能执行。
-4. 如果任务跨多个技能，先读取主导技能，再读取辅助技能。
-5. 如果本地没有匹配项且用户明确要查找/安装新技能，读取 `skills/find-skills` 并按其流程搜索外部技能。
-
-## 不适用边界
-
-- 用户已经明确指定某个技能时，直接读取该技能，不再通过本技能重新路由。
-- 普通代码修改、问题解释或文档编辑不涉及下方路由表领域时，不使用本技能。
-- 用户只是询问技能概念、目录含义或文件作用时，直接解释，不转入子技能执行。
-- 项目级约定、一次性规则或自动化校验逻辑，不通过本技能包装成子技能。
+1. **先确认领域**：用户意图是否落在本地路由表覆盖的 4 个领域内（UI实现/视觉设计/React性能/技能查找）。不在领域内直接说"不归本技能管"，不做路由。
+2. **先读主导技能**：命中本地技能后必须先 `read_file` 读取对应 `SKILL.md`，不能只凭本路由表概括执行。
+3. **按需读辅助技能**：只在触发条件满足时读取，不默认加载所有子技能。
+4. **冲突时用户优先**：用户当前明确要求 > 项目既有约定 > Figma 输出 > 通用最佳实践。
 
 ## 本地技能路由表
 
-| 用户意图 | 主导技能 | 辅助技能 |
-| --- | --- | --- |
-| 根据 Figma 链接、节点或截图实现 UI/组件/页面 | `skills/figma-implement-design` | `skills/vercel-react-best-practices`；`skills/frontend-design`（仅设计稿未覆盖时） |
-| 创建新 UI、重塑页面视觉、提升审美和差异化 | `skills/frontend-design` | `skills/vercel-react-best-practices` |
-| 编写、审查或重构 React/Next.js 代码并关注性能 | `skills/vercel-react-best-practices` | - |
-| 查找某类 Agent Skill、问有没有现成能力、安装新技能 | `skills/find-skills` | - |
+| 用户意图 | 主导技能 | 辅助技能 | 辅助触发条件 |
+| --- | --- | --- | --- |
+| 提供 Figma 链接/节点/截图，要求实现 UI/组件/页面 | `skills/figma-implement-design` | `skills/vercel-react-best-practices` | 项目为 React/Next.js 时 |
+| | | `skills/frontend-design` | 仅设计稿未覆盖的视觉决策（配色、间距、动效） |
+| 无 Figma 输入，要求"做得好看""重新设计""不要模板感""优化视觉" | `skills/frontend-design` | `skills/vercel-react-best-practices` | 进入 React/Next.js 代码实现或评审时 |
+| 编写/审查/重构 React/Next.js 代码，关注性能、bundle、渲染 | `skills/vercel-react-best-practices` | — | — |
+| 查找某类 Agent Skill、问"有没有技能能…""安装技能" | `skills/find-skills` | — | — |
 
-## 组合规则
+## 不适用边界
 
-### 冲突优先级
+以下场景**不进入本技能路由**，直接处理：
 
-1. 用户当前明确要求优先于所有子技能建议。
-2. 项目既有约定优先于 Figma 输出和通用最佳实践。
-3. 有 Figma 输入时，`skills/figma-implement-design` 主导；`skills/frontend-design` 仅在设计稿未覆盖的视觉决策时加载，不默认跟随。
-4. `skills/vercel-react-best-practices` 只能约束实现质量和性能，不得破坏 Figma 验收、用户指定视觉或项目组件契约。
-5. 本地技能已覆盖时，不使用 `skills/find-skills` 做外部搜索。
+- 用户已明确说"用 X 技能"——直接读取该技能，不重新路由。
+- 修 bug、改文案、调样式、加字段/按钮——小范围改动，不涉及技能选择。
+- 解释代码含义、回答技术问题——纯知识问答，不需要技能路由。
+- 项目配置调整、lint/format/构建问题——与技能路由无关。
+- 用户只是问"这个技能是做什么的"——直接解释，不转入子技能执行。
+- 任务涉及 `page-development-workflow`、`systematic-debugging`、`test-driven-development`、`writing-doc` 等非本路由表覆盖的技能——这些技能有自己的触发条件，不通过本技能路由。
+
+## 路由流程
 
 ### Figma 到代码
 
-当用户提供 Figma URL、节点 ID、设计稿截图或说“按设计稿实现”时：
-
-1. 读取 `skills/figma-implement-design/SKILL.md`，把设计上下文、截图和素材作为实现依据。
-2. 仅当 Figma 实现过程中出现设计稿未覆盖的视觉决策（配色方案、间距系统、动效风格等）时，才读取 `skills/frontend-design/SKILL.md`。
-3. 如果实现落在 React 或 Next.js 项目中，读取 `skills/vercel-react-best-practices/SKILL.md` 检查性能模式。
+1. 读取 `skills/figma-implement-design/SKILL.md`，按 7 步流程执行。
+2. 项目为 React/Next.js → 读取 `skills/vercel-react-best-practices/SKILL.md`。
+3. 仅当 Figma 未覆盖视觉决策时 → 读取 `skills/frontend-design/SKILL.md`。
+4. `vercel-react-best-practices` 不能破坏 Figma 验收标准。
 
 ### 纯视觉设计
 
-当用户没有 Figma 输入，只要求“做得好看”“重新设计”“不要模板感”“优化页面视觉”时：
-
-1. 读取 `skills/frontend-design/SKILL.md`。
-2. 只有在进入 React/Next.js 代码实现或评审时，才读取 `skills/vercel-react-best-practices/SKILL.md`。
+1. 读取 `skills/frontend-design/SKILL.md`，按两轮设计流程执行。
+2. 进入 React/Next.js 代码实现时 → 读取 `skills/vercel-react-best-practices/SKILL.md`。
+3. 不要因为写了 React 代码就自动引入 Figma 技能。
 
 ### React 性能与最佳实践
 
-当用户提到 React/Next.js 组件、页面、数据获取、bundle、渲染性能或代码评审时：
-
-1. 读取 `skills/vercel-react-best-practices/SKILL.md`。
-2. 不要因为普通 React 改动自动引入视觉设计技能，除非用户同时要求 UI 观感或设计方向。
+1. 读取 `skills/vercel-react-best-practices/SKILL.md`，按 8 类规则执行。
+2. 不要自动引入视觉设计技能，除非用户同时要求 UI 方向。
 
 ### 查找外部技能
 
-当本地技能无法覆盖，或用户明确说“找一个技能”“有没有技能”“安装技能”时：
-
-1. 读取 `skills/find-skills/SKILL.md`。
-2. 按开放技能生态的搜索、质量验证和推荐流程执行。
+1. 先确认本地 4 个技能无法覆盖。
+2. 读取 `skills/find-skills/SKILL.md`，按 leaderboard → 搜索 → 质量验证 → 推荐流程执行。
 
 ## 红线
 
-### 不要跳过主导技能
+### 不要跳过主导技能的 SKILL.md
 
-命中本地技能时，必须先读取主导技能的 `SKILL.md`，不要只凭本路由表概括执行。
+只读本路由表就开始执行 → 违规。必须先 `read_file` 主导技能。
 
 ### 不要把所有技能都读一遍
 
-只读取与当前任务有直接关系的技能。任务不涉及视觉、Figma 或 React 性能时，不要加载这些技能。
+任务不涉及 Figma 时不读 figma-implement-design，不涉及视觉时不读 frontend-design。只读与当前任务直接相关的技能。
 
 ### 不要用外部搜索替代本地技能
 
-本地技能已覆盖的问题，优先使用本地技能；外部搜索只用于发现本地没有的能力。
+本地 4 个技能已覆盖 → 不使用 `find-skills`。外部搜索只用于发现本地没有的能力。
+
+### 不要路由本路由表不覆盖的技能
+
+用户说"帮我调试这个 bug"→ 不归本技能管，直接说不在路由表领域内。不要尝试把 `systematic-debugging` 等技能硬塞进路由表。
 
 ## 完成前检查
 
-- 已确认用户意图命中了路由表，或明确进入了外部技能搜索 fallback。
-- 已读取主导技能的 `SKILL.md`，没有只凭本文件概括执行。
-- 辅助技能只在触发条件满足时读取，没有把所有子技能默认加载。
-- 多技能建议发生冲突时，已按“冲突优先级”处理。
-- 如果进入 `skills/find-skills`，已确认本地技能无法覆盖或用户明确要求查找/安装新技能。
+- [ ] 已确认用户意图命中路由表，或明确进入外部搜索 fallback。
+- [ ] 已读取主导技能的 `SKILL.md`，没有只凭本文件概括执行。
+- [ ] 辅助技能只在触发条件满足时读取，没有默认加载。
+- [ ] 多技能建议冲突时，已按"用户优先 > 项目约定 > Figma > 通用实践"处理。
+- [ ] 如果进入 `find-skills`，已确认本地 4 个技能无法覆盖。
 
 ## 技能集成
 
@@ -104,3 +103,7 @@ description: 当需要根据用户意图在本地技能之间选择、分派、�
 - `skills/frontend-design`：视觉设计方向和差异化 UI 决策。
 - `skills/vercel-react-best-practices`：React/Next.js 性能和实现实践。
 - `skills/find-skills`：外部技能搜索、评估和安装建议。
+
+### Token 效率
+
+当路由涉及读取多个子技能 SKILL.md 时，按 `token-saving` 技能设定预算、分层读取，避免一次性加载所有文件。

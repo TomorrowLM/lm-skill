@@ -1,0 +1,146 @@
+{
+  "skill_name": "skill-routing",
+  "description": "skill-routing 触发命中率测试用例集。覆盖应触发、不应触发、近义边缘、边界场景。",
+  "evals": [
+    {
+      "id": 1,
+      "category": "应触发 - Figma到代码",
+      "prompt": "帮我实现这个设计稿 https://figma.com/design/abc123/MyApp?node-id=1-2",
+      "expected_output": "应触发 skill-routing，路由到 skills/figma-implement-design 作为主导技能",
+      "files": []
+    },
+    {
+      "id": 2,
+      "category": "应触发 - Figma到代码",
+      "prompt": "这是Figma截图，按这个做一个登录页面",
+      "expected_output": "应触发 skill-routing，路由到 skills/figma-implement-design 作为主导技能",
+      "files": []
+    },
+    {
+      "id": 3,
+      "category": "应触发 - Figma到代码",
+      "prompt": "把Figma里的按钮组件转成React代码",
+      "expected_output": "应触发 skill-routing，路由到 skills/figma-implement-design 作为主导技能",
+      "files": []
+    },
+    {
+      "id": 4,
+      "category": "应触发 - 纯视觉设计",
+      "prompt": "这个页面太丑了，帮我重新设计一下，不要模板感",
+      "expected_output": "应触发 skill-routing，路由到 skills/frontend-design 作为主导技能",
+      "files": []
+    },
+    {
+      "id": 5,
+      "category": "应触发 - 纯视觉设计",
+      "prompt": "优化一下这个仪表盘的视觉，做得好看一点，配色要有差异化",
+      "expected_output": "应触发 skill-routing，路由到 skills/frontend-design 作为主导技能",
+      "files": []
+    },
+    {
+      "id": 6,
+      "category": "应触发 - React性能",
+      "prompt": "帮我审查这个React组件的性能，看看有没有不必要的重渲染",
+      "expected_output": "应触发 skill-routing，路由到 skills/vercel-react-best-practices 作为主导技能",
+      "files": []
+    },
+    {
+      "id": 7,
+      "category": "应触发 - React性能",
+      "prompt": "这个Next.js页面首屏加载太慢了，帮我优化bundle大小",
+      "expected_output": "应触发 skill-routing，路由到 skills/vercel-react-best-practices 作为主导技能",
+      "files": []
+    },
+    {
+      "id": 8,
+      "category": "应触发 - 查找技能",
+      "prompt": "有没有能帮我做自动化测试的技能？",
+      "expected_output": "应触发 skill-routing，路由到 skills/find-skills 进行外部搜索",
+      "files": []
+    },
+    {
+      "id": 9,
+      "category": "应触发 - 查找技能",
+      "prompt": "帮我安装一个代码审查的skill",
+      "expected_output": "应触发 skill-routing，路由到 skills/find-skills 进行外部搜索",
+      "files": []
+    },
+    {
+      "id": 10,
+      "category": "应触发 - 组合路由",
+      "prompt": "按这个Figma设计稿做一个React dashboard，要好看",
+      "expected_output": "应触发 skill-routing，主导技能 figma-implement-design，辅助技能 vercel-react-best-practices（React项目），frontend-design 仅在Figma未覆盖时",
+      "files": []
+    },
+    {
+      "id": 11,
+      "category": "不应触发 - 用户已指定技能",
+      "prompt": "用 page-development-workflow 技能帮我开发一个用户列表页",
+      "expected_output": "不应触发 skill-routing，用户已明确指定 page-development-workflow，直接读取该技能",
+      "files": []
+    },
+    {
+      "id": 12,
+      "category": "不应触发 - 修bug",
+      "prompt": "这个按钮点击后没反应，帮我修一下bug",
+      "expected_output": "不应触发 skill-routing，这是普通修bug，不属于路由表领域",
+      "files": []
+    },
+    {
+      "id": 13,
+      "category": "不应触发 - 改文案/加字段",
+      "prompt": "把这个表单加一个手机号字段",
+      "expected_output": "不应触发 skill-routing，这是小范围改动，不涉及技能选择",
+      "files": []
+    },
+    {
+      "id": 14,
+      "category": "不应触发 - 知识问答",
+      "prompt": "React的useEffect和useLayoutEffect有什么区别？",
+      "expected_output": "不应触发 skill-routing，这是纯知识问答",
+      "files": []
+    },
+    {
+      "id": 15,
+      "category": "不应触发 - 构建配置",
+      "prompt": "vite构建报错了，帮我看看esbuild的问题",
+      "expected_output": "不应触发 skill-routing，这是构建问题，与技能路由无关",
+      "files": []
+    },
+    {
+      "id": 16,
+      "category": "边缘场景 - 近义但不应触发",
+      "prompt": "这个React组件代码写得怎么样？帮我review一下",
+      "expected_output": "应触发（如用户关注性能）或不触发（如只是一般代码审查）。关键判断：用户是否明确关注性能/bundle/渲染",
+      "files": []
+    },
+    {
+      "id": 17,
+      "category": "边缘场景 - 近义但不应触发",
+      "prompt": "帮我调整一下这个按钮的颜色和间距",
+      "expected_output": "不应触发 skill-routing，这是单元素样式调整，不是视觉设计方向决策",
+      "files": []
+    },
+    {
+      "id": 18,
+      "category": "边缘场景 - 模糊意图",
+      "prompt": "这个页面加载很慢，帮我看看",
+      "expected_output": "需要判断：如果慢是因为React渲染性能→vercel-react-best-practices；如果是接口慢→不归本技能管。需要先澄清用户意图",
+      "files": []
+    },
+    {
+      "id": 19,
+      "category": "边界场景 - 跨领域",
+      "prompt": "帮我做一个好看的React landing page，这是设计稿链接 https://figma.com/design/xyz",
+      "expected_output": "应触发 skill-routing，主导 figma-implement-design（有Figma），辅助 vercel-react-best-practices（React），frontend-design 仅在Figma未覆盖时",
+      "files": []
+    },
+    {
+      "id": 20,
+      "category": "边界场景 - 技能询问",
+      "prompt": "skill-routing 这个技能是做什么的？",
+      "expected_output": "不应触发 skill-routing 执行路由，用户只是询问技能概念，直接解释即可",
+      "files": []
+    }
+  ]
+}
