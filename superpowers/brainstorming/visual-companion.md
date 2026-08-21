@@ -35,20 +35,22 @@
 ```bash
 # 已识别当前功能文档目录时，保存到该目录的 .superpowers/<会话ID>
 scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/feature-name \
+  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
   --session-name event-acceptance-tab-count
 
 # 需要完全控制目录时，直接指定最终存放路径
 scripts/start-server.sh \
-  --screen-dir /path/to/project/docs/design/feature-name/.superpowers/custom-session
+  --screen-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design/.superpowers/custom-session
 
 # 返回：{"type":"server-started","port":52341,"url":"http://localhost:52341",
-#           "screen_dir":"/path/to/project/docs/design/feature-name/.superpowers/event-acceptance-tab-count-20260811-143205"}
+#           "screen_dir":"/path/to/project/docs/design/YYYY-MM-DD-<topic>-design/.superpowers/event-acceptance-tab-count-20260811-143205"}
 ```
 
 保存响应中的 `screen_dir`。告诉用户打开该 URL。
 
 **功能文档目录识别：** 启动前先从当前会话上下文识别功能文档目录，包括用户附件、用户明确提供的路径、当前打开的需求文档，以及任务上下文引用的 `docs/design/<功能目录>` 或 `docs/prod/<功能目录>`。只有存在唯一且与当前任务匹配的目录时，才使用 `--feature-dir`。
+
+**目录命名规则：** 功能文档目录（设计文件夹）必须使用时间前缀命名，格式为 `docs/design/YYYY-MM-DD-<topic>-design/`，其中 `YYYY-MM-DD` 为需求创建日期、`<topic>` 为英文 kebab-case 功能名，例如 `docs/design/YYYY-MM-DD-<topic>-design/`。识别现有目录时优先匹配该格式；需要新建设计目录时同样遵守此格式。
 
 **无法确定时必须询问：** 如果没有功能文档目录、存在多个候选目录，或候选文档与当前任务明显不匹配，先让用户确认存放目录。不要自行回退到项目根目录、`docs/design/.superpowers/`、`<project>/.superpowers/` 或 `/tmp`。
 
@@ -66,7 +68,7 @@ scripts/start-server.sh \
 ```bash
 # 默认模式即可——脚本会自动将服务器放到后台
 scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/feature-name \
+  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
   --session-name event-acceptance-tab-count
 ```
 
@@ -76,7 +78,7 @@ scripts/start-server.sh \
 # 在 Bash 工具调用上设置 run_in_background: true，
 # 让服务器在会话轮次之间存活。
 scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/feature-name \
+  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
   --session-name event-acceptance-tab-count
 ```
 通过 Bash 工具调用时，设置 `run_in_background: true`。然后在下一轮读取 `$SCREEN_DIR/.server-info` 获取 URL 和端口。
@@ -86,7 +88,7 @@ scripts/start-server.sh \
 # Codex 会回收后台进程。脚本会自动检测 CODEX_CI 并
 # 切换到前台模式。正常运行即可——不需要额外标志。
 scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/feature-name \
+  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
   --session-name event-acceptance-tab-count
 ```
 
@@ -95,7 +97,7 @@ scripts/start-server.sh \
 # 使用 --foreground 并在 shell 工具调用上设置 is_background: true，
 # 让进程在轮次之间存活
 scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/feature-name \
+  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
   --session-name event-acceptance-tab-count \
   --foreground
 ```
@@ -106,7 +108,7 @@ scripts/start-server.sh \
 
 ```bash
 scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/feature-name \
+  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
   --session-name event-acceptance-tab-count \
   --host 0.0.0.0 \
   --url-host localhost
