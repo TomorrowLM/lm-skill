@@ -205,7 +205,7 @@ digraph process {
 - **superpowers:writing-plans** - 创建本技能执行的计划
 - **superpowers:requesting-code-review** - 提供规格审查与代码质量审查的组织模板
 - **test-driven-development** - 通过分派说明显式施加给实现子智能体
-- **superpowers:executing-plans** - 当实际工作由当前主会话顺序执行，而不是分派隔离子智能体时，改用该替代流程
+- **executing-plans** - 当实际工作由当前主会话顺序执行，而不是分派隔离子智能体时，改用该替代流程
 
 ### 后置技能
 
