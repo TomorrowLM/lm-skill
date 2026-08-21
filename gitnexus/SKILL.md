@@ -7,6 +7,7 @@
 
 ```
 gitnexus/
+├── references/                公共参考：工具参数、通用示例
 ├── gitnexus-guide/           ★ 总入口 / 使用手册 / 路由中心
 ├── gitnexus-exploring/       架构探索：代码结构、执行流追踪
 ├── gitnexus-impact-analysis/ 影响范围分析：爆炸半径评估
@@ -23,6 +24,8 @@ gitnexus/
 | **独立使用** | 直接加载对应技能的 SKILL.md |
 | **通过 superpowers** | 作为叠加增强层，在主流程节点上条件性加载（见 `superpowers/SKILL.md` 路由表 L31） |
 | **总入口** | 始终推荐从 `gitnexus-guide` 进入，由其根据任务类型路由到具体子技能 |
+
+公共工具参数和示例见 `references/toolkit.md`。
 
 ## 路由关系
 

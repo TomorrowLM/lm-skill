@@ -1,6 +1,6 @@
 # GitNexus 工具速查
 
-本文件汇总 systematic-debugging 技能各阶段使用的 GitNexus 工具，包含完整参数和示例。
+本文件汇总 GitNexus 系列技能使用的常用工具，包含参数和示例。
 
 ## 目录
 
@@ -16,9 +16,7 @@
 
 ## gitnexus_query — 语义搜索
 
-**阶段：** 1（侦察）
-
-用错误信息或症状关键词搜索相关代码。
+**用于：** 侦察阶段，用错误信息、症状关键词或业务术语搜索相关代码。
 
 ```
 gitnexus_query({query: "payment validation error"})
@@ -36,9 +34,7 @@ gitnexus_query({query: "payment validation error"})
 
 ## gitnexus_context — 符号上下文
 
-**阶段：** 1（侦察）、2（根因）
-
-查看符号的 360° 上下文：调用者、被调用者、所属执行流。
+**用于：** 查看符号的 360° 上下文：调用者、被调用者、所属执行流。
 
 ```
 gitnexus_context({name: "validatePayment"})
@@ -57,9 +53,7 @@ gitnexus_context({name: "validatePayment"})
 
 ## gitnexus_cypher — 自定义图查询
 
-**阶段：** 2（根因）
-
-当 query 和 context 不够用时，用 Cypher 做精确的调用链追踪。
+**用于：** 当 query 和 context 不够用时，用 Cypher 做精确调用链追踪。
 
 **追踪调用链（向上 2 层）：**
 ```cypher
@@ -77,9 +71,7 @@ RETURN caller.name, caller.filePath ORDER BY caller.filePath
 
 ## gitnexus_impact — 影响面分析
 
-**阶段：** 3（影响面）
-
-修改前评估爆炸半径。
+**用于：** 修改前评估爆炸半径。
 
 ```
 gitnexus_impact({
@@ -107,9 +99,7 @@ gitnexus_impact({
 
 ## gitnexus_detect_changes — 变更检测
 
-**阶段：** 2（检查近期变更）、5（提交前验证）
-
-基于 git diff 分析当前变更的影响。
+**用于：** 基于 git diff 分析当前变更的影响。
 
 ```
 gitnexus_detect_changes({scope: "staged"})
@@ -128,9 +118,7 @@ gitnexus_detect_changes({scope: "staged"})
 
 ## gitnexus_rename — 安全重命名
 
-**阶段：** 4（TDD 修复中的重构步骤）
-
-自动化的多文件协调重命名，基于知识图谱和 AST 分析。
+**用于：** 自动化多文件协调重命名，基于知识图谱和 AST 分析。
 
 ```
 gitnexus_rename({symbol_name: "validateUser", new_name: "authenticateUser", dry_run: true})

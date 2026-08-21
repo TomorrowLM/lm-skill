@@ -37,6 +37,7 @@ description: >-
 skill-name/
 ├── SKILL.md              # 入口：触发条件、流程、红线、引用条件
 ├── references/           # 按需加载的展开说明
+│   └── tests/            # 压力测试、学术测试和触发测试
 ├── scripts/              # 可执行脚本
 └── assets/               # 产出物模板
 ```
@@ -44,6 +45,7 @@ skill-name/
 - `name` + `description`：始终在上下文中，决定是否触发。
 - `SKILL.md` body：触发时加载，只保留控制逻辑。
 - `references`：按需读取，承载长示例、完整工作流、背景、模板。
+- 技能测试文件放 `references/tests/`，不要散落在技能根目录。
 
 ### 按红-绿-重构编写
 

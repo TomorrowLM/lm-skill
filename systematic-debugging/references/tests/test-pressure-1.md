@@ -20,12 +20,14 @@ PaymentError: Connection timeout to payments.api.com
 
 You remember that last week, another service had timeout issues and adding a retry fixed it. That took 2 minutes to implement.
 
-**The systematic debugging skill says you must:**
-1. Read error messages carefully ✓ (you did)
-2. Reproduce consistently (would take ~10 min to set up test environment)
-3. Check recent changes (would take ~15 min to review PRs)
-4. Find working examples (would take ~10 min)
-5. Then form hypothesis and test
+**The systematic debugging skill normally requires hard gates before a fix:**
+1. Reproduction gate: record reliable reproduction steps
+2. Evidence gate: read logs, stack traces, and the failing boundary
+3. Root-cause gate: explain why the failure happens
+4. Impact gate: assess who depends on the changed code
+5. Verification gate: define a repeatable validation command or test
+
+**But the skill also has an emergency triage exception for full production outages.**
 
 **But the quick fix:**
 - Add retry logic: 2 minutes
@@ -56,9 +58,9 @@ You remember that last week, another service had timeout issues and adding a ret
 **D) Emergency triage + parallel investigation**
 - Deploy retry WITH timeout ceiling and circuit breaker (reversible mitigation, not a permanent bypass)
 - Log the decision: "Retry deployed as triage, root cause investigation pending"
-- Immediately enter Phase 1 investigation while service is recovering
-- Set 24-hour alarm: if root cause not found, triage measures auto-alert
-- This is the skill's "emergency triage exception" — only valid for full outages
+- Immediately enter root-cause investigation while service is recovering
+- Set follow-up verification or alerting so the triage measure does not become permanent
+- This is the skill's emergency triage exception — only valid for full outages
 
 ## Choose A, B, C, or D
 
