@@ -183,7 +183,7 @@ digraph process {
 
 1. **开始实现前：** 默认留在当前工作区；只有在用户明确要求隔离工作区，或当前任务确实需要切到独立 worktree 时，才读取 `git-worktrees`。
 2. **开始分派任务前：** 确认当前存在可执行计划；如果计划尚未产出或不够具体，先回到 `superpowers:writing-plans`。
-3. **分派实现子智能体时：** 在分派说明里明确要求实现子智能体遵循 `superpowers:test-driven-development`。
+3. **分派实现子智能体时：** 在分派说明里明确要求实现子智能体遵循 `test-driven-development`。
 4. **进入正式审查前：** 先读取 `superpowers:requesting-code-review`，按其审查模板和节奏组织审查上下文。
 5. **标记任务完成或进入下一个任务前：** 先读取并执行 `superpowers:verification-before-completion`，确认当前任务已有新鲜验证证据。
 6. **所有任务完成后：** 先读取并执行 `superpowers:verification-before-completion`，确认整体实现通过验证。
@@ -204,7 +204,7 @@ digraph process {
 - **git-worktrees** - 可选：当用户明确要求隔离工作区，或当前任务确实需要切到独立 worktree 时使用
 - **superpowers:writing-plans** - 创建本技能执行的计划
 - **superpowers:requesting-code-review** - 提供规格审查与代码质量审查的组织模板
-- **superpowers:test-driven-development** - 通过分派说明显式施加给实现子智能体
+- **test-driven-development** - 通过分派说明显式施加给实现子智能体
 - **superpowers:executing-plans** - 当实际工作由当前主会话顺序执行，而不是分派隔离子智能体时，改用该替代流程
 
 ### 后置技能

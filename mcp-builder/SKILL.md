@@ -159,7 +159,7 @@ npx @modelcontextprotocol/inspector node dist/index.js
 
 **测试要点：** 每个 Tool 覆盖正常 + 异常路径、边界值、外部服务失败模拟。
 
-**TDD 集成：** 实现每个 Tool/Resource 的业务逻辑时，使用 `superpowers:test-driven-development` 的红-绿-重构循环——先写失败的测试，再写最少实现，再重构。
+**TDD 集成：** 实现每个 Tool/Resource 的业务逻辑时，使用 `test-driven-development` 的红-绿-重构循环——先写失败的测试，再写最少实现，再重构。
 
 ## 7. 安全考虑
 
