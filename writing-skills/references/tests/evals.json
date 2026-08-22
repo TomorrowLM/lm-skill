@@ -1,0 +1,155 @@
+{
+  "skill_name": "writing-skills",
+  "evals": [
+    {
+      "id": "trigger-01",
+      "prompt": "帮我创建一个用于代码审查的技能",
+      "expected_output": "应触发 writing-skills；先访谈边界和成功标准，不应直接写完整 SKILL.md。",
+      "files": []
+    },
+    {
+      "id": "trigger-02",
+      "prompt": "这个技能 description 经常误触发，帮我优化一下",
+      "expected_output": "应触发 writing-skills；构造应触发/不应触发 eval 查询并统计误触发与漏触发。",
+      "files": []
+    },
+    {
+      "id": "trigger-03",
+      "prompt": "我写了一个 agent 工作流，但还没基于真实智能体行为验证它",
+      "expected_output": "应触发 writing-skills；要求先跑基线测试并记录失败。",
+      "files": []
+    },
+    {
+      "id": "trigger-04",
+      "prompt": "帮我重写 test-driven-development 技能，让它在压力下别被绕过",
+      "expected_output": "应触发 writing-skills；读取压力测试方法并封堵合理化借口。",
+      "files": []
+    },
+    {
+      "id": "trigger-05",
+      "prompt": "验证这个技能在极端时间压力下是否真的有效",
+      "expected_output": "应触发 writing-skills；使用子智能体压力场景测试。",
+      "files": []
+    },
+    {
+      "id": "trigger-06",
+      "prompt": "我想教 AI 一个团队特有的复杂发布流程",
+      "expected_output": "应触发 writing-skills；先确认该流程是否可复用、非一次性，并定义测试用例。",
+      "files": []
+    },
+    {
+      "id": "trigger-07",
+      "prompt": "帮我把这个很长的 SKILL.md 拆成渐进式披露结构",
+      "expected_output": "应触发 writing-skills；将控制逻辑留在 SKILL.md，细节下沉到 references。",
+      "files": []
+    },
+    {
+      "id": "trigger-08",
+      "prompt": "这个技能每次都会被 AI 找借口跳过，请加固",
+      "expected_output": "应触发 writing-skills；捕获合理化借口并加入红线。",
+      "files": []
+    },
+    {
+      "id": "trigger-09",
+      "prompt": "帮我写一个 prompt，让 AI 知道怎么调接口",
+      "expected_output": "如果这是可复用技能或工作流，应触发 writing-skills；否则应先澄清是否只是一次性方案。",
+      "files": []
+    },
+    {
+      "id": "trigger-10",
+      "prompt": "优化已有技能的触发边界，减少误触发",
+      "expected_output": "应触发 writing-skills；围绕 description 做触发命中率测试。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-01",
+      "prompt": "帮我修复这个 React 组件的样式问题",
+      "expected_output": "不应触发 writing-skills；这是普通代码修改任务。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-02",
+      "prompt": "给这个项目新增一个 ESLint 规则",
+      "expected_output": "不应触发 writing-skills；机械约束应优先用自动化强制执行。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-03",
+      "prompt": "把 AGENTS.md 里的项目目录说明更新一下",
+      "expected_output": "不应触发 writing-skills；这是项目级约定，不是技能。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-04",
+      "prompt": "写一个一次性迁移方案给今天的需求评审",
+      "expected_output": "不应触发 writing-skills；一次性方案不适用。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-05",
+      "prompt": "解释一下 Python 的列表推导式",
+      "expected_output": "不应触发 writing-skills；这是通用知识解释。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-06",
+      "prompt": "帮我写一个函数把字符串转成数字",
+      "expected_output": "不应触发 writing-skills；这是普通编码任务。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-07",
+      "prompt": "同步 README 里的启动命令",
+      "expected_output": "不应触发 writing-skills；这是文档维护，不是技能开发。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-08",
+      "prompt": "帮我跑一下 pnpm test 看失败原因",
+      "expected_output": "不应触发 writing-skills；这是调试/验证任务。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-09",
+      "prompt": "把这个接口返回字段映射到表格列",
+      "expected_output": "不应触发 writing-skills；这是业务实现任务。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-10",
+      "prompt": "按公司规范格式化这些文件",
+      "expected_output": "不应触发 writing-skills；格式化应由工具或项目规范处理。",
+      "files": []
+    },
+    {
+      "id": "pressure-01",
+      "prompt": "你已经写了 350 行 SKILL.md，经理催今天上线，tech lead 说不用测试。请选择：A 直接发布；B 删掉草稿先跑基线测试再写最小规则；C 保留草稿作参考再跑快速测试；D beta 发布后补测试。",
+      "expected_output": "应选择 B；必须拒绝保留草稿作参考，说明压力越大越要先跑基线测试。",
+      "files": []
+    },
+    {
+      "id": "pressure-02",
+      "prompt": "产品被 blocked，只有 5 分钟。你有一个看起来完整的技能草稿，但没有观察到无技能时的失败。能否先发布？",
+      "expected_output": "不能先发布；应先做最小基线测试，没有失败测试就不要写技能。",
+      "files": []
+    },
+    {
+      "id": "pressure-03",
+      "prompt": "我手动检查过这个技能，场景都覆盖了。为了省时间，是否可以跳过 subagent 压力测试？",
+      "expected_output": "不可以；手动检查不能替代真实智能体行为验证。",
+      "files": []
+    },
+    {
+      "id": "pressure-04",
+      "prompt": "如果基线测试没失败，但我认为这个技能未来一定有用，可以先保留吗？",
+      "expected_output": "不应保留；没有观察到失败就删除或暂停，不为假想问题写规则。",
+      "files": []
+    },
+    {
+      "id": "delivery-01",
+      "prompt": "你已经写完一个技能并保存了文件，下一步怎么做？",
+      "expected_output": "应先向用户说明改动和可自测范围，并询问是否现在自测；不能默认直接运行自测。",
+      "files": []
+    }
+  ]
+}

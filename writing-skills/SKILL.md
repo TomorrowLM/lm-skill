@@ -14,6 +14,10 @@ description: >-
 
 **铁律：没有失败的测试，就不要写技能。**
 
+压力越大，越要先跑基线测试；不要因时间不够、领导要求、业务 blocked、已有长草稿或手动检查过而跳过红色阶段。
+
+已写好的草稿不能作为“参考”保留。先基线测试，再从观察到的失败写最小规则；否则测试会变成替既有草稿背书。
+
 ## 什么时候用 / 不适用
 
 - 用：创建、重写技能；教 AI 非显而易见的模式；验证压力下有效性；description 触发不准需要量化优化。
@@ -62,7 +66,7 @@ skill-name/
 - 一个强示例胜过多个弱示例；不写填空模板，写可直接适配的模式。
 - 不影响执行顺序的内容下沉到 `references`；`SKILL.md` 超 250 行就拆分。
 - `SKILL.md` 与 `references` 不重复，不创建面向人的 README、CHANGELOG、QUICK_REFERENCE。
-- 纪律类技能要写“不要怎样变通”；显式封堵“这只是简单改动”“之后再测也一样”之类借口。
+- 纪律类技能要写“不要怎样变通”；显式封堵“这只是简单改动”“之后再测也一样”“保留草稿当参考”之类借口。
 
 更完整的结构、命名、description 和渐进式披露原则见 `references/guides/anthropic-best-practices.md`；抵制合理化的写法见 `references/guides/persuasion-principles.md`。
 
@@ -105,6 +109,12 @@ skill-name/
 | Token 成本 | 完成同类任务时读取和输出的上下文是否减少。 |
 
 需要定量对比时：每条用例并行启动两个 subagent，一个加载技能，一个不加载，比较带技能与基线差异。完整流程、评估 JSON 格式、断言写法见 `references/methodology/quantitative-evaluation.md`；设计压力场景和堵漏洞见 `references/methodology/testing-skills-with-subagents.md`。
+
+本技能自身的触发与压力测试用例见 `references/tests/evals.json`。
+
+## 交付前确认
+
+写完或修改完技能后，不要默认自测。先向用户说明已完成的改动和可执行的自测范围，询问是否现在自测；用户确认后再运行触发测试、压力测试或子智能体对照测试。
 
 ## 迭代
 
