@@ -1,0 +1,26 @@
+{
+  "skill": "token-saving",
+  "version": 1,
+  "queries": [
+    { "text": "帮我读一下 src/components/Modal/index.tsx、src/pages/home/index.tsx、src/services/user.ts 这三个文件", "expectedTrigger": true, "category": "文件阅读-应触发" },
+    { "text": "搜索所有用到 useRequest 的地方，看看有没有可以优化的", "expectedTrigger": true, "category": "代码探索-应触发" },
+    { "text": "这个仓库有哪些 API 接口，帮我梳理一下", "expectedTrigger": true, "category": "代码探索-应触发" },
+    { "text": "帮我写一个代码审查的技能", "expectedTrigger": true, "category": "写技能-应触发" },
+    { "text": "修改 token-saving 的描述，让它更准确", "expectedTrigger": true, "category": "改技能-应触发" },
+    { "text": "根据这个 Figma 设计稿链接还原页面: https://figma.com/file/xxx", "expectedTrigger": true, "category": "Figma-应触发" },
+    { "text": "查一下 /api/user/list 这个接口的文档，看看请求参数和响应字段", "expectedTrigger": true, "category": "接口文档-应触发" },
+    { "text": "这个 Swagger 文档里有哪些 tag，帮我整理一下", "expectedTrigger": true, "category": "接口文档-应触发" },
+    { "text": "用子代理并行探索 an-admin 和 an-mobile 两个项目的代码结构", "expectedTrigger": true, "category": "多代理-应触发" },
+    { "text": "继续之前我们讨论的那个方案，现在来实现它", "expectedTrigger": true, "category": "长对话-应触发" },
+    { "text": "分析这个构建失败日志，帮我看看哪里出错了", "expectedTrigger": true, "category": "日志调试-应触发" },
+    { "text": "审查这个 PR 的 diff，看看有没有问题", "expectedTrigger": true, "category": "PR审查-应触发" },
+    { "text": "同步 AGENTS 文档，更新规范", "expectedTrigger": true, "category": "AGENTS-应触发" },
+    { "text": "看看现在项目里有没有可以复用的弹窗组件", "expectedTrigger": true, "category": "公共组件-应触发" },
+    { "text": "1+1等于几", "expectedTrigger": false, "category": "不应触发" },
+    { "text": "这个变量名改成 userName", "expectedTrigger": false, "category": "不应触发" },
+    { "text": "写个 hello world", "expectedTrigger": false, "category": "不应触发" },
+    { "text": "读一下这个文件的第 42 行", "expectedTrigger": false, "category": "不应触发" },
+    { "text": "import 报错了，帮我看看", "expectedTrigger": false, "category": "不应触发" },
+    { "text": "给这个函数加个注释", "expectedTrigger": false, "category": "不应触发" }
+  ]
+}

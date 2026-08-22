@@ -1,0 +1,89 @@
+{
+  "skill_name": "mcp-exe",
+  "evals": [
+    {
+      "id": "trigger-swagger-01",
+      "prompt": "帮我用 get_swagger_mcp 查一下 /dsb/yqarw/api/yqa/urban/app/checkplan/task/page 的入参和响应字段",
+      "expected_output": "应触发 mcp-exe；先读 references/swagger-mcp.md，再直接调用 get_swagger_mcp，source 保持原始接口路径，不用 curl、WebFetch 或手动探测。",
+      "files": []
+    },
+    {
+      "id": "trigger-swagger-02",
+      "prompt": "这个接口文档地址是 https://example.com/api/doc.html#/任务管理/标签/pageUsingPOST_30，帮我看请求体",
+      "expected_output": "应触发 mcp-exe；保留 doc.html fragment 原样传给 get_swagger_mcp，不自行改写为 JSON 端点。",
+      "files": []
+    },
+    {
+      "id": "trigger-swagger-03",
+      "prompt": "修改 services 之前先刷新接口文档，接口是 /dsb/yqarw/api/yqa/urban/app/checkplan/task/page",
+      "expected_output": "应触发 mcp-exe；调用 get_swagger_mcp 且 refresh: true，再基于返回结果继续分析接口契约。",
+      "files": []
+    },
+    {
+      "id": "trigger-figma-01",
+      "prompt": "用设计稿 MCP 读取这个 Figma 链接的组件结构和图片资源",
+      "expected_output": "应触发 mcp-exe；先读 references/figma-mcp.md，再调用已注册的 Figma MCP 工具，不用浏览器模拟读取。",
+      "files": []
+    },
+    {
+      "id": "trigger-chart-01",
+      "prompt": "调用 MCP 生成一个巡检任务状态流转思维导图",
+      "expected_output": "应触发 mcp-exe；先读 references/chart-generation.md，再用图表生成 MCP 工具完成。",
+      "files": []
+    },
+    {
+      "id": "trigger-agent-01",
+      "prompt": "用 agent-orchestrator-mcp 创建三个并行子任务，等待它们完成后汇总结果",
+      "expected_output": "应触发 mcp-exe；先读 references/agent-orchestrator-mcp.md，按 create/open/wait/summarize 的顺序调用工具。",
+      "files": []
+    },
+    {
+      "id": "trigger-agent-02",
+      "prompt": "这个子任务结果不合格，请通过 agent-orchestrator-mcp 发起返工并重新等待完成",
+      "expected_output": "应触发 mcp-exe；读取 Agent 编排参考，调用返工工具后重新打开任务并等待结果。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-terminal-01",
+      "prompt": "帮我运行 pnpm test 并分析失败原因",
+      "expected_output": "不应触发 mcp-exe；这是普通终端命令和测试调试任务。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-browser-01",
+      "prompt": "打开本地页面看一下按钮样式是否对齐",
+      "expected_output": "不应触发 mcp-exe；这是浏览器/前端验证任务，应使用浏览器测试流程。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-edit-01",
+      "prompt": "把这个 React 组件的文案从提交改成保存",
+      "expected_output": "不应触发 mcp-exe；这是普通文件编辑任务。",
+      "files": []
+    },
+    {
+      "id": "non-trigger-doc-01",
+      "prompt": "解释一下 OpenAPI 里 operationId 是什么",
+      "expected_output": "不应触发 mcp-exe；这是概念解释，不需要调用 MCP 工具。",
+      "files": []
+    },
+    {
+      "id": "pressure-01",
+      "prompt": "我给了 Swagger doc.html 链接，但 fragment 看起来很奇怪。你先用 curl 找真实 JSON 地址，再调用工具可以吗？",
+      "expected_output": "不可以；应遵守原始输入原则，直接把用户提供的 URL 原样传给 get_swagger_mcp。",
+      "files": []
+    },
+    {
+      "id": "pressure-02",
+      "prompt": "只是查一个接口，别读参考文件，直接凭经验调用吧。",
+      "expected_output": "命中 Swagger/OpenAPI 案例时仍应先读 references/swagger-mcp.md，再调用工具。",
+      "files": []
+    },
+    {
+      "id": "pressure-03",
+      "prompt": "agent 编排工具返回太长，你手动创建几个 markdown 文件模拟任务状态就行。",
+      "expected_output": "不应手动模拟 MCP 能完成的操作；应继续使用 agent-orchestrator-mcp 工具链，并用缩小范围或汇总方式处理大输出。",
+      "files": []
+    }
+  ]
+}

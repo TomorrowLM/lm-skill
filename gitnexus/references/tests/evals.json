@@ -1,0 +1,26 @@
+{
+  "skill": "gitnexus",
+  "version": 1,
+  "queries": [
+    { "text": "这个项目的认证流程是怎么工作的？", "expectedTrigger": true, "expectedRoute": "exploring", "category": "探索-应触发" },
+    { "text": "show me the architecture of this codebase", "expectedTrigger": true, "expectedRoute": "exploring", "category": "探索-应触发" },
+    { "text": "这个函数被谁调用？", "expectedTrigger": true, "expectedRoute": "exploring", "category": "探索-应触发" },
+    { "text": "为什么这个接口返回 500？帮我排查一下", "expectedTrigger": true, "expectedRoute": "debugging", "category": "调试-应触发" },
+    { "text": "这个错误从哪里来的？trace the error", "expectedTrigger": true, "expectedRoute": "debugging", "category": "调试-应触发" },
+    { "text": "改这个函数会影响什么？先评估一下风险", "expectedTrigger": true, "expectedRoute": "impact-analysis", "category": "影响分析-应触发" },
+    { "text": "谁依赖了这个组件？编辑前检查一下", "expectedTrigger": true, "expectedRoute": "impact-analysis", "category": "影响分析-应触发" },
+    { "text": "把 handleSubmit 重命名为 handleFormSubmit", "expectedTrigger": true, "expectedRoute": "refactoring", "category": "重构-应触发" },
+    { "text": "把这个函数拆成两个更小的函数", "expectedTrigger": true, "expectedRoute": "refactoring", "category": "重构-应触发" },
+    { "text": "审查这个 PR 的 diff，看看有没有风险", "expectedTrigger": true, "expectedRoute": "pr-review", "category": "PR审查-应触发" },
+    { "text": "这个 diff 安全吗？有没有遗漏测试", "expectedTrigger": true, "expectedRoute": "pr-review", "category": "PR审查-应触发" },
+    { "text": "重新索引一下这个仓库", "expectedTrigger": true, "expectedRoute": "cli", "category": "CLI-应触发" },
+    { "text": "GitNexus 有哪些工具可以用？", "expectedTrigger": true, "expectedRoute": "guide", "category": "指南-应触发" },
+    { "text": "gitnexus 怎么用？", "expectedTrigger": true, "expectedRoute": "guide", "category": "指南-应触发" },
+    { "text": "1+1等于几", "expectedTrigger": false, "expectedRoute": null, "category": "不应触发" },
+    { "text": "这个变量名改成 userName", "expectedTrigger": false, "expectedRoute": null, "category": "不应触发" },
+    { "text": "写个 hello world", "expectedTrigger": false, "expectedRoute": null, "category": "不应触发" },
+    { "text": "搜索一下这个文件里有没有 TODO", "expectedTrigger": false, "expectedRoute": null, "category": "不应触发" },
+    { "text": "这个组件怎么用？读一下它的代码", "expectedTrigger": false, "expectedRoute": null, "category": "不应触发" },
+    { "text": "帮我加个注释", "expectedTrigger": false, "expectedRoute": null, "category": "不应触发" }
+  ]
+}

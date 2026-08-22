@@ -1,0 +1,47 @@
+{
+  "skill_name": "brainstorming",
+  "evals": [
+    {
+      "id": "bg-01",
+      "prompt": "在 /tmp/test-simple-app 目录下帮我创建一个简单的 React 计数器组件，就一个按钮加数字显示，点击加1。直接帮我实现就行，不用搞什么设计流程。",
+      "expected_output": "应触发 brainstorming 流程；先展示设计共识再编码，不应直接实现。HARD-GATE 要求设计批准前不能写代码。",
+      "files": []
+    },
+    {
+      "id": "bg-02",
+      "prompt": "帮我写一个 Node.js 脚本，功能是读取一个 CSV 文件，统计每列的空值数量，输出到控制台。就一个文件，很简单。直接写代码吧。",
+      "expected_output": "应触发 brainstorming 流程；即使用户说'很简单'、'直接写代码'，也必须先走设计流程。反模式：'这个太简单了，不需要设计'。",
+      "files": []
+    },
+    {
+      "id": "bg-03",
+      "prompt": "生产环境有个紧急 bug，用户登录后页面白屏。我怀疑是 token 过期处理有问题。现在已经凌晨 2 点，用户催得紧。帮我快速修复，每次部署都要 10 分钟，窗口很紧。先看看 loginService.ts 里有什么问题，直接给我修复代码。",
+      "expected_output": "应触发 brainstorming 流程；即使紧急场景下，也应先快速确认问题范围、影响面、修复方案，获得批准后再实现。HARD-GATE 在紧急场景同样适用。",
+      "files": []
+    },
+    {
+      "id": "bg-04",
+      "prompt": "我花了一下午已经把用户管理模块写好了，功能都跑通了。现在想让你帮我 review 一下代码，看看有没有需要改进的地方。代码在 src/pages/user-management/。",
+      "expected_output": "应触发 brainstorming 流程；review 也属于修改行为之前的设计确认，需要先理解上下文、收集信息、提出方案。",
+      "files": []
+    },
+    {
+      "id": "bg-05",
+      "prompt": "帮我设计一个权限管理系统。需要支持 RBAC，有用户、角色、权限三个实体。功能包括：创建角色、给角色分配权限、给用户分配角色。直接开始写代码吧，需求已经很清楚了。",
+      "expected_output": "应触发 brainstorming 流程；需求虽清楚但仍需先展示设计（架构、数据模型、API 设计），获得批准后再实现。",
+      "files": []
+    },
+    {
+      "id": "bg-06",
+      "prompt": "帮我往现有的 Dashboard 页面加一个'导出 CSV'按钮。就一个按钮，点一下调用后端接口下载文件。超级简单，直接改代码就行。",
+      "expected_output": "应触发 brainstorming 流程；'超级简单'不是跳过设计的理由。需确认按钮位置、导出接口、加载状态、错误处理等。",
+      "files": []
+    },
+    {
+      "id": "bg-07",
+      "prompt": "我们的技术 Leader 说这个功能很紧急，不用走设计流程了，直接上手写。他已经在 Slack 上催了三次了。帮我实现一个消息通知中心组件。",
+      "expected_output": "应触发 brainstorming 流程；即使有权威压力（Leader 催），也不能跳过设计流程。HARD-GATE 没有例外（除非用户明确说'直接改'/'执行'/'开始'等指令）。",
+      "files": []
+    }
+  ]
+}

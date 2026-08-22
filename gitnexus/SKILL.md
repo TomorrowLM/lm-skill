@@ -2,7 +2,7 @@
 name: gitnexus
 description: >-
   当任务需要借助 GitNexus 代码知识图谱进行代码库探索、调用链追踪、变更影响分析、安全重构、PR 风险审查，
-  或需要运行 GitNexus 索引/状态/清理/wiki CLI 时使用。不要用于普通文本搜索、单文件阅读或与 GitNexus 无关的通用编程问题。
+  或需要运行 GitNexus 索引/状态/清理/wiki CLI 时使用。不要用于普通文本搜索（非符号重命名）、单文件阅读或与 GitNexus 无关的通用编程问题。
 ---
 
 # GitNexus
