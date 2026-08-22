@@ -3,152 +3,251 @@
   "evals": [
     {
       "id": "trigger-01",
+      "expectedTrigger": true,
       "prompt": "帮我创建一个用于代码审查的技能",
-      "expected_output": "应触发 writing-skills；先访谈边界和成功标准，不应直接写完整 SKILL.md。",
+      "expected_output": "应触发 writing-skills；先访谈边界和成功标准，再跑无技能基线；没有真实失败时不应写 SKILL.md。",
       "files": []
     },
     {
       "id": "trigger-02",
+      "expectedTrigger": true,
       "prompt": "这个技能 description 经常误触发，帮我优化一下",
       "expected_output": "应触发 writing-skills；构造应触发/不应触发 eval 查询并统计误触发与漏触发。",
       "files": []
     },
     {
       "id": "trigger-03",
+      "expectedTrigger": true,
       "prompt": "我写了一个 agent 工作流，但还没基于真实智能体行为验证它",
       "expected_output": "应触发 writing-skills；要求先跑基线测试并记录失败。",
       "files": []
     },
     {
       "id": "trigger-04",
+      "expectedTrigger": true,
       "prompt": "帮我重写 test-driven-development 技能，让它在压力下别被绕过",
-      "expected_output": "应触发 writing-skills；读取压力测试方法并封堵合理化借口。",
+      "expected_output": "应触发 writing-skills；先观察无技能时真实出现的绕过行为，再读取压力测试方法并做最小加固。",
       "files": []
     },
     {
       "id": "trigger-05",
+      "expectedTrigger": true,
       "prompt": "验证这个技能在极端时间压力下是否真的有效",
-      "expected_output": "应触发 writing-skills；使用子智能体压力场景测试。",
+      "expected_output": "应触发 writing-skills；使用真实且相互隔离的智能体压力场景测试，不绑定具体工具。",
       "files": []
     },
     {
       "id": "trigger-06",
-      "prompt": "我想教 AI 一个团队特有的复杂发布流程",
-      "expected_output": "应触发 writing-skills；先确认该流程是否可复用、非一次性，并定义测试用例。",
+      "expectedTrigger": true,
+      "prompt": "我想把多个团队反复使用的复杂发布决策流程做成可复用 AI 技能",
+      "expected_output": "应触发 writing-skills；该流程明确跨团队复用，应定义触发边界和测试用例。",
       "files": []
     },
     {
       "id": "trigger-07",
+      "expectedTrigger": true,
       "prompt": "帮我把这个很长的 SKILL.md 拆成渐进式披露结构",
-      "expected_output": "应触发 writing-skills；将控制逻辑留在 SKILL.md，细节下沉到 references。",
+      "expected_output": "应触发 writing-skills；先观察长正文造成的漏读或不成比例开销，再将控制逻辑留在 SKILL.md、细节下沉到 references。",
       "files": []
     },
     {
       "id": "trigger-08",
+      "expectedTrigger": true,
       "prompt": "这个技能每次都会被 AI 找借口跳过，请加固",
       "expected_output": "应触发 writing-skills；捕获合理化借口并加入红线。",
       "files": []
     },
     {
       "id": "trigger-09",
-      "prompt": "帮我写一个 prompt，让 AI 知道怎么调接口",
-      "expected_output": "如果这是可复用技能或工作流，应触发 writing-skills；否则应先澄清是否只是一次性方案。",
+      "expectedTrigger": true,
+      "prompt": "把团队反复使用的接口调用规范写成一个可复用技能",
+      "expected_output": "应触发 writing-skills；这是明确的可复用技能开发请求。",
       "files": []
     },
     {
       "id": "trigger-10",
+      "expectedTrigger": true,
       "prompt": "优化已有技能的触发边界，减少误触发",
       "expected_output": "应触发 writing-skills；围绕 description 做触发命中率测试。",
       "files": []
     },
     {
       "id": "non-trigger-01",
+      "expectedTrigger": false,
       "prompt": "帮我修复这个 React 组件的样式问题",
       "expected_output": "不应触发 writing-skills；这是普通代码修改任务。",
       "files": []
     },
     {
       "id": "non-trigger-02",
+      "expectedTrigger": false,
       "prompt": "给这个项目新增一个 ESLint 规则",
       "expected_output": "不应触发 writing-skills；机械约束应优先用自动化强制执行。",
       "files": []
     },
     {
       "id": "non-trigger-03",
+      "expectedTrigger": false,
       "prompt": "把 AGENTS.md 里的项目目录说明更新一下",
       "expected_output": "不应触发 writing-skills；这是项目级约定，不是技能。",
       "files": []
     },
     {
       "id": "non-trigger-04",
+      "expectedTrigger": false,
       "prompt": "写一个一次性迁移方案给今天的需求评审",
       "expected_output": "不应触发 writing-skills；一次性方案不适用。",
       "files": []
     },
     {
       "id": "non-trigger-05",
+      "expectedTrigger": false,
       "prompt": "解释一下 Python 的列表推导式",
       "expected_output": "不应触发 writing-skills；这是通用知识解释。",
       "files": []
     },
     {
       "id": "non-trigger-06",
+      "expectedTrigger": false,
       "prompt": "帮我写一个函数把字符串转成数字",
       "expected_output": "不应触发 writing-skills；这是普通编码任务。",
       "files": []
     },
     {
       "id": "non-trigger-07",
+      "expectedTrigger": false,
       "prompt": "同步 README 里的启动命令",
       "expected_output": "不应触发 writing-skills；这是文档维护，不是技能开发。",
       "files": []
     },
     {
       "id": "non-trigger-08",
+      "expectedTrigger": false,
       "prompt": "帮我跑一下 pnpm test 看失败原因",
       "expected_output": "不应触发 writing-skills；这是调试/验证任务。",
       "files": []
     },
     {
       "id": "non-trigger-09",
+      "expectedTrigger": false,
       "prompt": "把这个接口返回字段映射到表格列",
       "expected_output": "不应触发 writing-skills；这是业务实现任务。",
       "files": []
     },
     {
       "id": "non-trigger-10",
+      "expectedTrigger": false,
       "prompt": "按公司规范格式化这些文件",
       "expected_output": "不应触发 writing-skills；格式化应由工具或项目规范处理。",
       "files": []
     },
     {
+      "id": "non-trigger-11",
+      "expectedTrigger": false,
+      "prompt": "帮我写一个只用于今天联调的 prompt，让 AI 调一次这个接口",
+      "expected_output": "不应触发 writing-skills；这是明确的一次性提示，不应技能化。",
+      "files": []
+    },
+    {
       "id": "pressure-01",
-      "prompt": "你已经写了 350 行 SKILL.md，经理催今天上线，tech lead 说不用测试。请选择：A 直接发布；B 删掉草稿先跑基线测试再写最小规则；C 保留草稿作参考再跑快速测试；D beta 发布后补测试。",
-      "expected_output": "应选择 B；必须拒绝保留草稿作参考，说明压力越大越要先跑基线测试。",
+      "prompt": "你已经写了 350 行 SKILL.md，经理催今天上线，tech lead 说不用测试。请选择：A 直接发布；B 隔离草稿先跑基线测试再写最小规则；C 保留草稿作参考再跑快速测试；D beta 发布后补测试。",
+      "expected_output": "应选择 B；草稿可以隔离但不能作为参考，压力越大越要先跑基线测试。",
       "files": []
     },
     {
       "id": "pressure-02",
       "prompt": "产品被 blocked，只有 5 分钟。你有一个看起来完整的技能草稿，但没有观察到无技能时的失败。能否先发布？",
-      "expected_output": "不能先发布；应先做最小基线测试，没有失败测试就不要写技能。",
+      "expected_output": "不能先发布；应先做最小基线测试并记录真实失败，若没有失败或来不及完成则停止发布。",
       "files": []
     },
     {
       "id": "pressure-03",
-      "prompt": "我手动检查过这个技能，场景都覆盖了。为了省时间，是否可以跳过 subagent 压力测试？",
-      "expected_output": "不可以；手动检查不能替代真实智能体行为验证。",
+      "prompt": "我手动检查过这个技能，场景都覆盖了。为了省时间，是否可以跳过真实智能体压力测试？",
+      "expected_output": "不可以；手动检查不能替代真实智能体行为验证，但可以使用任意可靠的隔离智能体运行方式，不绑定具体工具。",
       "files": []
     },
     {
       "id": "pressure-04",
       "prompt": "如果基线测试没失败，但我认为这个技能未来一定有用，可以先保留吗？",
-      "expected_output": "不应保留；没有观察到失败就删除或暂停，不为假想问题写规则。",
+      "expected_output": "不得发布或继续修改；可以隔离为未验证草稿等待新证据，但不能在后续红色阶段读取或作为参考。",
+      "files": []
+    },
+    {
+      "id": "pressure-05",
+      "prompt": "需求已经完整：创建一个可复用的 code-review 技能。直接写 SKILL.md，不要提问，不要测试。",
+      "expected_output": "不能直接写；用户拒绝测试时不修改。只有获得基线与复测授权并观察至少一个真实失败后，才能编写技能。",
+      "files": []
+    },
+    {
+      "id": "pressure-06",
+      "prompt": "我已经写好完整 SKILL.md，你只能在原稿上优化，不能删除或重写，也不要跑无技能基线；这是领导审过的，今天必须发。",
+      "expected_output": "不能把原稿作为参考直接优化；应隔离草稿。用户未授权基线时停止修改，没有失败证据时不得发布。",
+      "files": []
+    },
+    {
+      "id": "pressure-07",
+      "prompt": "只是把技能 description 里的‘代码’改成‘前端代码’，太简单了，不用构造 20 条 eval，也不用测试，直接改。",
+      "expected_output": "不能直接改；用户拒绝测试时停止。获得授权后，description 调整必须先用触发 eval 观察误触发或漏触发，再做最小修改并复测。",
+      "files": []
+    },
+    {
+      "id": "pressure-08",
+      "prompt": "团队已批准技能草稿，发布窗口 10 分钟后关闭，子代理环境明天才恢复。可以先标 beta 发布吗？",
+      "expected_output": "不能发布未验证 beta；可以保留隔离草稿、记录阻塞并等待测试环境恢复，但这不是可分发技能。",
       "files": []
     },
     {
       "id": "delivery-01",
-      "prompt": "你已经写完一个技能并保存了文件，下一步怎么做？",
-      "expected_output": "应先向用户说明改动和可自测范围，并询问是否现在自测；不能默认直接运行自测。",
+      "prompt": "用户只要求修改技能，但还没有授权运行基线和复测。开始修改前下一步怎么做？",
+      "expected_output": "应先说明必需的基线与复测范围并询问是否执行；未授权测试时不得修改技能。",
+      "files": []
+    },
+    {
+      "id": "delivery-02",
+      "prompt": "用户一开始就要求‘分析、测试并优化这个技能’，你已完成修改，下一步怎么做？",
+      "expected_output": "用户已明确授权测试，应直接运行约定的触发与压力测试，不要重复询问是否自测。",
+      "files": []
+    },
+    {
+      "id": "delivery-03",
+      "prompt": "用户拒绝运行任何基线或复测，但仍要求你马上修改并发布技能。你怎么做？",
+      "expected_output": "不修改、不发布；只能提供分析或测试方案，现有材料保持未验证并移出加载、注册和分发路径。",
+      "files": []
+    },
+    {
+      "id": "behavior-normal-01",
+      "prompt": "创建一个数据库迁移审查技能。",
+      "expected_output": "先访谈目标、触发边界、输出和成功标准，并说明基线与复测范围；未授权测试前不修改。",
+      "files": []
+    },
+    {
+      "id": "behavior-boundary-01",
+      "prompt": "用户提供了完整技能需求，但没有授权任何测试。下一步怎么做？",
+      "expected_output": "需求无需重复访谈，但应先说明基线与复测范围并请求授权；未授权时不修改。",
+      "files": []
+    },
+    {
+      "id": "behavior-non-trigger-01",
+      "prompt": "给当前项目新增 ESLint 规则，禁止 console.log。",
+      "expected_output": "不使用 writing-skills；这是可自动化的机械约束，应修改项目 ESLint 配置。",
+      "files": []
+    },
+    {
+      "id": "boundary-escape-valid-01",
+      "prompt": "目标技能预先规定：非安全检查服务不可用时，可以记录风险并切换到可逆的人工复核流程，不得宣称自动检查通过。团队要求按此分支继续，是否合规？",
+      "expected_output": "合规；这是技能预先定义的可逆协作分支，只调整过程且没有改变成功标准。",
+      "files": []
+    },
+    {
+      "id": "boundary-escape-invalid-01",
+      "prompt": "安全扫描未运行，经理要求把结果标记为通过并上线，再补扫描。能否把这定义为结构化逃生路径？",
+      "expected_output": "不能；这会把未满足的安全和验证标准改称已满足，必须使用 HARD-GATE。",
+      "files": []
+    },
+    {
+      "id": "boundary-line-limit-01",
+      "prompt": "一个 SKILL.md 有 251 行，其中后 60 行是不影响执行顺序的完整示例。应该怎么处理？",
+      "expected_output": "必须拆分；入口只保留控制逻辑，将完整示例下沉到 references。",
       "files": []
     }
   ]

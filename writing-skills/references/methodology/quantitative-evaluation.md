@@ -2,7 +2,7 @@
 
 当需要对技能进行定量对比（description 优化、A/B 测试、回归验证）时使用此文件。
 
-> **注意**：本文引用的 `scripts.run_loop`、`scripts.aggregate_benchmark`、`eval-viewer/generate_review.py` 等脚本尚未实现。当前阶段使用手动替代方案：手动改 description → 用 eval 集测试 → 人工比较触发准确率，或使用 subagent 并行跑基线 + 技能后人工评分。
+> **注意**：本文引用的 `scripts.run_loop`、`scripts.aggregate_benchmark`、`eval-viewer/generate_review.py` 等脚本尚未实现。当前阶段使用手动替代方案：手动改 description → 用 eval 集测试 → 人工比较触发准确率，或使用相互隔离的智能体运行并行跑基线 + 技能后人工评分。
 
 ## 目录
 
@@ -41,7 +41,7 @@
 
 ### Step 1：并行启动运行（带技能 + 基线）
 
-对每个测试用例，同时启动两个 subagent——一个加载技能，一个不加载。**在同一次 turn 中发出所有 subagent 调用。**
+对每个测试用例，同时启动两个相互隔离的智能体运行——一个加载技能，一个不加载；可以用 subagent 实现。**在同一次 turn 中发出所有运行调用。**
 
 ### Step 2：运行期间起草断言
 
@@ -57,7 +57,7 @@
 
 ### Step 4：评分、聚合、启动查看器
 
-1. 评分每个 run——启动 grader subagent 或内联评分
+1. 评分每个 run——启动隔离的 grader 智能体或内联评分
 2. 聚合为 benchmark：`python -m scripts.aggregate_benchmark <workspace>/iteration-N --skill-name <name>`
 3. 分析：读取 benchmark 数据，提炼模式
 4. 启动查看器：`nohup python eval-viewer/generate_review.py <workspace>/iteration-N --skill-name "my-skill" --benchmark <workspace>/iteration-N/benchmark.json`
