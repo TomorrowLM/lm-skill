@@ -26,7 +26,7 @@ Phase 3 产出子任务规格
        ↓
 Step 1: agent_create_tasks   → 批量创建任务，返回 taskIds
        ↓
-Step 2: agent_open_task_chats → 加载 spec + 任务 prompt，打开子聊天窗口
+Step 2: agent_open_task_chats → 加载 spec（+ 可选 prompt），打开子聊天窗口
        ↓                          （任务状态自动变为 running）
 Step 3: agent_wait_for_tasks  → 阻塞等待所有子任务完成
        或 agent_poll_tasks    → 非阻塞查看进度
@@ -46,7 +46,7 @@ Step 5: 逐条审查
 |------|------|
 | `id` | 任务唯一 ID，通常为 `task-<uuid>`。 |
 | `title` | 任务标题，用于主窗口识别任务边界。 |
-| `prompt` | 创建任务时的原始任务要求；普通任务打开窗口时直接使用该字段，不生成 `prompts/` 文件夹。 |
+| `prompt` | 可选。创建任务时的原始任务要求；未传时子 Agent 仅根据 `inputFiles` 中的 spec 文件和 AGENTS.md 中的项目级约束自行执行。 |
 | `inputFiles` | 子任务输入文件，页面工作流内至少应包含对应 `spec/*.md`。 |
 | `resultFile` | 子任务当前最终结果文件；返工完成也必须覆盖该文件。 |
 | `status` | 当前任务状态：`pending`、`running`、`completed`、`failed`、`reviewed`、`rework_requested`。 |

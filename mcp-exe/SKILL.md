@@ -1,8 +1,8 @@
 ---
 name: mcp-exe
 description: >-
-  当需要调用已注册 MCP 工具完成 Swagger/OpenAPI 查询、Figma 设计稿读取、图表生成、Agent 编排、多工具结果处理时使用。
-  用户提到 get_swagger_mcp、接口文档、设计稿 MCP、agent-orchestrator-mcp、创建/等待/汇总/返工子任务等场景必须触发。
+  当需要调用已注册 MCP 工具完成 Swagger/OpenAPI 查询、Figma 设计稿读取、图表生成、Agent 编排、Chrome 浏览器操作、多工具结果处理时使用。
+  用户提到 get_swagger_mcp、接口文档、设计稿 MCP、agent-orchestrator-mcp、mcp-chrome、chrome 浏览器/MCP、创建/等待/汇总/返工子任务等场景必须触发。
   不适用于普通终端命令、浏览器检索、文件编辑或无需 MCP 的代码修改。
 ---
 
@@ -46,6 +46,7 @@ CallMcpTool:
 | 图表生成 | 思维导图、流程图、时序图、复杂图表、导出图片 | [references/chart-generation.md](references/chart-generation.md) |
 | Figma 设计稿 | 获取 UI 布局/样式/组件信息，下载图片资源 | [references/figma-mcp.md](references/figma-mcp.md) |
 | Agent 编排 | 拆分复杂任务为子任务，并行执行 + 审查返工 | [references/agent-orchestrator-mcp.md](references/agent-orchestrator-mcp.md) |
+| Chrome 浏览器 | 操作已打开的 Chrome 浏览器页面（导航、截图、交互、网络捕获、内容分析） | [references/chrome-mcp.md](references/chrome-mcp.md) |
 
 ## 注意事项
 

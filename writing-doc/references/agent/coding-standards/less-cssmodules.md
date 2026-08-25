@@ -51,3 +51,4 @@ import './index.less';
 12. CSS 注释格式：`/* color: #ffffff; */`
 13. **禁止**使用 `max-height`
 14. **禁止**在 HTML 中使用 style
+15. **所有样式必须使用 Less 嵌套语法编写**，利用 `&` 父选择器引用，避免平铺书写类名串联

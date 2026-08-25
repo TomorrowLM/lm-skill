@@ -38,7 +38,9 @@ CallMcpTool:
 
 `fileKey`、`nodes`（节点数组）、`localPath`（保存路径）
 
-> 用途：下载图标、插画等图片资源到项目中
+> 用途：下载图标、插画、截图等图片资源到项目中
+
+> **页面开发工作流内使用时：** `localPath` 必须指向当前功能文件夹的 `assets/figma/` 目录（如 `docs/design/YYYY-MM-DD-<topic>-design/assets/figma/`），确保设计资源随设计方案文档一同归档。
 
 ## 示例流程
 
@@ -48,6 +50,10 @@ CallMcpTool:
 提取 fileKey='abc123', nodeId='123:456'
 ↓
 调用 get_figma_data 获取 UI 布局、样式、组件信息
+↓
+调用 get_screenshot 获取视觉参考图，保存到 assets/figma/reference.png
+↓
+调用 download_figma_images 下载资源，localPath 指向 assets/figma/
 ↓
 根据设计数据实现页面 UI
 ```

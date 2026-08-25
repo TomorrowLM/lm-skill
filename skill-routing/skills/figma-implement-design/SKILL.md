@@ -83,6 +83,8 @@ get_screenshot(fileKey=":fileKey", nodeId="1-2")
 
 此截图是视觉验证的事实来源。整个实现过程中都应保持可访问。
 
+> **页面开发工作流内使用时：** 截图应保存到当前功能文件夹的 `assets/figma/` 目录（如 `docs/design/YYYY-MM-DD-<topic>-design/assets/figma/reference.png`），确保视觉参考图与设计方案文档一同归档。
+
 ### 步骤 4：下载所需资源
 
 下载 Figma MCP 服务器返回的所有资源（图片、图标、SVG 等）。
@@ -93,7 +95,7 @@ get_screenshot(fileKey=":fileKey", nodeId="1-2")
 - 如果提供了 `localhost` 来源，不要使用或创建占位资源。
 - 资源通过 Figma MCP 服务器内置的资源端点提供。
 
-> **页面开发工作流内使用时：** 需要落盘的 Figma 截图、标注图、图标文件应保存到当前功能文件夹的 `assets/figma/` 目录，便于和设计方案文档及代码一同归档。详见 `page-development-workflow` 的统一目录结构约定。
+> **页面开发工作流内使用时：** 需要落盘的 Figma 截图、标注图、图标文件应保存到当前功能文件夹的 `assets/figma/` 目录，便于和设计方案文档及代码一同归档。`download_figma_images` 的 `localPath` 参数也必须指向 `assets/figma/` 目录。详见 `page-development-workflow` 的统一目录结构约定。
 
 ### 步骤 5：转换为项目约定
 
