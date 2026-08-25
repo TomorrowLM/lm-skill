@@ -10,7 +10,7 @@
 | `agent_create_tasks` | 主 Agent | 批量创建多个编排任务 |
 | `agent_list_tasks` | 主 Agent | 列出工作区任务，可按状态过滤 |
 | `agent_get_task` | 主 Agent | 获取单个任务详情 |
-| `agent_open_task_chats` | 主 Agent | 加载 spec + 任务 prompt；返工时额外挂载当前 `rework.promptFile`，通过 VS Code CLI 打开子聊天窗口 |
+| `agent_open_task_chats` | 主 Agent | 挂载任务 `inputFiles`；返工时额外挂载当前 `rework.inputFiles`，并使用对应独立 `prompt` 打开子聊天窗口 |
 | `agent_wait_for_tasks` | 主 Agent | 阻塞等待多个任务完成（轮询状态 + 结果文件） |
 | `agent_poll_tasks` | 主 Agent | 非阻塞查看多个任务当前状态 |
 | `agent_complete_task` | 子 Agent | 写入结果并标记任务完成 |
@@ -53,7 +53,7 @@ Step 5: 逐条审查
 | `rework` | 当前最新一次返工记录，只在返工任务上存在。 |
 | `reworks` | 全部返工历史，按发生顺序追加。 |
 
-返工记录中 `promptFile` 必须指向 `reworks/task-<uuid>-rework-<N>.md`。普通任务没有 `promptFile`，也不生成 `prompts/` 目录。`reworks/` 只保存返工 prompt 历史，不保存返工结果；任务结果始终以 `resultFile` 为准。
+返工记录中的 `prompt` 是给返工子任务的简短独立说明，`inputFiles` 至少包含 `reworks/task-<uuid>-rework-<N>.md`。普通任务和返工任务统一通过 `inputFiles` 挂载文档，不生成 `prompts/` 目录。`reworks/` 只保存返工要求历史，不保存返工结果；任务结果始终以 `resultFile` 为准。
 
 ## Step 1：创建任务
 
@@ -100,11 +100,11 @@ CallMcpTool:
       - "task-<uuid-3>"
 ```
 
-> 服务端通过 VS Code CLI 打开 `code chat --mode agent --reuse-window --add-file <specFile>`，把任务 `prompt` 作为指令传给子 Agent，并将状态更新为 `running`。
+> 服务端通过 VS Code CLI 为任务的全部 `inputFiles` 追加 `--add-file`，把任务 `prompt` 作为独立指令传给子 Agent，并将状态更新为 `running`。
 >
 > 普通任务不生成 `prompts/` 文件夹；普通任务的可执行上下文来自 `spec/*.md` 和任务 `prompt` 字段。
 >
-> 返工任务会额外挂载当前 `rework.promptFile`，该文件位于当前设计目录的 `reworks/` 下。
+> 返工任务会额外挂载当前 `rework.inputFiles`，其中返工要求文档位于当前设计目录的 `reworks/` 下；旧数据中的 `promptFile` 仅作为读取兼容。
 
 ### 执行编排规则
 
@@ -183,6 +183,10 @@ CallMcpTool:
 
 ## Step 5：审查与返工
 
+返工不是自动动作。主 Agent 必须先整理返工草案，向用户展示任务、原因、缺失验收项、期望结果、允许范围、资源定位和原 `resultFile`，并等待明确确认。确认前不得调用 `agent_request_rework`，因此不会生成返工文件或改变任务状态；自动推进模式也不例外。
+
+用户要求调整草案时，修改后重新确认。只有用户回复“确认返工”“执行”“打开”等明确指令后，才执行以下返工调用并重新打开任务窗口。
+
 ```plaintext
 # 审查通过
 CallMcpTool:
@@ -203,9 +207,9 @@ CallMcpTool:
     reason: "详情页缺少错误态和空态处理，请补充"
 ```
 
-> `agent_request_rework` 会创建当前返工记录并写入 `tasks.json`：`rework` 表示当前返工，`reworks` 保留全部返工历史。每条返工记录包含 `reason`、实际发给子窗口的 `prompt`、返工文件路径 `promptFile`、`status` 和时间字段。
+> `agent_request_rework` 会创建当前返工记录并写入 `tasks.json`：`rework` 表示当前返工，`reworks` 保留全部返工历史。每条返工记录包含 `reason`、给子窗口的简短独立 `prompt`、返工 `inputFiles`、`status` 和时间字段。
 >
-> 返工文件平铺写入当前需求目录：`docs/design|prod/<需求目录>/reworks/<taskId>-rework-<N>.md`。重新 `agent_open_task_chats` 时会挂载原 `spec` 和当前 `rework.promptFile`。子 Agent 返工后必须覆盖原 `resultFile`，再调用 `agent_complete_task`。之后 `agent_wait_for_tasks` → `agent_summarize_results` → 主 Agent 审查。
+> 返工文件平铺写入当前需求目录：`docs/design|prod/<需求目录>/reworks/<taskId>-rework-<N>.md`，并记录到当前 `rework.inputFiles`。重新 `agent_open_task_chats` 时会挂载原任务 `inputFiles` 和当前返工 `inputFiles`。子 Agent 返工后必须覆盖原 `resultFile`，再调用 `agent_complete_task`。之后 `agent_wait_for_tasks` → `agent_summarize_results` → 主 Agent 审查。
 
 ### 返工数据结构
 
@@ -219,8 +223,10 @@ CallMcpTool:
   "rework": {
     "id": "rework-1",
     "reason": "缺少错误态和空态处理，请补充",
-    "prompt": "请对任务 task-xxx 进行返工...",
-    "promptFile": "/workspace/docs/design/demo/reworks/task-xxx-rework-1.md",
+    "prompt": "请读取已挂载的原始任务输入文件和本次返工输入文件，严格按返工要求补齐实现。",
+    "inputFiles": [
+      "/workspace/docs/design/demo/reworks/task-xxx-rework-1.md"
+    ],
     "status": "requested",
     "createdAt": "2026-08-13T00:00:00.000Z"
   },
@@ -228,8 +234,10 @@ CallMcpTool:
     {
       "id": "rework-1",
       "reason": "缺少错误态和空态处理，请补充",
-      "prompt": "请对任务 task-xxx 进行返工...",
-      "promptFile": "/workspace/docs/design/demo/reworks/task-xxx-rework-1.md",
+      "prompt": "请读取已挂载的原始任务输入文件和本次返工输入文件，严格按返工要求补齐实现。",
+      "inputFiles": [
+        "/workspace/docs/design/demo/reworks/task-xxx-rework-1.md"
+      ],
       "status": "requested",
       "createdAt": "2026-08-13T00:00:00.000Z"
     }

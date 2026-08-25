@@ -11,6 +11,16 @@
 - TDD 任务必须使用红-绿-重构：先写失败测试，再写最少实现，再重构。
 - 每个并行批次完成后，按计划执行合流检查。
 
+## 隔离执行的设计资源职责
+
+适用于多窗口、MCP 编排和子代理驱动；内联执行仍由当前窗口按计划读取资源。
+
+- 主窗口只把 Phase 1 已确认的资源定位、用途、验收目标和访问限制写入 `spec` 或任务 prompt，不在 Phase 3、Phase 4 重复打开网页、下载图片或执行完整视觉分析。
+- 新开的执行任务根据资源定位自行调用 Figma、浏览器或图片分析能力，获取实现所需详情，并将 Figma 资源保存到 `assets/figma/`、页面截图保存到 `assets/screenshots/`。
+- 聊天附件没有可复用路径时，主窗口只允许机械落盘并传递文件路径，不读取或总结视觉内容。
+- 子任务结果只向主窗口返回设计结论摘要、修改文件、验证结果、关键资源路径和遗留问题；不要回传完整网页内容、图片数据或冗长视觉分析过程。
+- 主窗口仅在审查无法由摘要和关键产物证明时，按需读取最小范围的截图或资源，不重新执行完整资源调研。
+
 ## Phase 4 入口自检
 
 进入编码或编排前必须完成自检，任一不满足则暂停并回到 Phase 3 或等待用户确认。
@@ -116,13 +126,14 @@ Phase 4 开始前，必须向用户确认推进模式。推进模式决定任务
 编排顺序：
 
 1. 用 `agent_create_tasks` 批量创建所有任务，必须显式传 `resultFile`。注意：`agent_create_tasks` 只创建任务记录，不会自动打开聊天窗口。
-2. 用 `agent_open_task_chats` 为待执行任务打开 VS Code 聊天窗口（通过 `code chat --mode agent --add-file <spec>` 启动）。普通任务不生成 `prompts/` 文件夹，执行上下文来自 `spec/*.md` 和任务 `prompt` 字段。
+2. 用 `agent_open_task_chats` 为待执行任务打开 VS Code 聊天窗口（通过 `code chat --mode agent` 挂载任务的全部 `inputFiles`）。普通任务不生成 `prompts/` 文件夹，执行上下文来自 `inputFiles` 和任务 `prompt` 字段。
 3. **有共享层依赖时**：先打开共享层任务 → 等共享层完成 → 再打开功能层任务。
 4. **无共享依赖时**：可以一次性打开所有任务聊天窗。
 5. 用 `agent_wait_for_tasks` 等待全部任务完成。
 6. 用 `agent_summarize_results` 汇总结果。
-7. 审查结果；不合格则用 `agent_request_rework` 请求返工。
-8. 通过后用 `agent_mark_task_reviewed` 标记，进入 Phase 5。
+7. 审查结果；不合格时先整理返工草案并等待用户确认，确认前不得调用返工工具或打开子窗口。
+8. 用户确认后用 `agent_request_rework` 生成返工记录，再执行 `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` 并重新审查。
+9. 通过后用 `agent_mark_task_reviewed` 标记，进入 Phase 5。
 
 `resultFile` 规则：
 
@@ -145,7 +156,7 @@ docs/design/YYYY-MM-DD-<topic>-design/
 - `tasks.json` 存储所有任务状态。
 - `tasks.json` 中普通任务的 `prompt` 记录原始任务要求；返工任务用 `rework` 记录当前返工，用 `reworks[]` 记录历史返工。
 - 普通任务不生成 `prompts/` 目录。
-- `reworks/` 只保存返工 prompt md，直接平铺，不按 taskId 建子目录。
+- `reworks/` 只保存返工要求文档，直接平铺，不按 taskId 建子目录。
 - `results/` 保存子任务结果；返工后仍覆盖原 `resultFile`。
 
 禁止事项：
@@ -158,20 +169,35 @@ docs/design/YYYY-MM-DD-<topic>-design/
 
 返工只用于处理已确认计划内的遗漏执行项：原 `spec` 或 `implementation-plan.md` 已写明，但执行结果漏做、做错或未满足验收标准。
 
+### 返工确认门禁
+
+返工草案必须先获得用户明确确认，自动推进和手动确认模式均不能跳过。
+
+确认前主窗口只能展示草案，不得调用 `agent_request_rework`、不得生成 `reworks/*.md`、不得调用 `agent_open_task_chats`。草案至少包含：
+
+- 原任务 ID 和标题。
+- 返工原因与未满足的验收项。
+- 期望修改结果和允许修改范围。
+- 需要执行任务自行获取的设计资源定位。
+- 原 `resultFile` 路径及覆盖规则。
+
+用户回复“确认返工”“执行”“打开”等明确指令后，才能创建返工记录并打开子窗口。用户要求调整时，先修改草案并重新确认，不产生无效返工历史。
+
 处理规则：
 
 1. 不创建新任务边界。
-2. 写清返工原因：问题点、缺失验收项、期望修改结果、允许改动范围。
-3. MCP 编排时使用 `agent_request_rework`，再重新 `agent_open_task_chats`、`agent_wait_for_tasks`、`agent_summarize_results`。
-4. 主窗口重新审查，通过后再标记 reviewed。
-5. 多次返工仍不通过时暂停，向用户说明阻塞点。
+2. 整理返工草案：问题点、缺失验收项、期望修改结果、允许改动范围，以及需要重新获取的设计资源定位；主窗口不代替返工任务获取或分析资源。
+3. 向用户展示草案并等待明确确认；未确认时保持原任务状态，不创建返工文件、不打开子窗口。
+4. 用户确认后，MCP 编排使用 `agent_request_rework`，再重新执行 `agent_open_task_chats`、`agent_wait_for_tasks`、`agent_summarize_results`。
+5. 主窗口重新审查，通过后再标记 reviewed；不通过则重新整理草案并再次等待确认。
+6. 多次返工仍不通过时暂停，向用户说明阻塞点。
 
 MCP 返工状态和文件规则：
 
 - `agent_request_rework` 会生成 `reworks/task-<uuid>-rework-<N>.md`。
 - `tasks.json` 中 `rework` 记录当前返工，`reworks[]` 记录所有历史返工。
-- 每条返工记录必须包含 `reason`、实际发送给子窗口的 `prompt`、`promptFile`、`status` 和时间字段。
-- 重新打开返工任务时会挂载原 `spec` 和当前 `rework.promptFile`。
+- 每条返工记录必须包含 `reason`、给子窗口的简短独立 `prompt`、返工 `inputFiles`、`status` 和时间字段。
+- 重新打开返工任务时会合并挂载原任务 `inputFiles` 和当前 `rework.inputFiles`；旧记录中的 `promptFile` 只用于兼容读取。
 - 返工完成后 `task.status = completed`，当前 `rework.status = completed`，并覆盖原 `resultFile`。
 
 ## 中途追加子任务
@@ -218,6 +244,7 @@ MCP 返工状态和文件规则：
 | 只调 `agent_open_task_chats`，不调 `agent_wait_for_tasks` | 聊天窗打开但主窗口不等待，无法汇总 | 打开后立即 `agent_wait_for_tasks` |
 | 忘记调 `agent_summarize_results` | 结果分散在各 resultFile，主窗口看不到汇总 | 等待完成后 `agent_summarize_results` |
 | 不审查直接标记通过 | 子 Agent 产出有 bug 进入 Phase 5 | 逐条审查，不合格 `agent_request_rework` |
+| 用户未确认返工草案就调用返工工具或打开窗口 | 产生未经确认的返工记录并消耗子窗口上下文 | 先展示草案，用户明确确认后再 `agent_request_rework` 和 `agent_open_task_chats` |
 | 返工时新建任务或新建 resultFile | 返工历史和原任务结果分裂 | 使用 `agent_request_rework`，保留原 task 和原 `resultFile` |
 | 追加任务不新增 spec | 后续无法追踪追加范围 | 先新增 `spec/NNx-xxx-spec.md`，再创建任务 |
 

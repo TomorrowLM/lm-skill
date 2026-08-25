@@ -1,7 +1,7 @@
 ---
 name: page-development-workflow
 description: >-
-  当用户说“开发一个XX页面”“实现这个设计稿”“按PRD做页面”“新建模块/功能页”“做列表页/详情页/编辑页/表单页/大屏页”，或需要把 Figma、原型、接口文档、PRD 落地为前端页面时使用。
+  当用户说“开发一个XX页面”“实现这个设计稿”“按PRD做页面”“新建模块/功能页”“做列表页/详情页/编辑页/表单页/大屏页”，或需要把 Figma、原型、接口文档、PRD 落地为前端页面，或大幅改造已有页面的结构/路由/接口/状态流/组件树时使用。
   覆盖需求分析→技术方案→实现计划→编码→测试验收→交付的完整闭环。
   不触发：修 bug、改文案、调单个样式、加单个字段/按钮、解释代码、代码评审、小范围快速改动。
 ---
@@ -63,14 +63,12 @@ Phase 6 收尾交付
 | `references/phase3-split-strategies.md` | Phase 3 需要设计拆分方案、实现计划、并行编排时 |
 | `references/phase4-execution-modes.md` | Phase 4 需要多窗口、MCP 编排、子代理或内联执行时 |
 | `references/phase5-verification.md` | Phase 5 选择验证命令、记录证据、做 UI 验收时 |
-| `references/mcp-integration.md` | 用户提供 Swagger、OpenAPI、Figma 或其他 MCP 可读资源时 |
-| `references/code-examples.md` | Phase 4 需要 React + TypeScript 代码组织示例时 |
 
 引用规则：
 
 - 进入 Phase 3、Phase 4、Phase 5 时，必须读取对应 reference 后再执行该阶段。
 - 使用 MCP 编排时，同时读取 `references/phase4-execution-modes.md` 和 `mcp-exe/references/agent-orchestrator-mcp.md`。
-- 涉及 Swagger/OpenAPI、Figma 或其他 MCP 资源时，先读取 `references/mcp-integration.md`，再按需读取 `mcp-exe` 对应案例。
+- Phase 1 涉及 Swagger/OpenAPI、Figma 或浏览器资源时，按需读取 `mcp-exe` 对应案例；Phase 3 只记录资源定位，Phase 4 隔离任务自行获取实现所需详情。
 
 ## Phase 1：需求分析与技术调研
 
@@ -87,7 +85,7 @@ Phase 6 收尾交付
 
 - 从零需求且无设计稿/接口文档：读取 `brainstorming`。
 - Figma / UI / React 实现相关：读取 `skill-routing`，只让它路由 UI/视觉/React 子技能。
-- Swagger / OpenAPI / Figma：读取 `references/mcp-integration.md`。
+- Swagger / OpenAPI / Figma：读取 `mcp-exe` 对应案例，获取确认需求、范围和接口契约所需的信息。
 - 项目已有 GitNexus 索引：用 GitNexus 探索可复用代码和执行流。
 
 结束时展示需求共识、范围取舍、待决策点和调研摘要，等待用户确认。
@@ -178,6 +176,8 @@ Phase 6 收尾交付
 - TDD 任务必须读取 `test-driven-development` 并按红-绿-重构执行。
 - 多窗口 / MCP 编排 / 子代理 / 内联执行细节见 `references/phase4-execution-modes.md`。
 - **MCP 编排时**必须先读取 `mcp-exe/references/agent-orchestrator-mcp.md`，按 Step 1→2→3→4→5 完整流程执行，禁止跳过 `agent_open_task_chats`。
+- 多窗口、MCP 编排和子代理等隔离执行方式中，主窗口只传递设计资源定位与验收目标；执行或返工任务自行获取详情、分析资源并落盘，主窗口只读取压缩结果。
+- 返工前必须先向用户展示返工草案并获得明确确认；确认前禁止创建返工记录、生成返工文件或打开返工子窗口，自动推进模式也不能跳过此门禁。
 - 已确认计划内的遗漏执行项走返工；返工和追加任务细节以 `references/phase4-execution-modes.md` 为准。
 - 新增页面、模块、接口、状态流、验收标准、共享层变更或 HIGH / CRITICAL 风险时，必须回到 Phase 3 更新计划并等待确认。
 
@@ -247,7 +247,7 @@ docs/design/YYYY-MM-DD-<topic>-design/
 │   └── NNx-<module>-spec.md            # 拆分时；NN=01,02,03... 按执行顺序
 │                                       # 并行批次用字母后缀：02a, 02b
 ├── tasks.json                          # MCP 编排任务状态，按需
-├── reworks/                            # MCP 返工 prompt，按需，文件平铺
+├── reworks/                            # MCP 返工要求文档，按需，文件平铺
 │   └── task-<uuid>-rework-<N>.md
 ├── results/                            # MCP 子任务执行结果，按需
 │   └── <编号>-result.md
@@ -265,7 +265,8 @@ MCP 编排产物规则：
 
 - 普通任务不生成 `prompts/` 文件夹；普通任务通过 `spec/*.md` 和 `tasks.json` 中的 `prompt` 字段提供上下文。
 - `tasks.json` 记录所有子任务状态；返工时 `rework` 指向当前返工，`reworks[]` 保留历史返工。
-- `reworks/` 只保存返工 prompt md，文件命名为 `task-<uuid>-rework-<N>.md`，直接平铺在 `reworks/` 下。
+- 返工记录保留简短独立的 `prompt`，返工要求文档通过 `rework.inputFiles` 挂载；旧 `promptFile` 仅作读取兼容。
+- `reworks/` 只保存返工要求文档，文件命名为 `task-<uuid>-rework-<N>.md`，直接平铺在 `reworks/` 下。
 - `results/` 保存每个任务的当前最终结果；返工完成后必须覆盖原任务的 `resultFile`，不另建返工结果文件。
 - 中途追加任务必须先新增 `spec/NNx-<module>-spec.md`，再创建任务并显式指定 `results/<编号>-result.md`。
 
