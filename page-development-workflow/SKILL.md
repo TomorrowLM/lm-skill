@@ -2,8 +2,7 @@
 name: page-development-workflow
 description: >-
   当用户说“开发一个XX页面”“实现这个设计稿”“按PRD做页面”“新建模块/功能页”“做列表页/详情页/编辑页/表单页/大屏页”，或需要把 Figma、原型、接口文档、PRD 落地为前端页面，或大幅改造已有页面的结构/路由/接口/状态流/组件树时使用。
-  覆盖需求分析→技术方案→实现计划→编码→测试验收→交付的完整闭环。
-  不触发：修 bug、改文案、调单个样式、加单个字段/按钮、解释代码、代码评审、小范围快速改动。
+  覆盖需求分析→技术方案→实现计划→编码→测试验收→交付的完整闭环。  Chrome 浏览器操作默认使用 chrome-mcp-server（chrome_ 前缀），不可用时回退到 chrome-devtools-mcp。  不触发：修 bug、改文案、调单个样式、加单个字段/按钮、解释代码、代码评审、小范围快速改动。
 ---
 
 # 页面开发工作流
@@ -63,12 +62,15 @@ Phase 6 收尾交付
 | `references/phase3-split-strategies.md` | Phase 3 需要设计拆分方案、实现计划、并行编排时 |
 | `references/phase4-execution-modes.md` | Phase 4 需要多窗口、MCP 编排、子代理或内联执行时 |
 | `references/phase5-verification.md` | Phase 5 选择验证命令、记录证据、做 UI 验收时 |
+| `browser-verification/SKILL.md` | Phase 5 做浏览器 UI 手动验收时，查看验证流程和工具映射 |
+| `mcp-exe/references/chrome-mcp.md` | 已废弃，Chrome 工具文档已迁移至 `browser-verification/references/chrome-mcp.md` |
 
 引用规则：
 
 - 进入 Phase 3、Phase 4、Phase 5 时，必须读取对应 reference 后再执行该阶段。
 - 使用 MCP 编排时，同时读取 `references/phase4-execution-modes.md` 和 `mcp-exe/references/agent-orchestrator-mcp.md`。
 - Phase 1 涉及 Swagger/OpenAPI、Figma 或浏览器资源时，按需读取 `mcp-exe` 对应案例；Phase 3 只记录资源定位，Phase 4 隔离任务自行获取实现所需详情。
+- Phase 5 做浏览器 UI 验收时，读取 `browser-verification/SKILL.md` 获取验证流程，再读取 `browser-verification/references/chrome-mcp.md` 获取工具用法。
 
 ## Phase 1：需求分析与技术调研
 

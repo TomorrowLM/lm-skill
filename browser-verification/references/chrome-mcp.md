@@ -191,3 +191,29 @@ CallMcpTool:
 - 工具名有 `chrome_` 前缀（如 `chrome_navigate`），与 Playwright 浏览器的工具名不同
 - `search_tabs_content` 依赖内置向量数据库和本地小模型，首次使用可能需要初始化索引
 - 网络请求捕获使用 Chrome 的 webRequest API 或 Debugger API；Debugger API 可获取响应体
+
+## 故障排查
+
+### 工具被禁用（Tool is currently disabled）
+
+**症状：** 调用 `chrome_*` 系列工具时返回 `Tool ... is currently disabled by the user`
+
+**原因：** VS Code Copilot 在会话中未自动激活 `chrome-mcp-server` 的工具，工具处于 fallback 状态。
+
+**临时解决：** 调用 `activate_fallback_mcp_chromemcpserv_*`（如 `activate_fallback_mcp_chromemcpserv_get_windows_and_tabs`）激活全部 23 个工具。
+
+**永久解决：** 在 VS Code `settings.json` 中配置：
+
+```json
+{
+  "chat.mcp.disabledTools": {
+    "chrome-mcp-server": []
+  },
+  "chat.mcp.autostart": "newAndOutdated",
+  "chat.permissions.default": "autoApprove"
+}
+```
+
+- `disabledTools` 设空数组表示不禁用该服务器的任何工具
+- `autostart: "newAndOutdated"` 确保工具集自动启动
+- `permissions.default: "autoApprove"` 自动批准工具调用，避免每次手动确认

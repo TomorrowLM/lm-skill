@@ -132,7 +132,7 @@ Phase 4 开始前，必须向用户确认推进模式。推进模式决定任务
 5. 用 `agent_wait_for_tasks` 等待全部任务完成。
 6. 用 `agent_summarize_results` 汇总结果。
 7. 审查结果；不合格时先整理返工草案并等待用户确认，确认前不得调用返工工具或打开子窗口。
-8. 用户确认后用 `agent_request_rework` 生成返工记录，再执行 `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` 并重新审查。
+8. 用户确认后，Agent 按模板写入返工文档 `reworks/task-<uuid>-rework-<N>.md`，再调用 `agent_request_rework` 传入文档路径；MCP 只更新 `tasks.json` 不生成文档。之后执行 `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` 并重新审查。
 9. 通过后用 `agent_mark_task_reviewed` 标记，进入 Phase 5。
 
 `resultFile` 规则：
@@ -173,7 +173,7 @@ docs/design/YYYY-MM-DD-<topic>-design/
 
 返工草案必须先获得用户明确确认，自动推进和手动确认模式均不能跳过。
 
-确认前主窗口只能展示草案，不得调用 `agent_request_rework`、不得生成 `reworks/*.md`、不得调用 `agent_open_task_chats`。草案至少包含：
+确认前主窗口只能展示草案，不得调用 `agent_request_rework`、不得写入 `reworks/*.md`、不得调用 `agent_open_task_chats`。草案至少包含：
 
 - 原任务 ID 和标题。
 - 返工原因与未满足的验收项。
@@ -188,17 +188,59 @@ docs/design/YYYY-MM-DD-<topic>-design/
 1. 不创建新任务边界。
 2. 整理返工草案：问题点、缺失验收项、期望修改结果、允许改动范围，以及需要重新获取的设计资源定位；主窗口不代替返工任务获取或分析资源。
 3. 向用户展示草案并等待明确确认；未确认时保持原任务状态，不创建返工文件、不打开子窗口。
-4. 用户确认后，MCP 编排使用 `agent_request_rework`，再重新执行 `agent_open_task_chats`、`agent_wait_for_tasks`、`agent_summarize_results`。
+4. 用户确认后，Agent 按模板写入返工文档，再调用 `agent_request_rework` 传入 `reworkFile` 路径；MCP 只更新 `tasks.json`。之后重新执行 `agent_open_task_chats`、`agent_wait_for_tasks`、`agent_summarize_results`。
 5. 主窗口重新审查，通过后再标记 reviewed；不通过则重新整理草案并再次等待确认。
 6. 多次返工仍不通过时暂停，向用户说明阻塞点。
 
 MCP 返工状态和文件规则：
 
-- `agent_request_rework` 会生成 `reworks/task-<uuid>-rework-<N>.md`。
+- Agent 按模板写入 `reworks/task-<uuid>-rework-<N>.md`，再调用 `agent_request_rework` 传入文档路径；MCP 只更新 `tasks.json`。
 - `tasks.json` 中 `rework` 记录当前返工，`reworks[]` 记录所有历史返工。
 - 每条返工记录必须包含 `reason`、给子窗口的简短独立 `prompt`、返工 `inputFiles`、`status` 和时间字段。
 - 重新打开返工任务时会合并挂载原任务 `inputFiles` 和当前 `rework.inputFiles`；旧记录中的 `promptFile` 只用于兼容读取。
 - 返工完成后 `task.status = completed`，当前 `rework.status = completed`，并覆盖原 `resultFile`。
+
+### 返工文档模板
+
+Agent 按以下模板写入 `reworks/task-<uuid>-rework-<N>.md`，写完后调用 `agent_request_rework` 传入 `reworkFile` 路径。执行子 Agent 打开后按清单逐项完成，禁止跳过或自行扩展。
+
+```md
+# 返工任务：<任务标题>
+
+> 返工编号：rework-<N> | 关联任务：<taskId>
+
+## 返工原因
+
+<用户确认的返工原因描述>
+
+## 输入文件
+
+- <原始任务 spec 路径>
+- <其他原始任务输入文件>
+- <返工专用输入文件（如有）>
+
+## 结果文件
+
+<原 resultFile 绝对路径>
+
+## 执行清单
+
+- [ ] 读取所有输入文件，理解原始任务范围和当前实现结果
+- [ ] 逐项对照返工原因，定位差距与遗漏
+- [ ] 编辑前执行 GitNexus upstream impact 并报告风险
+- [ ] 按返工要求补齐实现，确保与原始任务约束一致
+- [ ] 运行规格要求的验证（lint / typecheck / build）
+- [ ] 覆盖原 resultFile 并写入完整的修改报告
+- [ ] 调用 agent_complete_task 标记完成
+```
+
+模板使用规则：
+
+- Agent 负责按模板写入返工文档，MCP 不参与文档生成。
+- 返工原因直接使用用户确认的返工原因原文。
+- 输入文件来自原任务 `inputFiles`，不额外追加或删减。
+- 执行清单由技能侧维护，Agent 写入时不做增删改。
+- 如需为特定项目定制清单（如增加 GitNexus 步骤），应在技能中提供变体模板。
 
 ## 中途追加子任务
 

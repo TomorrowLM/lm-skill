@@ -16,7 +16,7 @@
 | `agent_complete_task` | 子 Agent | 写入结果并标记任务完成 |
 | `agent_read_task_result` | 主 Agent | 读取已完成任务的结果文件 |
 | `agent_mark_task_reviewed` | 主 Agent | 审查通过后标记任务为已审查 |
-| `agent_request_rework` | 主 Agent | 结果不合格时标记返工 |
+| `agent_request_rework` | 主 Agent | 结果不合格时记账（Agent 先写文档再调此工具） |
 | `agent_summarize_results` | 主 Agent | 读取多个任务结果并合并为汇总文本 |
 
 ## 完整编排流程
@@ -35,7 +35,7 @@ Step 4: agent_summarize_results → 合并所有结果
        ↓
 Step 5: 逐条审查
        ├─ 通过 → agent_mark_task_reviewed
-       └─ 不通过 → agent_request_rework → 重新等待
+       └─ 不通过 → Agent写返工文档 → agent_request_rework → 重新等待
 ```
 
 ## `tasks.json` 关键字段
@@ -54,6 +54,8 @@ Step 5: 逐条审查
 | `reworks` | 全部返工历史，按发生顺序追加。 |
 
 返工记录中的 `prompt` 是给返工子任务的简短独立说明，`inputFiles` 至少包含 `reworks/task-<uuid>-rework-<N>.md`。普通任务和返工任务统一通过 `inputFiles` 挂载文档，不生成 `prompts/` 目录。`reworks/` 只保存返工要求历史，不保存返工结果；任务结果始终以 `resultFile` 为准。
+
+返工文档格式由 `page-development-workflow` 技能的「返工文档模板」定义，MCP 只负责机械写入。模板包含：返工编号、关联任务、返工原因、输入文件、结果文件、执行清单。详见 `phase4-execution-modes.md` → 返工文档模板。
 
 ## Step 1：创建任务
 
@@ -183,7 +185,9 @@ CallMcpTool:
 
 ## Step 5：审查与返工
 
-返工不是自动动作。主 Agent 必须先整理返工草案，向用户展示任务、原因、缺失验收项、期望结果、允许范围、资源定位和原 `resultFile`，并等待明确确认。确认前不得调用 `agent_request_rework`，因此不会生成返工文件或改变任务状态；自动推进模式也不例外。
+返工不是自动动作。主 Agent 必须先整理返工草案，向用户展示任务、原因、缺失验收项、期望结果、允许范围、资源定位和原 `resultFile`，并等待明确确认。确认前不得调用 `agent_request_rework` 或写入返工文件；自动推进模式也不例外。
+
+用户确认后，Agent 按技能模板写入 `reworks/task-<uuid>-rework-<N>.md`，再调用 `agent_request_rework` 传入 `reworkFile` 路径；MCP 只更新 `tasks.json` 不生成文档。
 
 用户要求调整草案时，修改后重新确认。只有用户回复“确认返工”“执行”“打开”等明确指令后，才执行以下返工调用并重新打开任务窗口。
 
@@ -205,11 +209,10 @@ CallMcpTool:
     workspaceRoot: "/Users/zm/work/yqa-g-h5-urban"
     taskId: "task-detail-page"
     reason: "详情页缺少错误态和空态处理，请补充"
+    reworkFile: "/Users/zm/work/yqa-g-h5-urban/docs/design/demo/reworks/task-detail-page-rework-1.md"
 ```
 
-> `agent_request_rework` 会创建当前返工记录并写入 `tasks.json`：`rework` 表示当前返工，`reworks` 保留全部返工历史。每条返工记录包含 `reason`、给子窗口的简短独立 `prompt`、返工 `inputFiles`、`status` 和时间字段。
->
-> 返工文件平铺写入当前需求目录：`docs/design|prod/<需求目录>/reworks/<taskId>-rework-<N>.md`，并记录到当前 `rework.inputFiles`。重新 `agent_open_task_chats` 时会挂载原任务 `inputFiles` 和当前返工 `inputFiles`。子 Agent 返工后必须覆盖原 `resultFile`，再调用 `agent_complete_task`。之后 `agent_wait_for_tasks` → `agent_summarize_results` → 主 Agent 审查。
+> Agent 先按技能模板写入 `reworkFile`，再调 `agent_request_rework` 传入路径；MCP 只更新 `tasks.json`。
 
 ### 返工数据结构
 
@@ -247,7 +250,7 @@ CallMcpTool:
 
 返工状态同步规则：
 
-- `agent_request_rework`：`task.status = rework_requested`，当前 `rework.status = requested`，并追加到 `reworks[]`。
+- `agent_request_rework`：Agent 先写返工文档再调用；MCP 设 `task.status = rework_requested`，当前 `rework.status = requested`，并追加到 `reworks[]`。
 - `agent_open_task_chats`：`task.status = running`，当前 `rework.status = running`。
 - `agent_complete_task`：`task.status = completed`，当前 `rework.status = completed`，并覆盖原 `resultFile`。
 
@@ -271,7 +274,7 @@ CallMcpTool:
 5. 调用 `agent_open_task_chats` 打开追加任务。
 6. 调用 `agent_wait_for_tasks` 等待完成。
 7. 调用 `agent_summarize_results`，把追加任务结果合并进当前批次。
-8. 主 Agent 审查；通过则 `agent_mark_task_reviewed`，不通过则 `agent_request_rework`。
+8. 主 Agent 审查；通过则 `agent_mark_task_reviewed`，不通过则 Agent 写返工文档 → `agent_request_rework`。
 
 追加任务文件规则：
 

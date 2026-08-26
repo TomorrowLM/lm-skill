@@ -88,6 +88,10 @@
 
 ## 手动验收记录
 
+> **浏览器 UI 验收**：使用 `browser-verification` 技能进行系统化浏览器验证。
+> 读取 `browser-verification/SKILL.md` 获取完整验证流程（前置检查 → 视觉 → 交互 → 网络 → 控制台 → DOM → 证据汇总）。
+> 工具映射见 `browser-verification/references/chrome-mcp.md`。
+
 - 入口：...
 - 环境：...
 - 通过项：...
