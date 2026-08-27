@@ -98,6 +98,8 @@ docs/design/YYYY-MM-DD-<topic>-design/
 
 > 物理位置：`skill-routing/` 目录；子技能在 `skill-routing/skills/`
 
+> 子技能不一定会出现在顶层可用技能列表中。按路由命中后，应直接读取对应的 `skill-routing/skills/<skill-name>/SKILL.md`；列表未展示不代表技能不可用。
+
 技能发现、路由分发与设计类专项技能。
 
 | 技能 | 描述 |

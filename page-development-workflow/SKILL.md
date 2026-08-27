@@ -70,7 +70,7 @@ Phase 6 收尾交付
 - 进入 Phase 3、Phase 4、Phase 5 时，必须读取对应 reference 后再执行该阶段。
 - 使用 MCP 编排时，同时读取 `references/phase4-execution-modes.md` 和 `mcp-exe/references/agent-orchestrator-mcp.md`。
 - Phase 1 涉及 Swagger/OpenAPI、Figma 或浏览器资源时，按需读取 `mcp-exe` 对应案例；Phase 3 只记录资源定位，Phase 4 隔离任务自行获取实现所需详情。
-- Phase 5 做浏览器 UI 验收时，读取 `browser-verification/SKILL.md` 获取验证流程，再读取 `browser-verification/references/chrome-mcp.md` 获取工具用法。
+- Phase 5 做浏览器 UI 验收时，读取 `browser-verification/SKILL.md` 获取验证流程，再读取 `browser-verification/references/chrome-mcp.md` 获取工具用法；推荐在独立验收子窗口执行，主窗口只读取压缩结果并完成最终合流。
 
 ## Phase 1：需求分析与技术调研
 
@@ -88,8 +88,6 @@ Phase 6 收尾交付
 - 从零需求且无设计稿/接口文档：读取 `brainstorming`。
 - Figma / UI / React 实现相关：读取 `skill-routing`，只让它路由 UI/视觉/React 子技能。
 - Swagger / OpenAPI / Figma：读取 `mcp-exe` 对应案例，获取确认需求、范围和接口契约所需的信息。
-- 项目已有 GitNexus 索引：用 GitNexus 探索可复用代码和执行流。
-
 结束时展示需求共识、范围取舍、待决策点和调研摘要，等待用户确认。
 
 ## Phase 2：技术方案编写
@@ -127,8 +125,6 @@ Phase 6 收尾交付
 - 等用户选择拆分方案和执行方式后，再生成实现计划。
 - 不拆分：写入 `docs/design/YYYY-MM-DD-<topic>-design/spec/implementation-plan.md`。
 - 拆分：写入多个 `docs/design/YYYY-MM-DD-<topic>-design/spec/<module>-spec.md`，按执行顺序编号（01、02、03…）；同一批次内可并行的子任务用字母后缀区分（如 02a、02b）
-
-如需要修改现有模块且项目已有 GitNexus 索引，先做影响面分析；HIGH / CRITICAL 风险必须提醒用户后再继续。
 
 结束时展示实现计划或子任务规格路径，等待用户确认。
 
@@ -188,6 +184,13 @@ Phase 6 收尾交付
 ## Phase 5：测试验收
 
 目标：用证据证明实现可用，不凭感觉宣布完成。
+
+**执行窗口分工：**
+
+- 浏览器 UI 验收推荐在独立子窗口执行，避免截图、DOM、网络和控制台输出占用主窗口上下文。
+- 验收子窗口只负责浏览器验证，不修改业务代码、不启动或停止服务，并将压缩结果、截图路径、失败项和环境信息写入指定 `resultFile`。
+- 主窗口负责 Phase 5 入口自检、读取验收结果、复核关键证据、执行项目级自动化验证和代码审查，并生成正式 `evidence/phase5-verification.md`。
+- 子窗口验收不等于 Phase 5 完成；只有主窗口完成全部合流检查并生成正式证据后，Phase 5 才可提交用户确认。
 
 必须先读取 `references/phase5-verification.md` 和 `verification-before-completion`。进入 Phase 5 时，先向用户确认已读取这两份文件，再执行验证命令。
 

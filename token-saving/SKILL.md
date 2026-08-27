@@ -106,7 +106,6 @@ description: 当任务可能消耗大量上下文或 token 时使用：写技能
 ## 与其他技能集成
 
 - `brainstorming`：只保留设计共识，不生成长规格。
-- `gitnexus-exploring`：用知识图谱替代全仓库盲读。
 - `systematic-debugging`：先定位根因，再读取相关上下文。
 - `requesting-code-review`：子代理只返回阻塞问题和证据。
 - `verification-before-completion`：验证输出只摘命令、退出码和关键结果。

@@ -18,6 +18,7 @@ description: >-
 2. **先读主导技能**：命中本地技能后必须先 `read_file` 读取对应 `SKILL.md`，不能只凭本路由表概括执行。
 3. **按需读辅助技能**：只在触发条件满足时读取，不默认加载所有子技能。
 4. **冲突时用户优先**：用户当前明确要求 > 项目既有约定 > Figma 输出 > 通用最佳实践。
+5. **嵌套技能也属于本地技能**：`skills/` 下的子技能可能不会出现在顶层可用技能列表中；只要路由表或本地目录存在对应的 `SKILL.md`，就必须直接读取并执行，不能仅因列表未展示而报告技能不可用或转向外部搜索。
 
 ## 本地技能路由表
 
@@ -44,7 +45,7 @@ description: >-
 
 ### Figma 到代码
 
-1. 读取 `skills/figma-implement-design/SKILL.md`，按 7 步流程执行。
+1. 直接读取 `skill-routing/skills/figma-implement-design/SKILL.md`，按 7 步流程执行。该技能是本地嵌套技能，即使顶层可用技能列表未单独列出，也不能报告为不可用。
 2. 项目为 React/Next.js → 读取 `skills/vercel-react-best-practices/SKILL.md`。
 3. 仅当 Figma 未覆盖视觉决策时 → 读取 `skills/frontend-design/SKILL.md`。
 4. `vercel-react-best-practices` 不能破坏 Figma 验收标准。
