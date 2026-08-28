@@ -7,7 +7,22 @@
 - Phase 1、2、3、5 结束后必须等待用户明确确认。
 - Phase 4 前禁止写业务代码。
 - 轻量路径只允许合并 Phase 1-3 的展示与确认，不允许省略阶段产出。
-- 如果用户要求直接改一个小范围问题，本技能不触发。
+- 用户说“直接开始”只表示立即开始调研，不跳过阶段门禁。
+- 用户要求直接改一个小范围问题时，本技能不触发。
+
+## 产物布局
+
+一个功能的非代码产物统一放在 `docs/design/YYYY-MM-DD-<topic>-design/`：
+
+```text
+├── index.md
+├── spec/                              # implementation-plan.md 或 NNx-<module>-spec.md
+├── tasks.json                         # MCP 编排任务状态，按需
+├── reworks/task-<uuid>-rework-<N>.md  # 返工要求，按需
+├── results/<编号>-result.md           # 当前最终任务结果，按需
+├── assets/{figma,screenshots,diagrams,views}/
+└── evidence/phase5-verification.md
+```
 
 ## Phase 1：需求分析与技术调研
 
@@ -122,3 +137,4 @@
 - [ ] 已提交，或已说明未提交原因。
 - [ ] 已输出交付摘要和遗留风险。
 - [ ] 已执行 `sync:designs` 同步 `pages.yaml`（如项目配置了该脚本）。
+- [ ] 变更范围仅限本次需求，无无关文件改动。

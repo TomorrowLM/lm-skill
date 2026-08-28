@@ -1,0 +1,130 @@
+{
+  "description": "页面工作流的触发与门禁评估用例。",
+  "baselineFailure": {
+    "caseId": "gate-direct-start",
+    "observed": "未加载技能的基线行为把“直接开始”解释为可以跳过方案确认。",
+    "requiredBehavior": "直接开始只能进入 Phase 1，不得跳过后续确认和验证门禁。"
+  },
+  "cases": [
+    {
+      "id": "trigger-figma-list-page",
+      "prompt": "根据 Figma 链接开发一个订单管理列表页，包含筛选、分页和详情抽屉。",
+      "expectedTrigger": true,
+      "assertions": ["从 Phase 1 开始", "先调研再确认", "不提前编码", "按需路由 Figma 调研"]
+    },
+    {
+      "id": "non-trigger-copy-change",
+      "prompt": "把用户列表页搜索按钮文字改成查询。",
+      "expectedTrigger": false,
+      "assertions": ["采用最小范围修改", "不启动完整页面工作流"]
+    },
+    {
+      "id": "trigger-existing-page-overhaul",
+      "prompt": "现有订单页改成分栏布局，新增筛选条件、列表、详情抽屉和两个接口。",
+      "expectedTrigger": true,
+      "assertions": ["调研现状与接口契约", "进入方案和计划阶段"]
+    },
+    {
+      "id": "gate-direct-start",
+      "prompt": "根据 PRD 和 Swagger 实现商户入驻流程页面，直接开始。",
+      "expectedTrigger": true,
+      "assertions": ["直接开始仅进入 Phase 1", "不跳过确认和验证门禁"]
+    },
+    {
+      "id": "non-trigger-api-500",
+      "prompt": "订单页接口 500，帮我定位并修复。",
+      "expectedTrigger": false,
+      "assertions": ["先复现和取证", "使用调试流程而非页面开发工作流"]
+    },
+    {
+      "id": "light-path",
+      "prompt": "开发一个活动报名页面，走轻量路径。",
+      "expectedTrigger": true,
+      "assertions": ["仅合并 Phase 1-3 的展示和确认", "不省略方案、计划、编码、验收或交付"]
+    },
+    {
+      "id": "trigger-prd-form-page",
+      "prompt": "按 PRD 做一个供应商注册表单页，包含上传、保存草稿和提交审核。",
+      "expectedTrigger": true,
+      "assertions": ["从 Phase 1 开始", "覆盖状态和验收"]
+    },
+    {
+      "id": "trigger-dashboard",
+      "prompt": "新建运营数据大屏，整合四个统计接口和多个图表区块。",
+      "expectedTrigger": true,
+      "assertions": ["识别多接口和多区块", "进入完整工作流"]
+    },
+    {
+      "id": "trigger-route-refactor",
+      "prompt": "将客户中心从单页重构为列表、详情、编辑三个路由页面。",
+      "expectedTrigger": true,
+      "assertions": ["评估路由和共享边界", "进入 Phase 1"]
+    },
+    {
+      "id": "trigger-prototype-module",
+      "prompt": "根据产品原型实现审批管理模块，包含待办、已办和审批详情。",
+      "expectedTrigger": true,
+      "assertions": ["先调研原型和现状", "先方案后编码"]
+    },
+    {
+      "id": "non-trigger-color-adjustment",
+      "prompt": "把订单详情页的主按钮颜色改为品牌蓝。",
+      "expectedTrigger": false,
+      "assertions": ["最小样式修改", "不启动完整页面工作流"]
+    },
+    {
+      "id": "non-trigger-field-addition",
+      "prompt": "在订单列表多显示一个创建人字段。",
+      "expectedTrigger": false,
+      "assertions": ["评估字段来源", "不启动完整页面工作流"]
+    },
+    {
+      "id": "non-trigger-button-action",
+      "prompt": "给详情页新增一个返回按钮。",
+      "expectedTrigger": false,
+      "assertions": ["最小范围实现", "不启动完整页面工作流"]
+    },
+    {
+      "id": "non-trigger-explanation",
+      "prompt": "解释一下订单页的筛选条件为什么会同步到 URL。",
+      "expectedTrigger": false,
+      "assertions": ["只解释现有代码", "不启动完整页面工作流"]
+    },
+    {
+      "id": "non-trigger-review",
+      "prompt": "审查这个订单页面 PR，重点看状态管理是否合理。",
+      "expectedTrigger": false,
+      "assertions": ["进入代码审查流程", "不启动完整页面工作流"]
+    },
+    {
+      "id": "non-trigger-test-failure",
+      "prompt": "订单筛选的单测失败了，帮我分析原因。",
+      "expectedTrigger": false,
+      "assertions": ["先收集失败证据", "使用调试流程"]
+    },
+    {
+      "id": "edge-existing-design-document",
+      "prompt": "技术方案已确认，请按文档开发客户档案页面。",
+      "expectedTrigger": true,
+      "assertions": ["核对已确认方案", "从对应未完成阶段继续", "审阅方案是否具备路由、组件边界和接口映射"]
+    },
+    {
+      "id": "edge-incomplete-request",
+      "prompt": "做一个报表页面。",
+      "expectedTrigger": true,
+      "assertions": ["识别为完整页面需求", "先澄清目标和范围"]
+    },
+    {
+      "id": "edge-small-request-with-direct",
+      "prompt": "直接把登录页标题改成欢迎回来。",
+      "expectedTrigger": false,
+      "assertions": ["直接做最小文案改动", "不误触发完整工作流"]
+    },
+    {
+      "id": "edge-page-with-one-clear-change",
+      "prompt": "订单页的空态插图换成新附件里的图片。",
+      "expectedTrigger": false,
+      "assertions": ["最小资源替换", "不启动完整页面工作流"]
+    }
+  ]
+}

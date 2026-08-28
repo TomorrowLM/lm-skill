@@ -26,6 +26,14 @@ description: 当需要将 Figma 设计稿转化为生产可用的应用代码并
 - 或者，在使用 `figma-desktop` MCP 时：用户可以直接在 Figma 桌面应用中选择节点（无需 URL）。
 - 项目最好已有设计系统或组件库。
 
+## 页面工作流适配
+
+### Phase 1 调研模式
+
+当 `page-development-workflow` 在 Phase 1 引用本技能时，仅执行步骤 1-3：解析节点、获取设计上下文和查看视觉参考图。同时读取相关页面、路由、组件、服务和样式结构，形成可复用边界与差异分析。
+
+此模式不下载资源、不转换代码、不实现 UI、不做最终视觉验收，也不要求创建或写入 `assets/figma/`。Phase 4 按完整流程按需重做步骤 1-3，再执行步骤 4-7。
+
 ## 必需流程
 
 按顺序执行以下步骤，不要跳步。
@@ -83,7 +91,7 @@ get_screenshot(fileKey=":fileKey", nodeId="1-2")
 
 此截图是视觉验证的事实来源。整个实现过程中都应保持可访问。
 
-> **页面开发工作流内使用时：** 截图应保存到当前功能文件夹的 `assets/figma/` 目录（如 `docs/design/YYYY-MM-DD-<topic>-design/assets/figma/reference.png`），确保视觉参考图与设计方案文档一同归档。
+> **页面开发工作流内使用时：** Phase 4 的截图应保存到当前功能文件夹的 `assets/figma/` 目录（如 `docs/design/YYYY-MM-DD-<topic>-design/assets/figma/reference.png`），确保视觉参考图与设计方案文档一同归档；Phase 1 调研模式只查看截图，不落盘。
 
 ### 步骤 4：下载所需资源
 

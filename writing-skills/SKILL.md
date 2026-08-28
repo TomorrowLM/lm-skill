@@ -83,6 +83,7 @@ skill-name/
 - 不影响执行顺序的内容下沉到 `references`；`SKILL.md` 超 250 行就拆分。
 - `SKILL.md` 与 `references` 不重复，不创建面向人的 README、CHANGELOG、QUICK_REFERENCE。
 - 纪律类技能要写“不要怎样变通”；显式封堵“这只是简单改动”“之后再测也一样”“保留草稿当参考”之类借口。
+- 多 Agent / 子任务编排遵循隔离自包含加载、增量上下文收敛与确定性输入，详见 `references/guides/anthropic-best-practices.md`。
 
 ### HARD-GATE 判断规则
 

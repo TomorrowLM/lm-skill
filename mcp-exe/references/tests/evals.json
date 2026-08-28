@@ -4,13 +4,13 @@
     {
       "id": "trigger-swagger-01",
       "prompt": "帮我用 get_swagger_mcp 查一下 /dsb/yqarw/api/yqa/urban/app/checkplan/task/page 的入参和响应字段",
-      "expected_output": "应触发 mcp-exe；先读 references/swagger-mcp.md，再直接调用 get_swagger_mcp，source 保持原始接口路径，不用 curl、WebFetch 或手动探测。",
+      "expected_output": "应触发 mcp-exe；直接调用 get_swagger_mcp，source 保持原始接口路径，不用 curl、WebFetch 或手动探测。",
       "files": []
     },
     {
       "id": "trigger-swagger-02",
       "prompt": "这个接口文档地址是 https://example.com/api/doc.html#/任务管理/标签/pageUsingPOST_30，帮我看请求体",
-      "expected_output": "应触发 mcp-exe；保留 doc.html fragment 原样传给 get_swagger_mcp，不自行改写为 JSON 端点。",
+      "expected_output": "应触发 mcp-exe；保留 doc.html fragment 原样传给 get_swagger_mcp，不自行改写为 JSON 端点；仅在参数或查询范围不明确时读取 Swagger reference。",
       "files": []
     },
     {
@@ -74,9 +74,9 @@
       "files": []
     },
     {
-      "id": "pressure-02",
+      "id": "token-simple-swagger-01",
       "prompt": "只是查一个接口，别读参考文件，直接凭经验调用吧。",
-      "expected_output": "命中 Swagger/OpenAPI 案例时仍应先读 references/swagger-mcp.md，再调用工具。",
+      "expected_output": "若工具与参数已知，可直接调用 get_swagger_mcp；必须保留用户原始 source，且不得用 curl、WebFetch 或手动探测替代。",
       "files": []
     },
     {
