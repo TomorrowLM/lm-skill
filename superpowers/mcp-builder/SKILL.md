@@ -78,6 +78,14 @@ server.tool("search_users",
 ### 输出
 - 结构化数据 → JSON，人类可读内容 → Markdown
 - 始终用 `content: [{ type: "text", text: "..." }]` 格式返回
+- **默认返回最小必要字段的结构化 JSON，不返回描述性 prose。** LLM 输出比输入贵 5-10 倍，tool 返回一段话让 AI 转述，比直接返回 JSON 让 AI 自己组织语言贵得多：
+
+  ```
+  ❌ "用户 123 不存在，请检查 ID 后重试"
+  ✅ { "found": false, "id": "123" }
+  ```
+
+  错误信息也保持结构化：`{ "error": "not_found", "id": "123" }`，让 AI 根据错误类型决定如何措辞。
 
 ## 4. 输入验证和错误处理
 

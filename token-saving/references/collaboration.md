@@ -63,3 +63,12 @@
 
 - 一个会话里塞下"需求分析 + 方案设计 + 代码实现 + 测试"全流程，导致上下文越滚越大。
 - 阶段之间重复转述前一阶段的完整过程，而不是只传结论性摘要。
+
+## 上下文管理工具边界
+
+- `/compact` 是宿主（Copilot Chat）处理的内置斜杠命令，Skill 或模型都无法调用；上下文过大时只能提醒用户手动执行，不要声称已经执行：
+
+  > 当前阶段已完成，建议运行 `/compact focus on completed work, key decisions, changed files, verification results, and remaining tasks`。
+
+- SKILL.md frontmatter 的 `context: fork` + `github.copilot.chat.skillTool.enabled`，**并不是真正的子智能体隔离入口**；经实测（2026-08-29）在当前 VS Code Copilot Chat 版本中通过 `skill` 工具调用时**未观察到隔离效果**——技能全文仍直接注入主会话上下文，不要把它当成 `runSubagent` 的替代方案，也不要依赖它来控制上下文占用。
+- Skill 本身需要读取大量文件（如大规模代码审查）时，优先用子代理（`runSubagent`）承载读取和探索，只把压缩后的结果带回主会话；真正的隔离能力应由子代理执行路径提供，而不是依赖 Skill frontmatter。
