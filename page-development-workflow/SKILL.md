@@ -9,26 +9,28 @@ description: >-
 
 将页面需求转为可确认、可实施、可验证的交付物。它是状态机，不是代码模板集合。
 
-## 先判断是否触发
+## 快速判断是否触发
 
-| 判断 | 行动 |
-| --- | --- |
-| 新页面、完整功能模块、多步骤流程，或页面结构/路由/接口/状态流/组件树的大幅改造 | 使用本技能，从 Phase 1 开始。 |
-| 单个文案、字段、按钮、样式或局部布局；单点 bug；代码解释或审查 | 不使用本技能，按对应小范围或调试流程处理。 |
-| 用户说“直接开始/直接做” | 立即开始 Phase 1 调研，但不跳过后续阶段产出、确认或验证。 |
-| 用户明确要求轻量路径 | 仅合并 Phase 1-3 的展示与一次确认；不得省略调研、方案、计划、编码、验收和交付。 |
-| 用户提供已确认的方案或计划 | 核验阶段产物与用户确认记录，从首个未完成 Phase 继续；证据不足时从 Phase 1 重新确认。 |
+### 不使用本技能的场景（快速否定检查）
+- 单个文案、字段、按钮、样式或局部布局
+- 单点 bug、代码解释或审查
+- 用户已给出具体改动内容（"把 X 改成 Y"等）
 
-边界不清时，先用需求规模、涉及文件和接口/状态变更判断；不要因“页面”一词对小改动误触发。
+### 使用本技能的场景
+- 新页面、完整功能模块、多步骤流程
+- 页面结构/路由/接口/状态流/组件树的大幅改造
+- 涉及 Figma、PRD、OpenAPI 的端到端设计
+
+边界不清时，按需求规模和涉及文件数判断；不要因"页面"一词误触发小改动。
 
 ## HARD-GATE
 
-以下规则无例外：
+以下无例外（用户说"直接开始""简单改动""紧急"等不是授权）：
 
-1. 阶段顺序固定为 Phase 1 → 2 → 3 → 4 → 5 → 6；不能跳阶段或空过阶段产出。
-2. Phase 4 前不得写业务代码，包括类型、常量、组件、页面和服务层。
-3. Phase 1、2、3、5 的阶段产出必须展示并等待用户明确确认；“直接开始”不构成跳过门禁的授权。
-4. 发现新增页面、模块、接口契约、状态流、验收标准、共享层变更或未评估的 HIGH / CRITICAL 风险时，回到 Phase 3 更新计划并再次确认。
+1. 阶段顺序固定：Phase 1→2→3→4→5→6，不能跳阶段或空过产出。
+2. Phase 4 前禁止写业务代码（含类型、常量、组件、服务）。
+3. Phase 1、2、3、5 的产出必须**展示并等待明确确认**；"直接开始"不等于授权跳过。
+4. 发现新增页面、接口、状态流时立即回到 Phase 3 更新计划。
 
 ## 状态机
 
@@ -47,22 +49,21 @@ Phase 6 收尾交付
 
 每次进入阶段前读取下表指定的 reference；阶段细则只以 reference 为准，避免在入口文件重复解释。
 
-## 阶段路由
+## 阶段速查
 
-| 阶段 | 目标与阶段产出 | 必读材料 |
-|------|----------|
-| Phase 1 | 明确用户、目标、核心流程、边界状态、成功标准和现有实现影响；展示需求共识、范围取舍、待决策点和调研摘要。 | `references/phase-gates.md`、`references/phase1-2-discovery-and-design.md`；无设计和接口资料时读取 `brainstorming`；涉及 Figma、Swagger/OpenAPI 时按 `mcp-exe` 路由调研。 |
-| Phase 2 | 明确路由、文件位置、组件与状态边界、类型/常量、接口映射和错误/空态；写入或审阅技术方案。 | `references/phase-gates.md`、`references/phase1-2-discovery-and-design.md`；无方案时读取 `writing-doc`；注册页面时读取 `references/pages-registry.md`。 |
-| Phase 3 | 先展示 3-5 个拆分方案（必须含不拆分），用户选择后再生成可执行计划或子任务规格。 | `references/phase-gates.md`、`references/phase3-split-strategies.md`。 |
-| Phase 4 | 先完成入口自检，再由用户选择执行方式和推进模式；仅执行已确认计划。 | `references/phase-gates.md`、`references/phase4-execution-modes.md`；内联实现读取 `test-driven-development`；MCP 编排同时读取 `mcp-exe` 的编排入口。 |
-| Phase 5 | 选择真实项目验证命令、阅读输出、完成浏览器验收、记录证据并进行代码审查。 | `references/phase-gates.md`、`references/phase5-verification.md`、`superpowers/verification-before-completion`；浏览器验收读取 `browser-verification`。 |
-| Phase 6 | 汇总证据和审查结论，检查变更范围，说明提交状态、遗留风险和后续建议。 | `references/phase-gates.md`；如存在，执行 `sync:designs`；提交、推送、PR、合并、发布或删除分支前再次确认。 |
+| Phase | 第一步 | 对应 Reference |
+|-------|--------|--------|
+| 1 | 调研用户、目标、流程、边界、成功标准 | phase-gates.md、phase1-2-discovery-and-design.md |
+| 2 | 写路由、组件拆分、类型、接口映射 | 同上 + writing-doc + pages-registry.md |
+| 3 | 展示 3-5 拆分方案让用户选择 | phase-gates.md、phase3-split-strategies.md |
+| 4 | 完成入口自检后按计划编码 | phase-gates.md、phase4-execution-modes.md、test-driven-development |
+| 5 | 真实项目验证、浏览器验收、代码审查 | phase-gates.md、phase5-verification.md、browser-verification |
+| 6 | 汇总证据、检查范围、说明遗留风险 | phase-gates.md |
 
 ## 跨阶段规则
 
-- Figma Phase 1 只做需求调研；Phase 3 只记录资源定位；隔离执行任务自行获取实施详情并将资源落盘。
-- 隔离执行（MCP/多窗口/子代理）自包含加载自身技能与资源，主窗口不预读；返工任务以自包含改动清单为准，不强依赖原 spec，追求最小 token 与修改精度。
-- 并行只允许计划明确标记的批次；同一文件、symbol、API 契约、共享样式或全局状态不得并行。
-- MCP、多窗口和子代理执行时，主窗口只传资源定位与验收目标，并在合流时审查结果。
-- Phase 5 验收失败，或代码审查出现 Critical / Important 问题时，回到 Phase 4 修复后重新验收。
-- 非代码产物统一放在 `docs/design/YYYY-MM-DD-<topic>-design/`；具体文件名、任务账本和证据格式以各 Phase reference 为准。
+- **设计资源**：Figma/截图只在 Phase 1 用于调研；隔离执行任务自行读取实施详情；Phase 5 验收截图单独保存。详见 `references/guides/execution-patterns.md`。
+- **隔离执行**：MCP/多窗口/子代理自包含加载技能与资源，主窗口仅传资源定位；返工任务自包含修改目标，不强依赖原 spec。
+- **并行规则**：仅计划明确标记的批次可并行；同一文件、symbol、API、状态不得并行。
+- **失败处理**：Phase 5 验收失败或代码审查出 Critical 问题时回到 Phase 4 修复后重新验收。
+- **产物位置**：非代码产物统一放在 `docs/design/YYYY-MM-DD-<topic>-design/`；具体文件名和证据格式以各 Phase reference 为准。
