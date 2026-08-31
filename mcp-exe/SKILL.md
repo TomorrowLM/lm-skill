@@ -16,6 +16,7 @@ description: >-
 
 1. **原始输入** — 用户给的 URL/参数原样传入 MCP 工具，不自行用 curl/WebFetch 预处理
 2. **一步到位** — 能用 MCP 工具完成的操作，不手动创建文件或手动模拟
+3. **Swagger 前置阅读** — 每次调用 `lm-mcp-server.get_swagger_mcp` 前，必须先读取 [references/swagger-mcp.md](references/swagger-mcp.md)，再确定 `source` 和查询参数；已知单接口、路径简单或用户催促都不是例外。
 
 "用户明确指令优先于 skill 规则"不适用于以上规则。
 
@@ -23,8 +24,8 @@ description: >-
 
 | 场景 | 行动 |
 | --- | --- |
-| 已知 `get_swagger_mcp` 的单接口/单模型查询 | 直接调用；保留用户提供的 `source`。仅在参数、返回范围或多步骤查询不明确时读取 Swagger reference。 |
-| Swagger/OpenAPI 的模型目录、Tag、复杂筛选或调用失败 | 先读 [references/swagger-mcp.md](references/swagger-mcp.md)，再规划或调用。 |
+| 任意 `get_swagger_mcp` 查询 | 先读 [references/swagger-mcp.md](references/swagger-mcp.md)，再调用；保留用户提供的 `source`。 |
+| Swagger/OpenAPI 的模型目录、Tag、复杂筛选或调用失败 | 在已阅读 [references/swagger-mcp.md](references/swagger-mcp.md) 的基础上规划并调用。 |
 | Figma 设计稿 | 先读 [references/figma-mcp.md](references/figma-mcp.md)，再规划或调用 Figma MCP。 |
 | 图表生成或导出 | 先读 [references/chart-generation.md](references/chart-generation.md)，再选择并调用 MCP 工具。 |
 | Agent 编排、等待、汇总或返工 | 先读 [references/agent-orchestrator-mcp.md](references/agent-orchestrator-mcp.md)，再按场景只读其链接的基础、返工或高级 reference。 |
