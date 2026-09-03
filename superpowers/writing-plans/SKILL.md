@@ -236,7 +236,7 @@ def function(input):
 **选哪种方式？**
 
 **如果选择子代理驱动（1 或 2）：**
-- **必需子技能：** superpowers:subagent-driven-development
+- **可选执行方式：** 如果计划包含多个边界清晰、需要独立子智能体实现的任务，可使用 `superpowers:subagent-driven-development`；否则使用 `executing-plans`。
 - 每个任务一个新子代理 + 两阶段审查
 - 若选 2，先生成 cdoc 文档再调度子代理
 

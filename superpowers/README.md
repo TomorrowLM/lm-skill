@@ -19,8 +19,8 @@ superpowers 是一个面向工程工作流的技能包，用来把复杂任务�
 | subagent-driven-development | 已有计划，且适合按任务拆分协作执行时 | writing-plans | requesting-code-review / verification-before-completion / git-finishing-development-branch | 在当前主流程里按任务推进，适合细粒度执行和阶段审查。适用于已经有明确任务清单的阶段。 |
 | executing-plans | 已有计划，且要按顺序逐任务执行时 | writing-plans | verification-before-completion / git-finishing-development-branch | 先审查计划，再按任务顺序执行、验证和记录状态。 |
 | dispatching-parallel-agents | 存在多个可独立推进的任务时 | writing-plans / systematic-debugging | requesting-code-review / verification-before-completion | 适合并行处理没有共享状态、没有顺序依赖的任务。 |
-| verification-before-completion | 准备宣称"完成""修复完成""测试通过"之前 | test-driven-development / executing-plans / subagent-driven-development / systematic-debugging | requesting-code-review / git-finishing-development-branch | 所有完成性结论都要先过验证。 |
-| requesting-code-review | 功能完成、准备合并、需要正式审查时 | verification-before-completion / subagent-driven-development | git-finishing-development-branch | 发起正式代码审查，暴露风险和遗漏。 |
+| verification-before-completion | 准备宣称"完成""修复完成""测试通过"之前 | test-driven-development / executing-plans / subagent-driven-development / systematic-debugging / requesting-code-review | git-finishing-development-branch | 所有完成性结论都要先过验证。 |
+| requesting-code-review | 功能实现完成、需要正式审查时 | subagent-driven-development | verification-before-completion / git-finishing-development-branch | 发起正式代码审查，暴露风险和遗漏。 |
 | git-worktrees | 开始功能开发、执行计划前需要隔离工作区时 | using-superpowers | writing-plans / executing-plans / subagent-driven-development | 创建独立 worktree，降低对当前工作区的影响。 |
 | git-finishing-development-branch | 开发完成、验证通过后要收尾时 | verification-before-completion / requesting-code-review | 无 | 负责合并、PR、保留或清理分支等收尾动作。 |
 
@@ -59,9 +59,9 @@ superpowers 是一个面向工程工作流的技能包，用来把复杂任务�
 
 典型顺序通常是：
 
-1. 先用 `verification-before-completion`，确认当前任务或整体实现有新鲜的验证证据。
-2. 再用 `requesting-code-review`，让审查子智能体对照计划和变更范围检查质量与风险。
-3. 如果审查提出问题，修复后再回到验证，而不是只凭审查意见就宣称完成。
+1. 先用 `requesting-code-review`，让审查子智能体对照计划和变更范围检查质量与风险。
+2. 如果审查提出问题，先修复并进行必要的 Delta Review。
+3. 最后用 `verification-before-completion` 对最新代码执行验证，不能沿用审查前的旧结果。
 
 #### **subagent-driven-development/executing-plans**
 
@@ -283,7 +283,7 @@ superpowers 是一个面向工程工作流的技能包，用来把复杂任务�
 
 ### 1. 新功能开发
 
-using-superpowers → brainstorming → writing-plans[+gitnexus] → subagent-driven-development[+gitnexus][+TDD] 或 executing-plans[+gitnexus][+TDD] → verification-before-completion → requesting-code-review[+gitnexus] → git-finishing-development-branch
+using-superpowers → brainstorming → writing-plans[+gitnexus] → subagent-driven-development[+gitnexus][+TDD] 或 executing-plans[+gitnexus][+TDD] → requesting-code-review[+gitnexus] → verification-before-completion → git-finishing-development-branch
 
 适用场景：需求刚明确，要从想法走到实现、验证和收尾的完整流程。TDD 在子代理或执行流程内部执行。
 
@@ -301,13 +301,13 @@ using-superpowers → writing-plans → subagent-driven-development[+TDD] → re
 
 ### 4. Bug 修复
 
-using-superpowers → systematic-debugging[+gitnexus] → test-driven-development → verification-before-completion → requesting-code-review[+gitnexus] → git-finishing-development-branch
+using-superpowers → systematic-debugging[+gitnexus] → test-driven-development → requesting-code-review[+gitnexus] → verification-before-completion → git-finishing-development-branch
 
 适用场景：出现 bug、失败测试、构建异常或不明行为，先找根因，再修复和验证。
 
 ### 5. 并行处理多个独立任务
 
-using-superpowers → writing-plans → dispatching-parallel-agents → verification-before-completion → requesting-code-review
+using-superpowers → writing-plans → dispatching-parallel-agents → requesting-code-review → verification-before-completion
 
 适用场景：多个任务相互独立，没有共享状态，也没有严格顺序依赖。
 
