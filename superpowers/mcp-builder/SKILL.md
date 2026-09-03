@@ -265,4 +265,4 @@ server.sendLoggingMessage({ level: "info", data: "处理中" });
 - [ ] 遵循 semver，无硬编码密钥
 
 ### 交付验证
-- [ ] 使用 `superpowers:verification-before-completion` 验证所有测试通过、构建成功，才能宣称完成
+- [ ] 使用 `verification-before-completion` 验证所有测试通过、构建成功，才能宣称完成

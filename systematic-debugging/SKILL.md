@@ -90,7 +90,7 @@ description: >-
 1. 涉及可测试行为的 Bug 修复，先按 `test-driven-development` 创建并验证失败的回归测试；其他场景使用最小复现脚本或明确可重复的验证命令，并记录原因。
 2. 只修已确认根因，不顺手重构，不捆绑无关优化。
 3. 运行复现验证、相关测试和必要的 lint/typecheck/build。
-4. 修复后进入最终验证阶段；若当前流程已由 TDD 或上层工作流衔接 `superpowers:verification-before-completion`，由其统一执行，不重复启动；只能根据实际命令输出声明成功。
+4. 修复后进入最终验证阶段；若当前流程已由 TDD 或上层工作流衔接 `verification-before-completion`，由其统一执行，不重复启动；只能根据实际命令输出声明成功。
 5. 有 GitNexus 索引时，修复后运行变更检测，确认影响范围符合预期。
 
 如果修复失败：

@@ -77,13 +77,13 @@ description: 在实现新功能、修复 bug、重构或改变既有行为时使
 - [ ] 测试使用真实代码（只在不可避免时用 mock）
 - [ ] 覆盖了边界情况和错误场景
 
-不能全部勾选？你跳过了 TDD，需要回到缺失的红灯、绿灯或重构步骤。全量验证、需求逐项核对、代理 diff 验证和最终完成声明由 `superpowers:verification-before-completion` 负责。
+不能全部勾选？你跳过了 TDD，需要回到缺失的红灯、绿灯或重构步骤。全量验证、需求逐项核对、代理 diff 验证和最终完成声明由 `verification-before-completion` 负责。
 
 ## TDD 完成后的衔接
 
 TDD 在编写生产代码之前启动，并持续到红灯、绿灯和重构循环完成；它验证的是**每个行为的正确性**（测试先失败后通过）。
 
-这不等同于**任务完成**。TDD 循环完成、代码及相关测试就绪后，必须经过 `superpowers:verification-before-completion` 做最终完成声明验证：
+这不等同于**任务完成**。TDD 循环完成、代码及相关测试就绪后，必须经过 `verification-before-completion` 做最终完成声明验证：
 
 - TDD 验证：每个测试红-绿循环已走完 → 证明代码做了正确的事
 - verification-before-completion 验证：完成声明证据、需求逐项核对、代理 diff 验证和全量验证结果新鲜且完整 → 证明你有权说"完成了"

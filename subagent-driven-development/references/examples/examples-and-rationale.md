@@ -31,7 +31,7 @@
 [获取 git SHA，分派代码质量审查]
 代码审查者：优点：测试覆盖好，代码整洁。问题：无。通过。
 
-[使用 superpowers:verification-before-completion 验证任务 1 的最新代码]
+[使用 verification-before-completion 验证任务 1 的最新代码]
 
 [标记任务 1 完成]
 
@@ -67,7 +67,7 @@
 [代码审查者再次审查]
 代码审查者：✅ 通过
 
-[使用 superpowers:verification-before-completion 验证任务 2 的最新代码]
+[使用 verification-before-completion 验证任务 2 的最新代码]
 
 [标记任务 2 完成]
 
@@ -77,7 +77,7 @@
 [分派最终代码审查]
 最终审查者：所有需求已满足，可以合并
 
-[使用 superpowers:verification-before-completion 验证整体实现]
+[使用 verification-before-completion 验证整体实现]
 
 完成！
 ```
