@@ -1,0 +1,22 @@
+[
+  {"id":"T01","query":"验证登录页在 375px 和 1440px 下的视觉布局","expectedTrigger":true},
+  {"id":"T02","query":"检查页面按钮点击后是否打开正确的弹窗","expectedTrigger":true},
+  {"id":"T03","query":"捕获用户点击查询按钮发出的网络请求","expectedTrigger":true},
+  {"id":"T04","query":"排查页面控制台里的 React 报错","expectedTrigger":true},
+  {"id":"T05","query":"检查表单控件是否有正确的 aria-label","expectedTrigger":true},
+  {"id":"T06","query":"对比页面截图和设计稿","expectedTrigger":true},
+  {"id":"T07","query":"采集后台菜单、路由和按钮结构","expectedTrigger":true},
+  {"id":"T08","query":"逐层核对页面 DOM 和截图中的控件","expectedTrigger":true},
+  {"id":"T09","query":"验收刚开发完成的前端页面","expectedTrigger":true},
+  {"id":"T10","query":"验证 Tab 切换后内容是否真的变化","expectedTrigger":true},
+  {"id":"T11","query":"只修改一个 React 组件的文案","expectedTrigger":false},
+  {"id":"T12","query":"修复后端接口的 SQL 查询","expectedTrigger":false},
+  {"id":"T13","query":"运行 TypeScript 类型检查","expectedTrigger":false},
+  {"id":"T14","query":"审查一个 Python 脚本的异常处理","expectedTrigger":false},
+  {"id":"T15","query":"编写纯后端 API 的单元测试","expectedTrigger":false},
+  {"id":"T16","query":"解释 React useEffect 的工作原理","expectedTrigger":false},
+  {"id":"T17","query":"根据已提供的 HTML 静态分析按钮","expectedTrigger":false},
+  {"id":"T18","query":"查询数据库中某个用户的权限","expectedTrigger":false},
+  {"id":"T19","query":"验证一个没有浏览器页面的接口响应","expectedTrigger":false},
+  {"id":"T20","query":"只对一张产品截图做审美点评，不打开页面","expectedTrigger":false}
+]

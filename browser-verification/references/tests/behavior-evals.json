@@ -1,0 +1,62 @@
+[
+  {
+    "id":"B01",
+    "kind":"normal",
+    "prompt":"验证一个有菜单、Tab、表格和详情抽屉的后台页面；当前只有初始截图和一次 DOM 快照。",
+    "assertions":["建立验证范围和待处理队列","逐层验证菜单与 Tab","初始证据不能直接标记整页 verified","输出未验证项"]
+  },
+  {
+    "id":"B02",
+    "kind":"boundary",
+    "prompt":"页面包含无 ARIA 自定义 Tab、内部滚动容器、跨域 iframe 和高风险导出按钮。",
+    "assertions":["自定义 Tab 进入候选台账","滚动容器需要补采","跨域 iframe 标记 blocked 或 unverified","导出只记录不点击"]
+  },
+  {
+    "id":"B03",
+    "kind":"non-trigger",
+    "prompt":"只修改前端文案并运行 lint，不打开浏览器。",
+    "assertions":["不启动浏览器验证流程","不调用页面采集工具"]
+  },
+  {
+    "id":"B04",
+    "kind":"auth-redirect",
+    "prompt":"导航业务页后 URL 变为 /login，页面显示登录表单。",
+    "assertions":["提示用户业务页被重定向到 /login","当前页面标记 blocked/auth-required","跳过当前业务页","不采集登录表单或输入凭据"]
+  },
+  {
+    "id":"B05",
+    "kind":"verification-gate",
+    "prompt":"只提供一个页面截图、一次 DOM 快照和一个结构采集工具返回，要求输出最终 verified JSON。",
+    "assertions":["建立待处理队列","要求截图/DOM与操作后状态双重证据","拒绝直接输出 verified","输出 pending/unverified 节点和证据字段"]
+  },
+  {
+    "id":"B06",
+    "kind":"scroll-reset",
+    "prompt":"从页面底部切换到一个新 Tab，新 Tab 没有新的截图或 DOM 结果。",
+    "assertions":["先检查窗口和内部滚动容器位置","切换后先回到顶部并等待稳定","重新截图和采集 DOM 后再分析","不能直接复用底部视口结果"]
+  },
+  {
+    "id":"B07",
+    "kind":"scroll-coverage",
+    "prompt":"一个表格在中部和底部继续加载新行，要求只根据首屏结构输出 verified。",
+    "assertions":["检查表格首屏、中段和末屏","滚动后重新截图和采集 DOM","把新出现的行操作加入待处理队列","未收口时不能标记 verified"]
+  },
+  {
+    "id":"B08",
+    "kind":"duplicate-scroll",
+    "prompt":"滚动后 scrollTop 已变化，但截图、DOM 和候选指纹与上一检查点相同。",
+    "assertions":["记录 duplicate-checkpoint","跳过重复分析并进入下一个检查点或区域","scrollTop 未变化时不能使用该结论","不能因此直接标记整个页面 verified"]
+  },
+  {
+    "id":"B09",
+    "kind":"template-sampling",
+    "prompt":"页面有多张结构相同的统计卡片，只有标题和数值不同。",
+    "assertions":["枚举并记录全部卡片实例","抽取共同模板并选择代表实例","对有 Tooltip/Tab/权限/交互差异的卡片拆分变体","不重复展开完全相同的控件树"]
+  },
+  {
+    "id":"B10",
+    "kind":"scroll-template-reuse",
+    "prompt":"滚动到下一个区域后出现已确认的重复统计卡片模板，没有新的交互或状态变体。",
+    "assertions":["记录新实例和 covered-by-template","跳过重复模板递归","继续下一个滚动区域","仍检查标题、数据和差异"]
+  }
+]

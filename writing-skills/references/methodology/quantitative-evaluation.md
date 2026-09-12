@@ -13,7 +13,7 @@
 
 ## 评估 JSON 格式
 
-测试用例保存为 `evals/evals.json`：
+测试用例保存为技能目录下的 `references/tests/evals.json`（或同目录下按用途拆分的 JSON 文件）：
 
 ```json
 {

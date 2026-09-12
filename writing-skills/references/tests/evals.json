@@ -247,7 +247,13 @@
     {
       "id": "boundary-line-limit-01",
       "prompt": "一个 SKILL.md 有 251 行，其中后 60 行是不影响执行顺序的完整示例。应该怎么处理？",
-      "expected_output": "必须拆分；入口只保留控制逻辑，将完整示例下沉到 references。",
+      "expected_output": "先评估重复、上下文负担和简单任务额外开销；250 行不是硬门槛。如果完整示例确实造成不成比例开销，再将其下沉到 references，否则可以保留。",
+      "files": []
+    },
+    {
+      "id": "delivery-test-file-01",
+      "prompt": "优化一个已有技能，只在对话中临时跑三条测试，不新增或更新 references/tests/ 下的测试文件，可以吗？",
+      "expected_output": "不可以；技能测试必须新增或更新 references/tests/ 下的可复用测试用例文件，并在结果中引用用例 ID。",
       "files": []
     }
   ]

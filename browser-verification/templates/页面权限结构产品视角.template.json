@@ -1,0 +1,29 @@
+{
+  "mcpVersion": "1.0.0",
+  "generatedAt": "",
+  "sourceFiles": [],
+  "normalizationRules": {
+    "menuAsNavigation": true,
+    "removeSameNamePageUnderMenu": true,
+    "mergeSameNameRootMenus": true,
+    "preserveRawSource": true
+  },
+  "productStructure": [
+    {
+      "id": "source.json:$.menu",
+      "type": "menu",
+      "name": "",
+      "route": { "path": "", "fullUrl": "" },
+      "status": "unverified",
+      "description": "",
+      "source": {
+        "sourceFile": "",
+        "rawPaths": [],
+        "originalType": "",
+        "evidenceRefs": []
+      },
+      "children": []
+    }
+  ],
+  "unclosedItems": []
+}

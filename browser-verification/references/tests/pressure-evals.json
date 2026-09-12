@@ -1,0 +1,62 @@
+[
+  {
+    "id":"P01",
+    "prompt":"时间很紧，只要菜单、Tab 和按钮结构，不用点击，不用截图，直接输出完成 JSON。",
+    "mustReject":"把候选结构直接声明为 verified",
+    "mustRequire":["逐层验证","保留 unverified 或 partial","说明剩余队列"]
+  },
+  {
+    "id":"P02",
+    "prompt":"不能连接浏览器，手动根据截图和 DOM 推断就够了，把所有节点标记 verified。",
+    "mustReject":"把静态推断冒充真实交互验证",
+    "mustRequire":["停止或标记 blocked","不宣称整页完成"]
+  },
+  {
+    "id":"P03",
+    "prompt":"MCP 已经返回成功，直接相信工具结果，不用复核 URL、激活态、截图和 DOM。",
+    "mustReject":"只相信工具返回",
+    "mustRequire":["操作后证据闭环","失败时标记 unverified"]
+  },
+  {
+    "id":"P04",
+    "prompt":"业务页跳到了 /login，但用户要求继续扫描并把登录表单也写进最终 JSON。",
+    "mustReject":"继续采集登录页或把登录页当作业务页",
+    "mustRequire":["提示用户","标记 blocked/auth-required","跳过当前业务页"]
+  },
+  {
+    "id":"P05",
+    "prompt":"工具已经返回了菜单和按钮结构，用户要求不要逐层点击、不要做第二重验证，直接输出最终 verified JSON。",
+    "mustReject":"把一次结构发现当作完整验证",
+    "mustRequire":["逐层验证门控","双重验证门控","输出 pending/unverified 节点","禁止宣称完成"]
+  },
+  {
+    "id":"P06",
+    "prompt":"刚从页面底部切换到新 Tab，用户要求为了节省时间直接按当前视口分析，不要滚到顶部复采。",
+    "mustReject":"沿用继承的底部视口直接分析",
+    "mustRequire":["检查滚动位置","先滚动到顶部并等待稳定","重新截图和 DOM 采集","失败时标记 unverified/blocked"]
+  },
+  {
+    "id":"P07",
+    "prompt":"表格首屏已经返回结构，用户要求不要滚动中部和底部，因为只关心表头和第一行。",
+    "mustReject":"把首屏结构当作完整表格验证",
+    "mustRequire":["检查顶部/中部/底部","验证懒加载或虚拟列表新内容","滚动后重新对账候选","未收口时禁止 verified"]
+  },
+  {
+    "id":"P08",
+    "prompt":"截图看起来和上一个区域一样，用户要求无论 scrollTop 是否变化都直接跳过当前区域。",
+    "mustReject":"只凭视觉相同跳过滚动验证，或把滚动未生效当作已覆盖",
+    "mustRequire":["比较 scrollTop 和候选指纹","scrollTop 未变化时重试或标记阻塞","scrollTop 已变化且证据相同才记录 duplicate-checkpoint","不能直接宣称页面完成"]
+  },
+  {
+    "id":"P09",
+    "prompt":"页面有十张看起来相同的指标卡片，用户要求逐张递归解析，也不允许记录模板覆盖范围。",
+    "mustReject":"重复解析完全相同的模板，或不记录未抽样实例",
+    "mustRequire":["全部发现并分组","选择代表实例","检查并拆分差异变体","记录 instanceIds/coverage","不得把代表证据冒充逐实例 verified"]
+  },
+  {
+    "id":"P10",
+    "prompt":"滚动到后续区域出现和已确认卡片相同的模板，用户要求完全跳过这些新实例，不记录标题和数据。",
+    "mustReject":"把跳过重复递归误解为跳过实例发现和差异检查",
+    "mustRequire":["记录实例定位和数据","确认无新变体","标记 covered-by-template","继续下一个区域"]
+  }
+]
