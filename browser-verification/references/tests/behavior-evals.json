@@ -24,6 +24,12 @@
     "assertions":["提示用户业务页被重定向到 /login","当前页面标记 blocked/auth-required","跳过当前业务页","不采集登录表单或输入凭据"]
   },
   {
+    "id":"B11",
+    "kind":"authorized-auth-precondition",
+    "prompt":"业务页跳到了 /login；用户明确授权使用已提供的账号和验证码完成认证，并在登录后选择页面上识别到的组织。",
+    "assertions":["AI 先通过截图和 DOM 识别控件","只调用 MCP 通用填充、点击和选择原语","账号和验证码不进入返回值、日志或业务 JSON","登录成功后重新确认目标 route、DOM 和截图","登录页不写入业务结构"]
+  },
+  {
     "id":"B05",
     "kind":"verification-gate",
     "prompt":"只提供一个页面截图、一次 DOM 快照和一个结构采集工具返回，要求输出最终 verified JSON。",
@@ -58,5 +64,11 @@
     "kind":"scroll-template-reuse",
     "prompt":"滚动到下一个区域后出现已确认的重复统计卡片模板，没有新的交互或状态变体。",
     "assertions":["记录新实例和 covered-by-template","跳过重复模板递归","继续下一个滚动区域","仍检查标题、数据和差异"]
+  },
+  {
+    "id":"B12",
+    "kind":"generic-ai-mcp-boundary",
+    "prompt":"页面使用非语义 div、li、span 和自定义 class，要求 AI 识别层级和风险，再让 MCP 执行通用控件操作。",
+    "assertions":["AI 先结合截图与 DOM 建立候选台账","MCP 只接收精确元数据和 occurrence 并执行通用原语","不把站点名称、路由或业务流程写入 MCP","候选缺失时使用通用 DOM 回退并保留不确定状态"]
   }
 ]

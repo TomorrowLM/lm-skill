@@ -19,7 +19,8 @@ uv run --directory front/mcp/front-automation-mcp python server.py
 
 ```text
 connect_browser → list_pages → 确认 page_index → navigate_page/switch_tab
-→ page_snapshot → inspect_dom → 交互后再次 inspect_dom + 截图 → JSON
+→ scroll_to_top(atTop=true) → page_snapshot → inspect_dom
+→ 交互后再次 scroll_to_top + inspect_dom + 截图 → JSON
 ```
 
 本 MCP 同时服务三种模式：
@@ -28,7 +29,7 @@ connect_browser → list_pages → 确认 page_index → navigate_page/switch_ta
 - 交互测试：只执行已获准的低风险代表性交互，并验证 route、激活态、主内容、截图和 DOM。
 - 自动化设计/执行：只使用已完成双重验证的 route、定位方式、Tab 层级、occurrence 和风险策略；未验证节点只能进入待补证据队列。
 
-当前工具：`connect_browser`、`list_pages`、`navigate_page`、`switch_tab`、`page_snapshot`、`page_screenshot`、`inspect_dom`、`find_text_elements`、`click_and_collect_overlay`。
+当前工具：`connect_browser`、`list_pages`、`navigate_page`、`scroll_to_top`、`scroll_page`、`switch_tab`、`page_snapshot`、`page_screenshot`、`inspect_dom`、`find_text_elements`、`click_and_collect_overlay`。
 
 工作流工具：`collect_navigation_tree`、`collect_tab_variants`。优先使用工作流工具，不要在 MCP 工程外编写 Python 循环或 JSON 后处理。
 
