@@ -130,7 +130,7 @@ Phase 4 开始前，必须向用户确认推进模式。推进模式决定任务
 
 ## MCP 编排执行
 
-页面工作流的编排前提是：每个任务的 `inputFiles` 包含对应 `spec/*.md`，`resultFile` 显式指向当前设计目录的 `results/<编号>-result.md`，且已识别共享依赖与并行边界。
+页面工作流的编排前提是：每个任务必填 `task`，可选 `resources`、`notes`，`resultFile` 显式指向当前设计目录的 `results/<编号>-result.md`，且已识别共享依赖与并行边界。视觉产物目录 `visualDir` 仅在需要时传入，并应位于当前设计目录的 `assets/` 下。打开子聊天必须继续使用 `--reuse-window`，并要求子 Agent 调用 `agent_complete_task` 写回 `tasks.json`。
 
 先读取 [Agent 编排入口](../../mcp-exe/references/agent-orchestrator-mcp.md)：无依赖任务按入口读取 `basic.md`，页面工作流中的依赖或追加任务读取 `advanced.md`，返工读取 `rework.md`。工具调用、任务状态、`tasks.json` 字段和结果汇总规则以这些文档为准。
 
@@ -172,7 +172,7 @@ Agent 按以下模板写入 `reworks/task-<uuid>-rework-<N>.md`，写完后调�
 
 - [ ] 读取涉及的代码文件，理解返工原因与当前实现的差距
 - [ ] 按修改要求精准补齐或修正实现，确保不破坏已有功能
-- [ ] 运行规格要求的验证（lint / typecheck / build / 浏览器验证）
+- [ ] 只运行任务规格明确要求的验证；不得由 MCP 或技能默认追加 `build`
 - [ ] 覆盖原 resultFile 并写入完整的修改报告
 - [ ] 调用 agent_complete_task 标记完成
 ```

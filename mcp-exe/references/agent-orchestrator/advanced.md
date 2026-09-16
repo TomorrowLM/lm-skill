@@ -33,10 +33,10 @@ agent_open_task_chats:
 
 1. 先说明追加原因、任务边界、输入与结果位置，取得用户确认。
 2. 页面工作流中，先新增当前设计目录下的子任务规格。
-3. 创建任务时将规格加入 `inputFiles`，并显式传入 `resultFile`。
+3. 创建任务时将规格作为 `task` 文件地址或加入 `resources`，并显式传入 `resultFile`。
 4. 打开、等待、汇总并审查追加任务。
 
-工具会依据 `inputFiles` 或 `resultFile` 将任务追加到当前设计目录的 `tasks.json`；追加后检查账本未覆盖既有任务，并确认对应结果文件可被 `agent_summarize_results` 读取。
+工具会依据任务文件、`resources` 或 `resultFile` 将任务追加到当前设计目录的 `tasks.json`；追加后检查账本未覆盖既有任务，并确认对应结果文件可被 `agent_summarize_results` 读取。
 
 新增页面、模块、接口、状态流、验收标准，或影响共享层、全局状态、路由、构建配置时，应回到计划阶段。
 
@@ -44,6 +44,6 @@ agent_open_task_chats:
 
 这些是页面工作流的目录约定，不是 MCP 创建接口的必填参数：
 
-- `inputFiles` 应包含对应 `spec/*.md`。
+- `task` 应写明执行要求；需要挂载的 `spec/*.md` 放入 `resources`。
 - `resultFile` 应显式指向当前功能目录的 `results/<module>-result.md`。
 - 子任务账本写入当前设计目录的 `tasks.json`；只能追加任务，不覆盖既有记录。

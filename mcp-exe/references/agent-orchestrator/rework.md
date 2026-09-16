@@ -22,7 +22,7 @@
 
 1. 调用 `agent_request_rework`，传入 `workspaceRoot`、`taskId`、`reason`、`reworkFile`。
 2. 工具将任务标为 `rework_requested`，追加 `reworks` 历史，并把本次返工输入设为 `reworkFile`。
-3. 调用 `agent_open_task_chats` 重新打开任务；服务会同时挂载原 `inputFiles` 与本次 `rework.inputFiles`。
+3. 调用 `agent_open_task_chats` 重新打开任务；服务会同时挂载原任务文件、`resources` 与本次 `rework.task`、`rework.resources`。
 4. 调用 `agent_wait_for_tasks` 等待完成，再调用 `agent_summarize_results` 复审。
 5. 通过后调用 `agent_mark_task_reviewed`。
 

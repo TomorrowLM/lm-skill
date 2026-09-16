@@ -8,7 +8,7 @@
 | `agent_create_tasks` | 主 Agent | 批量创建多个编排任务。 |
 | `agent_list_tasks` | 主 Agent | 列出工作区任务，可按状态过滤。 |
 | `agent_get_task` | 主 Agent | 获取单个任务详情。 |
-| `agent_open_task_chats` | 主 Agent | 挂载任务 `inputFiles`；返工时额外挂载当前 `rework.inputFiles`，并使用任务 `prompt` 打开子聊天窗口。 |
+| `agent_open_task_chats` | 主 Agent | 在最近活动的 VS Code 窗口打开独立 Chat，挂载任务文件与 `resources`；返工时额外挂载 `rework.task` 与 `rework.resources`，并使用任务标题、`task` 和 `notes` 打开子聊天窗口。 |
 | `agent_wait_for_tasks` | 主 Agent | 阻塞等待多个任务完成，轮询状态与结果文件。 |
 | `agent_poll_tasks` | 主 Agent | 非阻塞查看多个任务当前状态。 |
 | `agent_complete_task` | 子 Agent | 写入结果并标记任务完成。 |
@@ -23,10 +23,11 @@
 | --- | --- | --- |
 | `title` | 是 | 任务标题。 |
 | `workspaceRoot` | 是 | 任务所属工作区绝对路径。 |
-| `prompt` | 否 | 原始任务要求；未传时子 Agent 仅依据 `inputFiles` 与项目约束执行。 |
-| `inputFiles` | 否 | 任务输入文件，路径必须位于 `workspaceRoot` 内；打开聊天前至少应有一个。 |
+| `task` | 是 | 子任务简短描述或任务文件地址。 |
+| `resources` | 否 | 参考资源文件，路径必须位于 `workspaceRoot` 内。 |
+| `notes` | 否 | 补充说明、边界和暂不处理项。 |
 | `resultFile` | 否 | 结果文件；未传时从输入推断并写入 `docs/design|prod/<需求目录>/results/task-<uuid>.md`，无法推断时写入 `docs/results/task-<uuid>.md`。 |
-| `visualDir` | 否 | 视觉或头脑风暴产物目录；未传时由输入或结果位置推断。 |
+| `visualDir` | 否 | 视觉产物目录，建议位于当前设计目录的 `assets/` 下；非视觉任务可省略。 |
 
 ## 常用工具参数
 

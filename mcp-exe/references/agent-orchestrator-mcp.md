@@ -13,8 +13,9 @@
 ## 核心规则
 
 1. 不用手工 Markdown 模拟任务状态；创建、打开、等待与汇总都调用编排工具。
-2. `agent_open_task_chats` 前确保每个任务已有 `inputFiles`。
-3. 普通任务精确调用链：`agent_create_tasks` → `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` → `agent_mark_task_reviewed`。
-4. 返工精确调用链：用户确认 → 写入 `reworkFile` → `agent_request_rework` → `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` → `agent_mark_task_reviewed`。
+2. `agent_create_task` / `agent_create_tasks` 必须提供 `task`；`resources` 用于补充参考资源，`notes` 用于补充边界说明。
+3. `agent_open_task_chats` 前确保每个任务已有可用的 `task` 或 `resources`。
+4. 普通任务精确调用链：`agent_create_tasks` → `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` → `agent_mark_task_reviewed`。
+5. 返工精确调用链：用户确认 → 写入返工任务文件 → `agent_request_rework` → `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` → `agent_mark_task_reviewed`。
 5. 不得缩写、改写或虚构工具名；例如 `agent_wait_tasks`、`agent_aggregate_results`、`agent_collect_results` 均不可调用。
 6. 单文件简单修改或紧密耦合的串行任务不使用编排。

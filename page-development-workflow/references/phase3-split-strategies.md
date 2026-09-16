@@ -9,9 +9,9 @@
 - `spec/` 只存放可执行交付物，不存放整体技术方案。
 - `implementation-plan.md` 与 `<module>-spec.md` 默认二选一；除非用户明确要求保留总计划。
 
-MCP 任务通过 `spec/*.md` 和 `tasks.json` 的 `prompt` 获取完整上下文，不创建 `prompts/`。后续若触发返工，返工文件作为独立的自包含微规格通过 `rework.inputFiles` 挂载，子 Agent 直接基于返工文档中的修改要求和代码路径执行，无需重新阅读原 spec 全文；`rework` 指向当前返工、`reworks[]` 保留历史。返工完成覆盖原 `resultFile`，追加任务先创建 `spec/NNx-<module>-spec.md` 并指定 `results/<编号>-result.md`。
+MCP 任务通过必填 `task`、可选 `resources` 和可选 `notes` 获取完整上下文；`task` 可以是简短描述或任务文件地址，不创建 `prompts/`。后续若触发返工，返工文件统一记录在 `rework.task`，参考资源记录在 `rework.resources`，补充说明记录在 `rework.notes`；旧返工字段只作兼容读取。返工完成覆盖原 `resultFile`，追加任务先创建 `spec/NNx-<module>-spec.md` 并指定 `results/<编号>-result.md`。
 
-生成的视图文件统一保存到 `assets/views/`，不得散落在功能目录根目录或其他产物目录。
+生成的视觉文件统一保存到当前设计目录的 `assets/` 下（例如 `assets/views/`），不得散落在功能目录根目录或其他产物目录。
 
 ## 决策顺序
 

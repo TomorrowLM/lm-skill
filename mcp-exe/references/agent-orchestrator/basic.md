@@ -9,7 +9,7 @@
 不得缩写、改写或虚构工具名，例如 `agent_wait_tasks`、`agent_collect_results`、`agent_get_task_results` 都不是可调用工具。
 
 1. 用 `agent_create_task` 创建一个任务，或用 `agent_create_tasks` 批量创建多个任务。
-2. 为每个待打开任务提供至少一个 `inputFiles`；创建接口只要求 `title` 和 `workspaceRoot`，但 `agent_open_task_chats` 会拒绝没有输入文件的任务。
+2. 创建每个新任务时必须提供 `task`；`task` 可以是简短描述，也可以是工作区内的任务文件地址。`resources` 用于补充参考资源，`notes` 用于补充边界说明。旧任务可继续使用 `prompt/inputFiles`。
 3. 调用 `agent_open_task_chats`。服务会逐个打开聊天窗口并将任务设为 `running`；全部窗口打开后，无依赖任务可并行执行。
 4. 需要统一收口时调用 `agent_wait_for_tasks`；只查看进度时调用 `agent_poll_tasks`。
 5. 调用 `agent_summarize_results` 汇总结果，再逐项审查。
@@ -19,9 +19,9 @@
 
 | 工具 | 必需参数 | 说明 |
 | --- | --- | --- |
-| `agent_create_task` | `title`、`workspaceRoot` | 单个任务；`prompt`、`inputFiles`、`resultFile` 可选。 |
+| `agent_create_task` | `title`、`task`、`workspaceRoot` | 单个任务；`resources`、`notes`、`resultFile` 可选。 |
 | `agent_create_tasks` | `tasks` | 每个任务至少包含 `title`、`workspaceRoot`。 |
-| `agent_open_task_chats` | `workspaceRoot`、`taskIds` | 每个任务必须已有 `inputFiles`。 |
+| `agent_open_task_chats` | `workspaceRoot`、`taskIds` | 每个任务必须已有 `task` 或兼容旧字段；任务文件地址会自动挂载。 |
 | `agent_wait_for_tasks` | `workspaceRoot`、`taskIds` | 默认等待 300000ms，默认轮询间隔 2000ms。 |
 | `agent_summarize_results` | `workspaceRoot`、`taskIds` | 读取各任务 `resultFile` 并合并文本。 |
 
@@ -33,20 +33,20 @@
 agent_create_tasks:
 	tasks:
 		- title: "共享层：类型定义 + API 服务"
-			prompt: "根据 spec/shared-layer-spec.md 创建类型定义和 API 服务层..."
+			task: "根据 spec/shared-layer-spec.md 创建类型定义和 API 服务层..."
 			workspaceRoot: "/Users/zm/work/yqa-g-h5-urban"
-			inputFiles:
+			resources:
 				- "docs/design/2026-08-06-xxx-design/spec/shared-layer-spec.md"
 			resultFile: "docs/design/2026-08-06-xxx-design/results/shared-layer-result.md"
 		- title: "列表页实现"
-			prompt: "根据 spec/list-page-spec.md 实现列表页..."
+			task: "根据 spec/list-page-spec.md 实现列表页..."
 			workspaceRoot: "/Users/zm/work/yqa-g-h5-urban"
-			inputFiles:
+			resources:
 				- "docs/design/2026-08-06-xxx-design/spec/list-page-spec.md"
 			resultFile: "docs/design/2026-08-06-xxx-design/results/list-page-result.md"
 ```
 
-未传 `resultFile` 时，工具会尝试由 `inputFiles` 推断设计目录；无法推断时写入 `docs/results/`。页面工作流必须显式传入当前功能目录的结果位置。
+未传 `resultFile` 时，工具会尝试由任务文件地址或 `resources` 推断设计目录；无法推断时写入 `docs/results/`。页面工作流必须显式传入当前功能目录的结果位置。
 
 ## 打开、等待与汇总示例
 
@@ -66,7 +66,7 @@ agent_summarize_results:
 	taskIds: ["task-list-page", "task-detail-page"]
 ```
 
-`agent_open_task_chats` 会为每个任务追加全部 `inputFiles` 并传入任务 `prompt`；普通任务不生成 `prompts/` 目录。
+`agent_open_task_chats` 会为每个任务追加全部 `resources`，在最近活动的 VS Code 窗口中打开独立 Chat，并传入语义化标题、任务 `task` 和完成协议；普通任务不生成 `prompts/` 目录。旧任务读取 `prompt/inputFiles`。
 
 `agent_poll_tasks` 返回每个任务的状态、结果文件路径、更新时间，以及总数、已完成、失败和待处理汇总。
 
