@@ -20,6 +20,21 @@
       "id": "coding-standards-style-module-priority",
       "prompt": "项目同时安装了 tailwindcss 和 less，生成项目编码规范时应该选择哪套样式规范？",
       "expected_output": "优先使用 tailwind.md；Less 仅作为 Tailwind 无法覆盖时的补充，项目实际使用 Less 时再加载 less.md，并统一使用 CSS Modules。"
+    },
+    {
+      "id": "coding-standards-ui-interaction-boundary",
+      "prompt": "整理通用编码规范时，哪些内容应该放在 UI 与交互规范，哪些内容应该留在通用规范？",
+      "expected_output": "加载、空、错误、成功、提交反馈、危险操作、图片预览和控件状态放在 ui-interaction.md；业务约定优先级写在 agent.md 和 base.md，避免 UI 文档与业务约定耦合。"
+    },
+    {
+      "id": "coding-standards-ui-state-completeness",
+      "prompt": "补全前端 UI 与交互规范，要求覆盖页面状态、提交操作和图片展示边界。",
+      "expected_output": "至少覆盖首次/局部加载、空状态、错误重试、成功/失败反馈、防重复提交、危险操作确认、内容图片预览、装饰图例外、图片失败占位和 alt 语义。"
+    },
+    {
+      "id": "agents-ui-interaction-second-level",
+      "prompt": "根据 references/agent 生成项目 AGENTS.md，UI 与交互规范应放在哪一级标题？",
+      "expected_output": "在 # 二、项目编写规范 下生成独立的 ## UI 与交互规范 二级章节，其状态展示、操作反馈、提交与危险操作、图片展示和可操作元素作为三级子章节。"
     }
   ]
 }
