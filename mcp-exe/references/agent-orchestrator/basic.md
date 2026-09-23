@@ -68,6 +68,8 @@ agent_summarize_results:
 
 `agent_open_task_chats` 会为每个任务追加全部 `resources`，在最近活动的 VS Code 窗口中打开独立 Chat，并传入语义化标题、任务 `task` 和完成协议；普通任务不生成 `prompts/` 目录。旧任务读取 `prompt/inputFiles`。
 
+页面工作流只允许在 Phase 3 已确认后创建任务。默认情况下，`task` 应指向对应 `spec/*.md`，并将同一 spec 放入 `resources`；只有任务账本中已有用户明确的 spec 豁免记录时，才允许使用完整内联任务描述。
+
 `agent_poll_tasks` 返回每个任务的状态、结果文件路径、更新时间，以及总数、已完成、失败和待处理汇总。
 
 ## 子 Agent 完成协议

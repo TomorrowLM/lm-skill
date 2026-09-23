@@ -18,7 +18,8 @@
 | --- | --- |
 | 从零需求且无设计稿或接口文档 | 读取 `brainstorming`，先收敛需求。 |
 | Figma、截图、UI 或 React 实现取舍 | 读取 `skill-routing`，仅路由当前需要的设计、视觉或 React 子技能。 |
-| Swagger、OpenAPI 或 Figma 契约调研 | 读取 `mcp-exe` 的对应案例，获取范围确认所需信息。 |
+| 页面涉及接口契约 | 默认读取 `mcp-exe` 的 Swagger 参考并调用 `lm-mcp-server.get_swagger_mcp`；查询失败或结果不可用时，再读取 `apifox-cli` 并使用 Apifox 回退。 |
+| 用户明确要求管理 Apifox 项目资源 | 直接读取 `apifox-cli`；若只是获取页面接口契约，仍遵循先 `get_swagger_mcp`、后 Apifox 的顺序。 |
 
 ### Phase 1 输出
 
@@ -33,6 +34,7 @@
 - Hook、utils、store 的归属与边界。
 - 类型、常量、枚举和状态展示映射。
 - API 请求参数、响应字段、错误态和空态处理。
+- 接口来源类型、查询范围、获取结果；若回退到 Apifox，同时记录 Swagger 查询失败原因、Apifox 项目/分支/资源标识和未解决冲突。
 
 ### 方案规则
 

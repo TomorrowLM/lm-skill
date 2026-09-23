@@ -26,16 +26,15 @@ references/agent/
 │   ├── typescript.md            # TypeScript 类型规范
 │   ├── project-structure.md     # 项目目录结构
 │   ├── components.md            # 项目公共组件说明
+│   ├── ui-interaction.md        # UI 与交互规范
 │   ├── tailwind.md              # Tailwind CSS 样式
-│   ├── less.md                  # Less 样式（H5）
-│   ├── less-cssmodules.md       # Less + CSS Modules 样式（PC）
+│   ├── less.md                  # Less + CSS Modules 样式
 │   ├── antd.md                  # Ant Design 组件库
 │   ├── antd-mobile.md           # antd-mobile 组件库
 │   ├── api.md                   # API 调用规范
 │   ├── qiankun.md               # 微前端基座
 │   ├── h5-pxtorem.md            # 移动端适配
 │   ├── oxlint.md                # Oxlint 代码检查
-│   └── image-preview.md         # 图片展示规范
 └── testing-standards/           # 三、项目测试规范
     └── vitest.md                # 单测规则
 ```
@@ -52,16 +51,18 @@ references/agent/
 | 框架 | `react` 依赖存在 | `coding-standards/react.md` |
 | 框架 | `vue` 依赖存在 | `coding-standards/vue.md` |
 | 样式 | `tailwindcss` 依赖存在 | `coding-standards/tailwind.md` |
-| 样式 | `less` 依赖存在，且无 `tailwindcss` | `coding-standards/less-cssmodules.md`（PC 项目）或 `coding-standards/less.md`（H5 项目） |
+| 样式 | 无 `tailwindcss` 但有 `less` 依赖 | `coding-standards/less.md` |
 | UI 库 | `antd` 依赖存在 | `coding-standards/antd.md` |
 | UI 库 | `antd-mobile` 依赖存在 | `coding-standards/antd-mobile.md` |
 | 微前端 | `qiankun` 依赖存在 | `coding-standards/qiankun.md` |
 | 移动端 | `postcss-pxtorem` 依赖存在 | `coding-standards/h5-pxtorem.md` |
 | Lint | `oxlint` 依赖存在 | `coding-standards/oxlint.md` |
 | 测试 | `vitest` 或 `jest` 依赖存在 | `testing-standards/vitest.md` |
-| 图片预览 | `yqa-g-web-urban` 项目特有 | `coding-standards/image-preview.md` |
 
-> 样式模块选择：PC 项目（有 `antd` 无 `antd-mobile`）用 `less-cssmodules.md`；H5 项目（有 `antd-mobile` 无 `antd`）用 `less.md`。
+> 样式模块选择：
+> 1. 存在 `tailwindcss` 依赖时，以 Tailwind 为主要样式方案，加载 `tailwind.md`。
+> 2. 不存在 `tailwindcss` 但存在 `less` 依赖时，加载 `less.md`。
+> 3. 两者同时存在时，Less 仅作为 Tailwind 无法覆盖时的补充；只有项目实际使用 Less 时才补充加载 `less.md`。
 
 ---
 
@@ -92,11 +93,10 @@ references/agent/
 5. `## 封装规则`
 6. `## 项目公共组件`
 7. `## 样式规范` 或 `## 样式与移动端适配规范`
-8. `## 图片展示规范`（命中时）
-9. `## Ant Design 规范` 或 `## antd-mobile 规范`（命中时）
-10. `## API 调用规范`
-11. `## 注释规范`
-12. `## 工程约定`（项目存在长期工程约定时）
+8. `## Ant Design 规范` 或 `## antd-mobile 规范`（命中时）
+9. `## API 调用规范`
+10. `## 注释规范`
+11. `## 工程约定`（项目存在长期工程约定时）
 
 禁止生成以下旧目录：
 
@@ -122,8 +122,8 @@ references/agent/
 4. coding-standards/typescript.md      ← 必选
 5. coding-standards/[框架].md          ← react.md 或 vue.md（命中时合并进封装规则）
 6. coding-standards/components.md      ← 必选
-7. coding-standards/[样式].md          ← tailwind.md / less.md / less-cssmodules.md（按检测结果选择）
-8. coding-standards/image-preview.md   ← 命中时选择
+7. coding-standards/ui-interaction.md  ← 必选
+8. coding-standards/[样式].md          ← tailwind.md / less.md（按检测结果选择）
 9. coding-standards/[UI库].md          ← antd.md / antd-mobile.md（按检测结果选择）
 10. coding-standards/api.md            ← 必选
 11. 项目特有模块                        ← qiankun.md / h5-pxtorem.md / oxlint.md（按检测结果选择）
@@ -138,9 +138,9 @@ references/agent/
 
 | 项目 | 模块清单 |
 |------|---------|
-| yqa-g-web-urban | ai-behavior, base, react, project-structure, typescript, components, tailwind, image-preview, antd, api, vitest |
-| yqa-g-h5-urban | ai-behavior, base, react, project-structure, typescript, components, tailwind, less, antd-mobile, api, vitest, h5-pxtorem |
-| yqa-web-portal | ai-behavior, base, react, project-structure, typescript, less-cssmodules, antd, api, qiankun, oxlint, vitest |
+| yqa-g-web-urban | ai-behavior, base, react, project-structure, typescript, components, ui-interaction, tailwind, antd, api, vitest |
+| yqa-g-h5-urban | ai-behavior, base, react, project-structure, typescript, components, ui-interaction, tailwind, less, antd-mobile, api, vitest, h5-pxtorem |
+| yqa-web-portal | ai-behavior, base, react, project-structure, typescript, components, ui-interaction, less, antd, api, qiankun, oxlint, vitest |
 
 ---
 

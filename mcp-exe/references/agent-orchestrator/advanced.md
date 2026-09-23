@@ -44,6 +44,7 @@ agent_open_task_chats:
 
 这些是页面工作流的目录约定，不是 MCP 创建接口的必填参数：
 
-- `task` 应写明执行要求；需要挂载的 `spec/*.md` 放入 `resources`。
+- 默认先生成并确认 `spec/*.md`；`task` 指向对应 spec，且需要挂载的 spec 放入 `resources`。只有用户明确豁免 spec 时，才允许使用完整内联任务描述，并在 `notes` 保留豁免原话、原因、边界和验收标准。
 - `resultFile` 应显式指向当前功能目录的 `results/<module>-result.md`。
 - 子任务账本写入当前设计目录的 `tasks.json`；只能追加任务，不覆盖既有记录。
+- 有依赖的任务只能在前置任务完成并经主 Agent 标记为 `reviewed` 后打开；任务描述中的“等待前置任务完成”不能替代实际批次控制。

@@ -20,6 +20,12 @@
       "files": []
     },
     {
+      "id": "trigger-api-fallback-01",
+      "prompt": "开发页面时先用 lm-mcp-server.get_swagger_mcp 获取接口，获取失败后再用 Apifox CLI 查接口定义。",
+      "expected_output": "应先读取 Swagger reference 并调用 get_swagger_mcp；只有结果失败或不可用时，才加载 apifox-cli 作为回退，并记录失败原因。",
+      "files": []
+    },
+    {
       "id": "trigger-figma-01",
       "prompt": "用设计稿 MCP 读取这个 Figma 链接的组件结构和图片资源",
       "expected_output": "应触发 mcp-exe；先读 references/figma-mcp.md，再调用已注册的 Figma MCP 工具，不用浏览器模拟读取。",
@@ -41,6 +47,18 @@
       "id": "trigger-agent-02",
       "prompt": "这个子任务结果不合格，请通过 agent-orchestrator-mcp 发起返工并重新等待完成",
       "expected_output": "应触发 mcp-exe；读取 Agent 编排参考，调用返工工具后重新打开任务并等待结果。",
+      "files": []
+    },
+    {
+      "id": "trigger-page-spec-default-01",
+      "prompt": "页面工作流已经确认拆分方案，请用 agent-orchestrator-mcp 执行多个子任务，用户没有说不需要 spec。",
+      "expected_output": "应先生成并确认 spec 文件；每个任务的 task 指向对应 spec，resources 挂载 spec，依赖任务按 reviewed 批次打开。",
+      "files": []
+    },
+    {
+      "id": "trigger-page-spec-waiver-01",
+      "prompt": "这是一个明确不需要 spec 的小范围任务，请用 agent-orchestrator-mcp 直接执行。",
+      "expected_output": "只有在任务账本记录用户明确豁免后，才允许使用完整内联 task；仍需记录边界、依赖和验收标准。",
       "files": []
     },
     {

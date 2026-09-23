@@ -1,19 +1,15 @@
-# Less 样式规范（H5 项目）
+# Less + CSS Modules 样式规范
 
 ## 核心原则
 
-H5 项目使用 Tailwind CSS 作为主要样式方案，Less 仅作为补充。
+无论 PC 还是 H5 项目，只要使用 Less，就默认使用 CSS Modules，文件命名为 `index.module.less`。
 
 ## 样式实现规则
 
-1. **优先使用 Tailwind 工具类组合**完成样式，避免自定义 CSS
-2. **禁止在 JSX 中使用内联 `style={{}}`**，样式必须通过 Tailwind 工具类或 CSS Modules 中的 className 实现
-3. **Less 仅作为补充**，用于 Tailwind 无法覆盖的复杂自定义样式（如动画、特殊布局）
-4. **Less 文件命名为 `index.module.less`**，必须通过 CSS Modules 引入
-5. 业务样式必须写在 CSS Modules 中，避免散落全局 class 造成样式污染
-6. 禁止直接 import 普通 `.less` 文件
-7. 遵循 BEM 命名规范（仅在使用 Less 文件时）
-8. 长 className 列表使用 `classnames` 库（已安装）动态组合，保持 JSX 可读性
+1. **禁止在 JSX 中使用内联 `style={{}}`**，样式必须通过 Tailwind 工具类或 CSS Modules 中的 className 实现
+2. **Less 必须使用 CSS Modules**：通过 `import styles from './index.module.less'` 引入，使用 `styles.xxx` 访问类名，禁止直接 import 普通 `.less` 文件
+3. 业务样式必须写在 CSS Modules 中，避免散落全局 class 造成样式污染
+4. 长 className 列表使用 `classnames` 库动态组合，保持 JSX 可读性
 
 ## Less 样式规则
 

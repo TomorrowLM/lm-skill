@@ -12,6 +12,7 @@ src/
 │   └── page-name/                # 页面目录
 │       ├── index.tsx             # 页面入口
 │       ├── types.ts              # 页面级类型定义
+│       ├── enums.ts              # 页面级业务枚举
 │       ├── consts.ts             # 页面级常量定义
 │       ├── components/           # 页面私有组件
 │       │   ├── ComponentName/
@@ -62,8 +63,9 @@ src/
 ## 文件命名规范
 
 - 主组件文件：`index.tsx`
-- 样式文件：见样式模块（tailwind.md / less.md / less-cssmodules.md）
+- 样式文件：见样式模块（tailwind.md / less.md）
 - 类型定义：`types.ts`
+- 页面私有枚举：`enums.ts`
 - 常量定义：`consts.ts`
 - 工具函数：`utils.ts`
 - 测试文件：`index.test.tsx`

@@ -1,0 +1,25 @@
+{
+  "skill_name": "writing-doc",
+  "evals": [
+    {
+      "id": "interface-contract-swagger-first",
+      "prompt": "修改 service 的请求参数和响应类型，接口契约需要先刷新。",
+      "expected_output": "默认先调用 get_swagger_mcp，source 使用对应接口路径并设置 refresh: true。"
+    },
+    {
+      "id": "interface-contract-apifox-fallback",
+      "prompt": "get_swagger_mcp 返回 MODEL_NOT_FOUND，但需要继续确认接口契约后修改 service。",
+      "expected_output": "记录 Swagger 查询失败，再加载 apifox-cli 使用 Apifox 获取契约，并记录回退原因。"
+    },
+    {
+      "id": "coding-standards-image-preview-in-ui-interaction",
+      "prompt": "生成前端项目通用编码规范，项目包含图片展示需求。",
+      "expected_output": "在 ui-interaction.md 中包含图片预览、统一预览组件和加载失败兜底规则，不再要求单独拼装独立图片预览规范。"
+    },
+    {
+      "id": "coding-standards-style-module-priority",
+      "prompt": "项目同时安装了 tailwindcss 和 less，生成项目编码规范时应该选择哪套样式规范？",
+      "expected_output": "优先使用 tailwind.md；Less 仅作为 Tailwind 无法覆盖时的补充，项目实际使用 Less 时再加载 less.md，并统一使用 CSS Modules。"
+    }
+  ]
+}

@@ -41,10 +41,13 @@ Phase 4 的合流检查由主窗口执行。子任务只负责自身 spec 的实
 
 - Phase 1、Phase 2、Phase 3 均已获得用户确认。
 - `docs/design/YYYY-MM-DD-<topic>-design/index.md` 已存在并是当前方案来源。
-- `spec/` 下存在 `implementation-plan.md` 或拆分后的 `NNx-<module>-spec.md`。
-- 每个待执行任务都有明确输入 `spec`、任务边界和验收标准。
+- `spec/` 下存在 `implementation-plan.md` 或拆分后的 `NNx-<module>-spec.md`；若不存在，必须能在 Phase 3 产出或 `tasks.json` 中找到用户明确的 spec 豁免记录。
+- 未豁免 spec 时，每个待执行任务的 `task` 指向对应 spec，且 `resources` 包含该 spec、任务边界和验收标准。
+- 已豁免 spec 时，每个任务的内联 `task` 和 `notes` 必须完整包含任务边界、依赖、验收标准以及用户豁免记录。
 - 使用 MCP 编排时，每个任务都已规划显式 `resultFile`。
 - 共享层、同文件修改、同接口契约和同全局状态依赖已识别。
+- 每个依赖任务的前置任务均已完成并由主 Agent 标记为 `reviewed`；未满足时只能创建或打开当前就绪批次。
+- 方案或 spec 已逐接口记录实际契约来源；Apifox 回退项包含 Swagger 失败原因和 Apifox 资源标识。
 - 推进模式已确认：自动推进或手动确认。
 
 ## 推进模式
@@ -134,7 +137,7 @@ Phase 4 开始前，必须向用户确认推进模式。推进模式决定任务
 
 先读取 [Agent 编排入口](../../mcp-exe/references/agent-orchestrator-mcp.md)：无依赖任务按入口读取 `basic.md`，页面工作流中的依赖或追加任务读取 `advanced.md`，返工读取 `rework.md`。工具调用、任务状态、`tasks.json` 字段和结果汇总规则以这些文档为准。
 
-页面工作流只额外约束：共享层完成前不得启动依赖任务；任务账本只能追加；返工与追加任务都必须覆盖或写入当前设计目录约定的 `resultFile`。
+页面工作流只额外约束：默认先生成并绑定 spec；共享层完成并经主 Agent 审查前不得启动依赖任务；任务账本只能追加；返工与追加任务都必须覆盖或写入当前设计目录约定的 `resultFile`。用户明确豁免 spec 时，必须保留豁免记录，不得由 Agent 自行判断“任务简单所以不需要”。
 
 ## 页面工作流返工边界
 

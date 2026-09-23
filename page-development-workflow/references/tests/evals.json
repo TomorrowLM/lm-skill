@@ -25,6 +25,24 @@
       "assertions": ["调研现状与接口契约", "进入方案和计划阶段"]
     },
     {
+      "id": "interface-source-swagger-then-apifox",
+      "prompt": "开发一个订单编辑页面，接口契约默认先用 lm-mcp-server.get_swagger_mcp 获取，失败后再用 Apifox CLI。",
+      "expectedTrigger": true,
+      "assertions": ["先使用 get_swagger_mcp", "仅在查询失败或结果不可用时回退 Apifox", "记录接口来源和失败原因"]
+    },
+    {
+      "id": "phase3-default-spec",
+      "prompt": "根据已确认方案开发列表页、详情页和集成验证任务，使用 MCP 编排执行。用户没有提到不需要 spec。",
+      "expectedTrigger": true,
+      "assertions": ["Phase 3 默认生成 spec 文件", "每个任务绑定对应 spec", "前置任务 reviewed 后才打开依赖任务"]
+    },
+    {
+      "id": "phase3-explicit-spec-waiver",
+      "prompt": "这是一个很小的单文件页面改动，明确不需要生成 spec，直接使用内联任务执行。",
+      "expectedTrigger": true,
+      "assertions": ["记录用户明确的 spec 豁免", "内联任务仍包含边界和验收标准", "不由 Agent 自行判断省略 spec"]
+    },
+    {
       "id": "gate-direct-start",
       "prompt": "根据 PRD 和 Swagger 实现商户入驻流程页面，直接开始。",
       "expectedTrigger": true,

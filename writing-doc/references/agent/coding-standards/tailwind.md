@@ -8,8 +8,8 @@
 
 1. **优先使用 Tailwind 工具类组合**完成样式，避免自定义 CSS
 2. **禁止在 JSX 中使用内联 `style={{}}`**，样式必须通过 Tailwind 工具类或 `.less` 文件中的 className 实现
-3. **Less 仅作为补充**，用于 Tailwind 无法覆盖的复杂自定义样式（如动画、特殊布局）
-4. **Less 文件命名为 `index.less`** 并与组件文件同目录
+3. **Less 仅作为补充**，用于 Tailwind 无法覆盖的复杂自定义样式（如动画、特殊布局），具体规则见 `less.md`
+4. **使用 Less 时必须通过 CSS Modules**，文件命名为 `index.module.less`
 5. 长 className 列表使用 `classnames` 库（已安装）动态组合，保持 JSX 可读性
 6. **优先使用 Tailwind 内置类**，避免任意值写法（`[Npx]`）；仅当内置类无法精确表达时才使用任意值
 7. **不生成 `p-2px`、`w-12px` 等带 px 后缀的自定义工具类命名**
