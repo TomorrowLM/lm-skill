@@ -1,7 +1,7 @@
 ---
 name: browser-verification
 description: >-
-  当需要对前端页面进行浏览器端验证时使用，包括视觉验收截图、交互验证、网络请求检查、控制台错误排查、DOM 与可访问性检查。
+  当需要对前端页面进行浏览器端验证时使用，包括视觉验收截图、交互验证、DOM、路由与可访问性检查；网络请求或控制台检查仅在当前允许的 front-automation 工具明确支持时执行，否则标记未验证/阻塞。
   用户提到"验证页面""检查页面""验收""截图对比""浏览器验证""页面验收"等场景必须触发。
   当任务要求 AI 结合截图识别页面结构、对照 DOM、通过 MCP 采集或避免漏识别元素时同样触发。
   页面采集默认使用项目内最新的 front-automation-mcp；旧 Chrome MCP 仅保存在 references/cache 中。
@@ -12,20 +12,21 @@ description: >-
 
 # 浏览器页面验证
 
-通过 front-automation-mcp 对前端页面进行系统化验证，覆盖视觉、交互、网络、控制台和 DOM 五个维度。
+通过 front-automation-mcp 对前端页面进行系统化验证，覆盖视觉、交互、路由、DOM 与可访问性。当前 MCP 未提供网络请求捕获和控制台日志工具；不得改用其他浏览器工具补采，应将相关验收项标记为 `unverified`/`blocked` 并说明原因。
 
 ## HARD-GATE
 
 以下规则无例外，即使用户要求“只要结构”“手动推断”“相信工具返回”或“跳过截图”：
 
-1. **先确认可用** — 先调用 `connect_browser`，再调用 `list_pages` 确认已登录页面和 `page_index`
-1a. **多 Chrome 必须按 CDP 端点隔离** — `page_index` 只表示同一 CDP 端点下的页面，不代表 Chrome 窗口。发现多个 Chrome/CDP 时必须记录每个 `cdp_url`，分别连接、分别 `list_pages`，禁止在一个会话中混用；切换端点后必须重新确认页面和登录态。
-1b. **不得干扰正常 Chrome** — 启动采集浏览器只能使用独立 CDP 端口和独立临时 profile；禁止退出、重启、复用或覆盖用户正常 Chrome 及其 profile。端口已占用时只连接并核验，不得强制启动或关闭进程。
+1. **先发现再选页** — 默认调用 `connect_browsers` 发现当前主机上已允许远程调试的 Chrome/Chromium 实例，再调用 `list_pages`；用户给出明确 CDP 地址或要求连接单个 endpoint 时才使用 `connect_browser(cdp_url)`。
+1a. **按完整 URL 精确匹配** — `list_pages` 的每项包含 `browserId`、`browserLabel` 和跨实例/contexts 的全局 `index`。按用户给出的完整 URL 选择目标，不得默认使用第一个 tab；后续工具始终沿用该项的 `index`，并在证据中记录浏览器标识。
+1a.1. **已有 tab 请求禁止新开或导航** — 用户要求读取、检查或截图“已打开的 tab”时，若完整 URL 未命中，或 `connect_browsers` 报告目标实例未启用远程调试/不可读，必须标记 `blocked`/`unverified` 并停止；不得调用 `open_browser_page`、`navigate_page` 或 `launch_login_browser` 伪造命中。只有用户或已确认的 `#10` 明确要求打开/导航时，才执行对应操作。
+1b. **不得干扰正常 Chrome** — `connect_browsers` 和 `connect_browser` 只附加到已允许远程调试的实例，不得退出、重启或覆盖用户 profile。只有验收范围明确需要新浏览器且用户授权时才调用 `launch_login_browser`，并使用独立 CDP 端口和临时 profile。
 1c. **启动后必须打印浏览器标识** — 启动成功后必须输出 `{ "browserLabel": "Chrome-{port}", "cdpUrl": "http://127.0.0.1:{port}" }`，并在后续证据中沿用该标识；不能只报告“已启动”。
-1d. **当前聊天端点复用规则** — 不读取或假设另一个聊天窗的 MCP 会话状态；只探测当前 MCP 配置的 CDP 端点。调用 `launch_login_browser` 前先按实际监听地址探测 `/json/version`（macOS 同一端口可能分别监听 `[::1]` 和 `127.0.0.1`），端点可达就返回实际 `cdpUrl`、`reused:true` 并执行 `connect_browser`，端点不可达且端口空闲才启动；端口占用但不是可达 CDP 时停止并报告。`list_pages=[]` 只表示该端点当前没有页面，不能据此再次启动 Chrome。
+1d. **发现边界与会话隔离** — `connect_browsers` 只搜索当前 MCP 主机可发现且存在有效 `DevToolsActivePort` 的 Chrome/Chromium 用户目录；不会读取另一个聊天窗的 MCP 会话，也不扫描 Safari、Firefox、Edge 或 Brave。检查 `skipped`；存在未启用远程调试或权限错误时报告不完整，不能把已连接实例冒充为全部浏览器；明确告诉用户哪个实例未接入，并提示在该实例允许远程调试后重新连接。
 2. **默认 front-automation-mcp** — 页面采集和交互验证统一使用项目内最新的 `front-automation-mcp`；旧 MCP 只保存在 `references/cache/legacy-mcp.md`。
 3. **证据落盘** — 截图和日志必须保存到指定目录，不能只口头描述结果
-4. **先导航再操作** — 操作前必须确保已在目标页面
+4. **先确认目标 tab 再操作** — 操作前确认选中 tab 的完整 URL/route 与验收目标一致。只有验收步骤明确要求导航时才调用 `navigate_page`；已打开目标 tab 时不得为了“确认”而重复导航。
 4a. **登录重定向默认阻塞，明确授权后允许认证前置** — 业务页导航后若 URL path 为 `/login`，或页面明确显示登录页，默认提示用户“业务页已重定向到 `/login`，已跳过当前页面验证”，并将范围标记为 `blocked`/`auth-required`。只有用户明确授权使用已提供的凭据时，AI 才能先通过 `inspect_dom`/截图识别登录控件，再调用 MCP 的通用 `fill_text_control`、`click_visible_control`、`select_visible_option` 完成一次认证前置；登录页不写入业务结构，认证成功后必须重新确认目标 route、DOM 和截图，再继续业务页面验证。MCP 不识别或硬编码登录字段、组织名称和业务流程。
 4a.1. **认证数据隔离** — 账号、密码、验证码等敏感值只能作为 MCP 工具调用参数传入；默认使用 `sensitive=true`，不得出现在截图说明、原始日志、验证 JSON、异常文本或最终报告中。MCP 只返回脱敏长度/存在性摘要，验证码不由 MCP 自动获取。
 4b. **强制逐层递归门控** — 任何页面验证或结构采集都必须建立待处理队列，按“菜单 → page → 外层 Tab → 内层 Tab → 业务按钮/表格行操作 → Dialog/Drawer 或详情页 → 详情页内部节点”逐层处理；完成子节点后必须回到父层重新确认并继续兄弟节点。只完成菜单、page 或 Tab 不算完成；队列未清空前禁止输出“验证完成”或最终 `verified` JSON。
@@ -122,6 +123,7 @@ Phase 6 证据汇总 — 截图、日志、清单落盘
 | `references/collection/collection.md` | 采集菜单、页面、Tab、Dialog/Drawer 和结构化清单时读取 |
 | `references/common/scrolling.md` | 涉及页面、表格、列表、懒加载或嵌套滚动时读取 |
 | `references/common/sampling.md` | 涉及重复卡片、列表行、按钮或模板变体时读取 |
+| `references/common/visual-comparison.md` | 对照 Figma/设计图、分析截图差异或回归样式修复时读取；按模块逐项对比，最后检查模块间布局 |
 | `references/automation/automation-testing.md` | 设计或执行自动化测试、回归测试、无人值守脚本时读取 |
 | `references/tests/` | 修改或评估本技能时读取触发、行为和压力测试用例；正常验证任务不读取 |
 
@@ -133,10 +135,11 @@ Phase 6 证据汇总 — 截图、日志、清单落盘
 
 ### 步骤
 
-1. 优先调用 `connect_browser` 连接当前聊天已经启动的 Chrome CDP；只有确认当前端点不可达且端口空闲时，才调用 `launch_login_browser`
-2. 调用 `list_pages`，按 URL/title 选择目标页，禁止默认假设第一个标签页正确
-3. 如果页面 URL 已知，调用 `navigate_page` 导航到目标页面
-4. 确认页面加载完成，无白屏或 404
+1. 默认调用 `connect_browsers`，检查 `browsers` 与 `skipped`；有明确 CDP 地址时可改用 `connect_browser(cdp_url)`。
+2. 调用 `list_pages`，按完整 URL 精确匹配目标，并记录 `browserId`、`browserLabel`、全局 `index`。
+3. 用户要求检查已打开 tab 时，命中后直接使用该 `page_index`；未命中则标记 `blocked`，不得调用 `open_browser_page` 或 `navigate_page`。仅当用户或 `#10` 明确要求导航时才调用 `navigate_page`。
+4. 调用 `wait_until_ready`；截图或 DOM 采集前调用 `scroll_to_top` 并确认 `atTop=true`、`windowScrollY=0`、`remainingScrolledContainers=0`。
+5. 使用 `page_snapshot`/`inspect_dom` 采集内容；需保存截图时调用 `page_screenshot` 并记录返回的 `screenshotPath`。核对返回 URL/route 与目标一致后，才将截图和 DOM 摘要写入 evidence。
 
 ### MCP 连接失败排查
 
@@ -156,10 +159,10 @@ Phase 6 证据汇总 — 截图、日志、清单落盘
 
 ### 步骤
 
-1. 确定需要检查的视口尺寸（如 375px 移动端、1920px 桌面端）
-2. 调用 `page_snapshot` 通过 front-automation-mcp 截取全页截图并采集可见 DOM
-3. 对关键 UI 元素（卡片、按钮、表单、弹窗）使用 `page_screenshot` 或操作后截图
-4. 保存截图到 `assets/screenshots/` 目录
+1. 对照设计图或回归样式时，先读取 `references/common/visual-comparison.md`，固定设计版本、实际业务状态、视口及截图来源。
+2. 只要求截图分析时使用已有图片，不新增浏览器操作。真实页面验收才按 Phase 0 定位目标并通过 MCP 采集截图与 DOM，截图保存到 `assets/screenshots/`。
+3. 先建立整页模块清单，再逐个模块完成结构、背景、图片、尺寸、间距和状态对比；每项保留证据及独立结论，不凭整页印象打分。
+4. 最后检查共享边界、模块间距、固定底栏和遮挡；设计还原与业务流程分别给出结果，不把源码检查当作视觉通过。
 
 ### 检查项
 

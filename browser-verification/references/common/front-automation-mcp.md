@@ -18,10 +18,17 @@ uv run --directory front/mcp/front-automation-mcp python server.py
 调用顺序：
 
 ```text
-connect_browser → list_pages → 确认 page_index → navigate_page/switch_tab
-→ scroll_to_top(atTop=true) → page_snapshot → inspect_dom
-→ 交互后再次 scroll_to_top + inspect_dom + 截图 → JSON
+connect_browsers（或 connect_browser(cdp_url)）→ list_pages
+→ 按完整 URL 精确匹配 browserId/browserLabel/global index
+→ wait_until_ready → scroll_to_top(atTop=true)
+→ page_snapshot/inspect_dom/page_screenshot
+→ 核对 URL、route、readiness 和截图路径 → evidence
+→ 有交互时复采 URL/DOM/截图并记录状态变化
 ```
+
+`connect_browsers` 扫描当前 MCP 主机上可发现的 Chrome/Chromium 默认用户目录和运行进程声明的自定义 `--user-data-dir`，只连接存在有效 `DevToolsActivePort` 的实例。它不会启动浏览器或新建页面。`skipped` 中的 `remote_debugging_not_enabled`、`profile_access_denied` 或 `connection_failed` 表示发现不完整，必须作为 `blocked`/`unverified` 证据记录，指出未接入的实例并提示用户授权远程调试或修复目录权限后重试。此工具不扫描 Safari、Firefox、Edge 或 Brave。
+
+`list_pages` 返回的 `index` 是所有已连接实例和 browser context 的全局索引，可传给 `page_snapshot`、`inspect_dom`、`page_screenshot` 及交互工具；`browserId`/`browserLabel` 用于保留来源。用户要求检查已打开页面时，先按完整 URL 精确匹配；未命中就停止并报告，不得改用第一个 tab，也不得调用 `open_browser_page` 或 `navigate_page`。只有用户或已确认的验收步骤明确要求进入新 route 时，才导航。
 
 本 MCP 同时服务三种模式：
 
@@ -29,7 +36,13 @@ connect_browser → list_pages → 确认 page_index → navigate_page/switch_ta
 - 交互测试：只执行已获准的低风险代表性交互，并验证 route、激活态、主内容、截图和 DOM。
 - 自动化设计/执行：只使用已完成双重验证的 route、定位方式、Tab 层级、occurrence 和风险策略；未验证节点只能进入待补证据队列。
 
-当前工具：`connect_browser`、`list_pages`、`navigate_page`、`scroll_to_top`、`scroll_page`、`switch_tab`、`page_snapshot`、`page_screenshot`、`inspect_dom`、`find_text_elements`、`click_and_collect_overlay`。
+当前工具按职责分组：
+
+- 连接与页面：`connect_browser`、`connect_browsers`、`list_pages`、`open_browser_page`、`launch_login_browser`、`navigate_page`、`wait_until_ready`。
+- 页面证据：`page_snapshot`、`page_screenshot`、`inspect_dom`、`scroll_to_top`、`scroll_page`、`collect_page_structure`、`collect_navigation_tree`、`collect_tab_variants`、`validate_view`。
+- 通用交互：`find_text_elements`、`fill_text_control`、`click_visible_control`、`select_visible_option`、`switch_tab`、`enumerate_navigation`、`click_navigation_item`、`click_and_collect_overlay`、`close_overlay`。
+
+当前工具没有网络请求捕获或控制台日志查询能力。验收项需要这些证据时，不得切换到其他浏览器 MCP、Chrome DevTools 或直接 CDP；应按 `#10` 记录为 `unverified`/`blocked`，或由用户选择手动验收方式。
 
 工作流工具：`collect_navigation_tree`、`collect_tab_variants`。优先使用工作流工具，不要在 MCP 工程外编写 Python 循环或 JSON 后处理。
 
