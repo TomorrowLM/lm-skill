@@ -2,7 +2,7 @@
 
 适用于无依赖的独立子任务：创建、打开、等待、汇总与审查。
 
-## 最短流程
+## 多窗口委派最短流程
 
 **精确调用链：** `agent_create_tasks` → `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` → `agent_mark_task_reviewed`。
 
@@ -68,7 +68,7 @@ agent_summarize_results:
 
 `agent_open_task_chats` 会为每个任务追加全部 `resources`，在最近活动的 VS Code 窗口中打开独立 Chat，并传入语义化标题、任务 `task` 和完成协议；普通任务不生成 `prompts/` 目录。旧任务读取 `prompt/inputFiles`。
 
-页面工作流只允许在 Phase 3 已确认后创建任务。默认情况下，`task` 应指向对应 `spec/*.md`，并将同一 spec 放入 `resources`；只有任务账本中已有用户明确的 spec 豁免记录时，才允许使用完整内联任务描述。
+页面工作流在 Phase 3 确认后，无论选择内联、子代理还是多窗口，都必须用 MCP 创建并维护 `tasks.json`。默认情况下，`task` 应指向对应 `spec/*.md`，并将同一 spec 放入 `resources`；只有任务账本中已有用户明确的 spec 豁免记录时，才允许使用完整内联任务描述。内联由主 Agent 实现；子代理由主 Agent 委派并收取结果；两者均由主 Agent 调用 `agent_complete_task` 写回结果，再调用 `agent_mark_task_reviewed`。只有多窗口模式才运行本节的打开、等待和汇总调用链。
 
 `agent_poll_tasks` 返回每个任务的状态、结果文件路径、更新时间，以及总数、已完成、失败和待处理汇总。
 
@@ -86,7 +86,7 @@ agent_complete_task:
 ## 等待结果与完成方式
 
 - `agent_wait_for_tasks` 返回 `completed`、`failed`、`pending`；`reviewed` 会归入 `completed`。
-- 子 Agent 应调用 `agent_complete_task` 写入结果并设为完成。
+- 多窗口子 Agent 应调用 `agent_complete_task` 写入结果并设为完成；内联和 `runSubagent` 模式由主 Agent 在核验结果后调用。
 - 兼容方式是子 Agent 直接写入 `resultFile`；等待工具会检测结果并同步状态。
 - `failed` 或 `pending` 任务不应直接视为验收通过。
 
@@ -95,11 +95,11 @@ agent_complete_task:
 - 无依赖任务可批量创建、统一打开、统一等待。
 - 有依赖关系时读取 [advanced.md](advanced.md)。
 - 返工时读取 [rework.md](rework.md)。
-- 单文件简单修改或紧密耦合的串行任务不使用编排。
+- 不属于页面开发工作流的单文件简单修改或紧密耦合串行任务不使用任务编排；已触发页面工作流时，内联执行仍使用任务账本。
 
 | 场景 | 推荐 |
 | --- | --- |
 | 页面开发工作流 Phase 4 多子任务并行 | 首选 |
 | 独立模块调研或批量代码审查 | 适用 |
 | 单文件简单修改 | 不使用 |
-| 紧密耦合的串行任务 | 用内联执行更合适 |
+| 页面工作流中的紧密耦合串行任务 | 用内联执行，但保留 MCP 任务账本 |

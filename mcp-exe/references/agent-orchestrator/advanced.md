@@ -44,6 +44,7 @@ agent_open_task_chats:
 
 这些是页面工作流的目录约定，不是 MCP 创建接口的必填参数：
 
+- Phase 3 确认后，所有执行方式都先把计划任务写入当前设计目录的 `tasks.json`；执行模式只决定实现者和是否打开子聊天，不改变任务账本要求。
 - 默认先生成并确认 `spec/*.md`；`task` 指向对应 spec，且需要挂载的 spec 放入 `resources`。只有用户明确豁免 spec 时，才允许使用完整内联任务描述，并在 `notes` 保留豁免原话、原因、边界和验收标准。
 - `resultFile` 应显式指向当前功能目录的 `results/<module>-result.md`。
 - 子任务账本写入当前设计目录的 `tasks.json`；只能追加任务，不覆盖既有记录。

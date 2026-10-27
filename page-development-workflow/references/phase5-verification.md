@@ -54,8 +54,8 @@ flowchart TD
 进入测试验收前必须确认 Phase 4 已收口，任一不满足则回到 Phase 4 补齐：
 
 - `spec/` 下所有计划或子任务规格均已有对应执行产物。
-- 使用 MCP 编排时，`tasks.json` 中不存在 `pending`、`running`、`failed` 或 `rework_requested` 任务。
-- 使用 MCP 编排时，所有已完成任务都已由主 Agent 审查，通过项应标记为 `reviewed`。
+- 所有执行方式共用 `tasks.json`；其中不存在 `pending`、`running`、`failed` 或 `rework_requested` 任务。
+- 所有已完成任务都已由主 Agent 审查，通过项应标记为 `reviewed`。
 - 如存在 `reworks/`，当前返工必须已完成并覆盖原 `resultFile`。
 - `results/` 中的执行报告能对应到每个 `spec/*.md`。
 - Phase 4 没有遗留的新增范围、接口契约或验收标准变更。
@@ -180,7 +180,7 @@ docs/design/YYYY-MM-DD-<topic>-design/results/05-browser-verification-result.md
 docs/design/YYYY-MM-DD-<topic>-design/evidence/phase5-verification.md
 ```
 
-Phase 4 只生成 `tasks.json`、`results/` 和按需 `reworks/`。证据文件必须记录 `# 10` 中适用测试和验收内容的实际结果，不得只写“页面正常”。
+Phase 4 在所有执行方式下都维护 `tasks.json` 和各任务 `resultFile`；返工时按需生成 `reworks/`。Phase 5 生成本节指定的 evidence 文件，并记录 `# 10` 中适用测试和验收内容的实际结果，不得只写“页面正常”。
 
 ```md
 # Phase 5 验证证据

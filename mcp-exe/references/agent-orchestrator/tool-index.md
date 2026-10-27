@@ -11,7 +11,7 @@
 | `agent_open_task_chats` | 主 Agent | 在最近活动的 VS Code 窗口打开独立 Chat，挂载任务文件与 `resources`；返工时额外挂载 `rework.task` 与 `rework.resources`，并使用任务标题、`task` 和 `notes` 打开子聊天窗口。 |
 | `agent_wait_for_tasks` | 主 Agent | 阻塞等待多个任务完成，轮询状态与结果文件。 |
 | `agent_poll_tasks` | 主 Agent | 非阻塞查看多个任务当前状态。 |
-| `agent_complete_task` | 子 Agent | 写入结果并标记任务完成。 |
+| `agent_complete_task` | 执行任务的 Agent 或主 Agent | 写入结果并标记任务完成；内联/子代理模式由主 Agent 核验后调用，多窗口模式由子 Agent 调用。 |
 | `agent_read_task_result` | 主 Agent | 读取已完成任务的结果文件。 |
 | `agent_mark_task_reviewed` | 主 Agent | 审查通过后标记任务为已审查。 |
 | `agent_request_rework` | 主 Agent | 在返工文档已写入后，请求返工并更新任务账本。 |

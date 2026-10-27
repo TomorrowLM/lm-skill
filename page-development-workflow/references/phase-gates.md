@@ -17,7 +17,7 @@
 ```text
 ├── index.md
 ├── spec/                              # implementation-plan.md 或 NNx-<module>-spec.md
-├── tasks.json                         # MCP 编排任务状态，按需
+├── tasks.json                         # 页面工作流统一任务账本，所有执行方式共用
 ├── reworks/task-<uuid>-rework-<N>.md  # 返工要求，按需
 ├── results/<编号>-result.md           # 当前最终任务结果，按需
 ├── assets/{figma,screenshots,diagrams,views}/
@@ -70,6 +70,7 @@
 - [ ] 已给出 3-5 种拆分方案，至少包含不拆分方案。
 - [ ] 用户已选择拆分方案和执行方式。
 - [ ] 默认已生成 `spec/implementation-plan.md` 或多个 `<module>-spec.md`；若用户明确豁免，已记录用户原话、原因、任务边界、依赖和验收标准。
+- [ ] Phase 3 获得确认后，已通过 MCP 为每个计划任务创建或追加 `tasks.json` 记录；此要求不随 Phase 4 执行方式变化。
 - [ ] 计划包含步骤顺序、串行阶段、可同步执行、不可同步执行、合流检查点。
 - [ ] 每个接口已记录实际来源工具、source、查询结果和 Apifox 回退信息（如适用）。
 - [ ] 如需修改现有模块，已完成影响面评估。
@@ -81,13 +82,14 @@
 |------|------|
 | 输入 | Phase 3 确认后的计划或子任务规格 |
 | 产出 | 可运行代码和变更记录 |
-| 门控 | **执行方式选择必须等待用户确认**（内联/子代理/MCP编排/多窗口），串行前置任务可立即内联执行 |
+| 门控 | **执行方式选择必须等待用户确认**（内联/子代理/多窗口〔MCP 子聊天〕）；Phase 3 确认后先创建统一任务账本，再按所选方式执行 |
 
 完成标志：
 
 - [ ] 已向用户展示执行方式选项并获得确认。
-- [ ] 只允许串行前置任务在确认前执行；并行批次必须在用户选择方式后启动。
-- [ ] 未豁免 spec 时，每个任务已绑定对应 spec；已豁免时，任务内联描述包含完整边界和验收标准。
+- [ ] Phase 3 和执行方式确认前未创建或执行任务；确认后先创建/追加任务账本，再执行当前就绪任务。
+- [ ] `tasks.json` 已包含所有计划任务；每个任务均有明确 `task`、`resultFile` 和验收依据。
+- [ ] 未豁免 spec 时，每个任务已绑定对应 spec；已豁免时，任务记录包含用户豁免原话及完整边界、依赖和验收标准。
 - [ ] 依赖任务的前置任务均已完成并标记为 `reviewed`，未就绪任务不得打开。
 - [ ] 已按计划顺序执行。
 - [ ] 只并行计划中明确允许的批次。
@@ -96,10 +98,10 @@
 - [ ] 变更范围记录清楚。
 - [ ] 主窗口已完成合流门禁：任务状态、变更范围、项目级 typecheck/lint/build 和页面启动 smoke check。
 
-### MCP 编排附加检查项
+### 多窗口 MCP 子聊天附加检查项
 
 - [ ] 已读取 `mcp-exe/references/agent-orchestrator-mcp.md`。
-- [ ] `agent_create_tasks` → `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` 四步完整执行，无跳过。
+- [ ] `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` 按依赖批次执行；不适用的调用不强行执行。
 - [ ] 各任务结果已审查，不合格的已返工。
 - [ ] 已通过的任务已标记 `agent_mark_task_reviewed`。
 

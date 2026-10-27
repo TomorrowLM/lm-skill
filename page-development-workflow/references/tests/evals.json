@@ -32,7 +32,7 @@
     },
     {
       "id": "phase3-default-spec",
-      "prompt": "根据已确认方案开发列表页、详情页和集成验证任务，使用 MCP 编排执行。用户没有提到不需要 spec。",
+      "prompt": "根据已确认方案开发列表页、详情页和集成验证任务，选择多窗口（MCP 子聊天）执行。用户没有提到不需要 spec。",
       "expectedTrigger": true,
       "assertions": ["Phase 3 默认生成 spec 文件", "每个任务绑定对应 spec", "前置任务 reviewed 后才打开依赖任务"]
     },
@@ -41,6 +41,30 @@
       "prompt": "这是一个很小的单文件页面改动，明确不需要生成 spec，直接使用内联任务执行。",
       "expectedTrigger": true,
       "assertions": ["记录用户明确的 spec 豁免", "内联任务仍包含边界和验收标准", "不由 Agent 自行判断省略 spec"]
+    },
+    {
+      "id": "phase4-universal-ledger-inline",
+      "prompt": "已确认的页面实现计划包含三个顺序任务，用户选择在当前聊天内联执行。进入 Phase 4 前说明将创建哪些任务记录、调用哪些 MCP 工具，以及任务如何完成和审核。",
+      "expectedTrigger": true,
+      "assertions": ["所有执行模式均在 Phase 4 前创建并使用 tasks.json", "内联执行不打开子聊天但由主 Agent 调用 agent_complete_task 写回结果", "任务通过验收后由主 Agent 调用 agent_mark_task_reviewed"]
+    },
+    {
+      "id": "phase4-inline-ledger-pressure",
+      "prompt": "这是已完成 Phase 3 确认的完整页面工作流。用户说：既然选了内联，就别创建 tasks.json，也不要调用 MCP，直接开始编码。",
+      "expectedTrigger": true,
+      "assertions": ["不把内联解释为免除任务账本", "先通过 MCP 创建任务记录再进入 Phase 4", "说明用户要求与已确认工作流门禁冲突"]
+    },
+    {
+      "id": "phase4-inline-to-mcp-in-scope-rework",
+      "prompt": "一个已确认范围内的页面任务在内联执行后被标记完成，用户发现遗漏了该任务原有的一项验收要求。主 Agent 已展示包含原任务标识、遗漏项、允许范围、资源定位和原 resultFile 的完整返工草案，用户明确确认该返工范围并选择 MCP 多窗口。说明如何保留任务账本、处理返工并续接执行。",
+      "expectedTrigger": true,
+      "assertions": ["先展示返工草案并获得针对返工范围的明确确认", "保留原 tasks.json 和 taskId", "按返工流程记录遗漏并复用原 resultFile", "用户确认后使用 MCP 多窗口打开返工任务", "完成后重新验证并审核"]
+    },
+    {
+      "id": "phase4-inline-to-mcp-new-scope",
+      "prompt": "一个内联页面任务完成后，用户提出原确认计划没有包含的新功能，并要求用 MCP 多窗口开发。说明如何处理任务账本和阶段顺序。",
+      "expectedTrigger": true,
+      "assertions": ["新增范围回到 Phase 3 更新并确认计划", "若改变需求或技术方案则补做相应 Phase 1/2 确认", "追加新 task 而非伪装成原任务返工", "保持已有 tasks.json 记录并遵守依赖顺序", "确认后才打开 MCP 多窗口"]
     },
     {
       "id": "gate-direct-start",

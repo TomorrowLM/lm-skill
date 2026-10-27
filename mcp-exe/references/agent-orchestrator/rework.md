@@ -6,7 +6,7 @@
 
 以下是协作流程约束，不是 MCP 自动校验：
 
-**返工精确调用链：** 用户确认 → 写入 `reworkFile` → `agent_request_rework` → `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` → `agent_mark_task_reviewed`。
+**返工精确调用链：** 用户确认 → 写入 `reworkFile` → `agent_request_rework` → `agent_open_task_chats` → 子 Agent 调用 `agent_complete_task` → `agent_wait_for_tasks` → `agent_summarize_results` → `agent_mark_task_reviewed`。
 
 不得跳过用户确认、返工文档、重新打开或等待步骤；不得缩写、改写或虚构工具名。
 
@@ -23,8 +23,9 @@
 1. 调用 `agent_request_rework`，传入 `workspaceRoot`、`taskId`、`reason`、`reworkFile`。
 2. 工具将任务标为 `rework_requested`，追加 `reworks` 历史，并把本次返工输入设为 `reworkFile`。
 3. 调用 `agent_open_task_chats` 重新打开任务；服务会同时挂载原任务文件、`resources` 与本次 `rework.task`、`rework.resources`。
-4. 调用 `agent_wait_for_tasks` 等待完成，再调用 `agent_summarize_results` 复审。
-5. 通过后调用 `agent_mark_task_reviewed`。
+4. 子 Agent 完成返工后调用 `agent_complete_task` 覆盖原 `resultFile` 并更新状态。
+5. 调用 `agent_wait_for_tasks` 等待完成，再调用 `agent_summarize_results` 复审。
+6. 通过后调用 `agent_mark_task_reviewed`。
 
 不得只写返工文档或口头要求子 Agent 修改；确认后必须按上述工具链请求、重新打开、等待并复审。
 

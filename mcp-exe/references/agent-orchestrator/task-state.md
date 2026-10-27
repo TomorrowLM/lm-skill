@@ -61,3 +61,5 @@
 - `agent_open_task_chats`：任务变为 `running`，当前返工变为 `running`。
 - `agent_complete_task`：任务变为 `completed`，当前返工变为 `completed`，并覆盖原 `resultFile`。
 - `agent_wait_for_tasks`：把 `completed` 与 `reviewed` 归入完成集合；超时或未完成任务归入 `pending`。
+
+页面工作流的内联和子代理任务由主 Agent 执行或接收结果；执行期间不调用 `agent_open_task_chats`，因此任务保持 `pending`。验收通过后，主 Agent 调用 `agent_complete_task` 写入结果，再审查并标记 `reviewed`。该工具允许从 `pending` 更新为 `completed`，无需伪造 `running` 状态。

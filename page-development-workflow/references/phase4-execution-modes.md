@@ -18,7 +18,7 @@ Phase 4 的合流检查由主窗口执行。子任务只负责自身 spec 的实
 - 内联任务涉及业务逻辑、Hook、组件或页面整合时，读取 `test-driven-development` 并执行红-绿-重构。
 - 内联 React / Next.js 任务先读取 `skill-routing` 判断是否需要专项技能；仅在渲染、性能或 bundle 问题时加载对应性能实践。
 - 设计稿未覆盖配色、间距或动效等视觉决策时，读取 `skill-routing` 路由到视觉设计技能。
-- 多窗口、MCP 编排和子代理执行时，主窗口不预读实现技能；执行任务根据自身 spec 按需加载。
+- 多窗口（MCP 子聊天）和子代理执行时，主窗口不预读实现技能；执行任务根据自身 spec 按需加载。
 
 > **技能加载的三层分工：**
 > - **Phase 3 spec**：隔离执行的完整技能清单，只列本子任务实际需要的，不引用通用规则。
@@ -27,7 +27,7 @@ Phase 4 的合流检查由主窗口执行。子任务只负责自身 spec 的实
 
 ## 隔离执行的设计资源职责
 
-适用于多窗口、MCP 编排和子代理驱动；内联执行仍由当前窗口按计划读取资源。
+适用于多窗口（MCP 子聊天）和子代理驱动；内联执行仍由当前窗口按计划读取资源。
 
 - 主窗口只把 Phase 1 已确认的资源定位、用途、验收目标和访问限制写入 `spec` 或任务 prompt，不在 Phase 3、Phase 4 重复打开网页、下载图片或执行完整视觉分析。
 - 新开的执行任务根据资源定位自行调用 Figma 或图片分析能力，获取实现所需详情，并将 Figma 资源保存到 `assets/figma/`。页面截图可作为实现参考保存，但不作为正式浏览器验收；完整页面截图统一由 Phase 5 验收子窗口生成并保存到 `assets/screenshots/`。
@@ -43,10 +43,10 @@ Phase 4 的合流检查由主窗口执行。子任务只负责自身 spec 的实
 - `docs/design/YYYY-MM-DD-<topic>-design/index.md` 已存在并是当前方案来源。
 - `spec/` 下存在 `implementation-plan.md` 或拆分后的 `NNx-<module>-spec.md`；若不存在，必须能在 Phase 3 产出或 `tasks.json` 中找到用户明确的 spec 豁免记录。
 - 未豁免 spec 时，每个待执行任务的 `task` 指向对应 spec，且 `resources` 包含该 spec、任务边界和验收标准。
-- 已豁免 spec 时，每个任务的内联 `task` 和 `notes` 必须完整包含任务边界、依赖、验收标准以及用户豁免记录。
-- 使用 MCP 编排时，每个任务都已规划显式 `resultFile`。
+- `tasks.json` 已包含所有计划任务；spec 豁免任务的 `task` 和 `notes` 完整包含用户豁免原话、任务边界、依赖和验收标准。
+- 每个任务都已规划显式 `resultFile`，不因执行方式省略。
 - 共享层、同文件修改、同接口契约和同全局状态依赖已识别。
-- 每个依赖任务的前置任务均已完成并由主 Agent 标记为 `reviewed`；未满足时只能创建或打开当前就绪批次。
+- 每个依赖任务的前置任务均已完成并由主 Agent 标记为 `reviewed`；未就绪任务保持 `pending`，不得执行或打开，只能处理当前就绪批次。
 - 方案或 spec 已逐接口记录实际契约来源；Apifox 回退项包含 Swagger 失败原因和 Apifox 资源标识。
 - 推进模式已确认：自动推进或手动确认。
 
@@ -84,11 +84,11 @@ Phase 4 开始前，必须向用户确认推进模式。推进模式决定任务
 
 | 执行方式 | 适用场景 |
 |----------|----------|
-| 直接实现 | 低复杂度、文件少、无需子任务规格 |
-| 内联执行 | 有完整 `implementation-plan.md`，但不需要并行 |
-| 多窗口并行 | 子任务相互独立，用户愿意手动开多个聊天窗口 |
-| MCP 编排执行 | 已配置 agent-orchestrator-mcp，需要自动创建、打开、等待、汇总任务 |
-| 子代理驱动 | 当前环境支持子代理，任务可由代理分工完成 |
+| 内联 | 主 Agent 在当前聊天按计划顺序执行；仍使用 MCP 任务账本，不打开子聊天 |
+| 子代理 | 主 Agent 使用 `runSubagent` 委派独立任务；任务仍进入 MCP 账本，由主 Agent 收到并核验结果后写回 |
+| 多窗口（MCP 子聊天） | 使用 agent-orchestrator MCP 打开独立 VS Code 聊天，适用于可隔离任务或明确并行批次 |
+
+页面开发工作流的任务记录与执行方式分离：Phase 3 确认后，所有模式都先创建或追加 `tasks.json`。单点小改动不触发本技能，也不因此额外创建任务账本。
 
 ## 多窗口并行
 
@@ -131,13 +131,15 @@ Phase 4 开始前，必须向用户确认推进模式。推进模式决定任务
 - 需要主窗口注意：...
 ```
 
-## MCP 编排执行
+## 统一任务账本与模式切换
 
-页面工作流的编排前提是：每个任务必填 `task`，可选 `resources`、`notes`，`resultFile` 显式指向当前设计目录的 `results/<编号>-result.md`，且已识别共享依赖与并行边界。视觉产物目录 `visualDir` 仅在需要时传入，并应位于当前设计目录的 `assets/` 下。打开子聊天必须继续使用 `--reuse-window`，并要求子 Agent 调用 `agent_complete_task` 写回 `tasks.json`。
+Phase 3 确认后，调用 `agent_create_tasks` 将所有计划任务写入当前设计目录的 `tasks.json`。每项任务必须提供 `task`、`workspaceRoot` 和显式 `resultFile`；`resources` 挂载 spec 与必要参考，`notes` 记录边界、依赖、执行模式和用户豁免。视觉产物目录 `visualDir` 仅在需要时传入。此账本从任务开始一直保留到 Phase 5，不因执行者或聊天窗口变化而重建。
 
-先读取 [Agent 编排入口](../../mcp-exe/references/agent-orchestrator-mcp.md)：无依赖任务按入口读取 `basic.md`，页面工作流中的依赖或追加任务读取 `advanced.md`，返工读取 `rework.md`。工具调用、任务状态、`tasks.json` 字段和结果汇总规则以这些文档为准。
+内联模式由主 Agent 在当前聊天逐项执行；子代理模式由主 Agent 调用 `runSubagent`。两者完成实现并核对验收项后，由主 Agent 调用 `agent_complete_task` 写入结果，再调用 `agent_mark_task_reviewed` 标记已审查。执行期间若尚未完成，任务保留 `pending`；不得仅为制造 `running` 状态而打开子聊天。完成结果写入由主 Agent 执行，不要求子代理具备 MCP 工具。
 
-页面工作流只额外约束：默认先生成并绑定 spec；共享层完成并经主 Agent 审查前不得启动依赖任务；任务账本只能追加；返工与追加任务都必须覆盖或写入当前设计目录约定的 `resultFile`。用户明确豁免 spec 时，必须保留豁免记录，不得由 Agent 自行判断“任务简单所以不需要”。
+多窗口模式先读取 [Agent 编排入口](../../mcp-exe/references/agent-orchestrator-mcp.md)：无依赖批次读取 `basic.md`，有依赖或追加任务读取 `advanced.md`，返工读取 `rework.md`。仅此模式调用 `agent_open_task_chats` 和 `agent_wait_for_tasks`；子 Agent 调用 `agent_complete_task`，主 Agent 汇总、审查并标记 `reviewed`。工具参数、状态和结果规则以这些 reference 为准。
+
+内联或子代理任务转为多窗口执行时，保留原 `tasks.json` 和任务 ID。已完成任务遗漏原验收项时，按用户确认的返工流程处理并覆盖原 `resultFile`；用户提出原计划外的新功能时，先判断是否改变已确认的需求或技术方案，必要时回到 Phase 1/2 补充确认，再回 Phase 3 更新计划并追加任务。任务账本只能追加，不得用新任务覆盖既有记录。
 
 ## 页面工作流返工边界
 
@@ -194,11 +196,18 @@ Agent 按以下模板写入 `reworks/task-<uuid>-rework-<N>.md`，写完后调�
 
 流程：
 
-1. 读取 `implementation-plan.md`。
-2. 按步骤逐项执行。
-3. 每完成一个步骤记录变更文件。
-4. 遇到测试失败或类型错误，按当前步骤修复，不扩大范围。
-5. 全部完成后进入 Phase 5。
+1. 读取已确认的 `implementation-plan.md`，并核对 Phase 3 已创建的任务账本。
+2. 主 Agent 按依赖顺序逐项执行；任务未完成前保持 `pending`，不得伪报完成。
+3. 验收项通过后，主 Agent 调用 `agent_complete_task` 写入指定 `resultFile`，再审查并调用 `agent_mark_task_reviewed`。
+4. 遇到失败或阻塞时保留未完成状态并记录证据；需要换多窗口执行时复用原 task ID，不重建账本。
+5. 所有任务完成并审查后进入 Phase 5。
+
+## 子代理执行
+
+1. 使用 Phase 3 已创建的任务账本，不为 `runSubagent` 另建一套手工清单。
+2. 主 Agent 将 task、spec、边界和验收项交给子代理；同一文件或共享契约按计划串行处理。
+3. 收到子代理结果后，主 Agent 核对变更和验收证据，再调用 `agent_complete_task` 与 `agent_mark_task_reviewed`。
+4. 子代理未完成或结果不合格时，不标记完成；按原 task ID 继续或进入已确认的返工流程。
 
 ## 子代理驱动
 
