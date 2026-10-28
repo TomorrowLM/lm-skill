@@ -4,14 +4,14 @@
 
 ## 多窗口委派最短流程
 
-**精确调用链：** `agent_create_tasks` → `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` → `agent_mark_task_reviewed`。
+**精确调用链：** `agent_create_tasks` → `agent_open_task_chats` → 子 Agent 调用 `agent_complete_task` → `agent_wait_for_tasks` → `agent_summarize_results` → `agent_mark_task_reviewed`。
 
 不得缩写、改写或虚构工具名，例如 `agent_wait_tasks`、`agent_collect_results`、`agent_get_task_results` 都不是可调用工具。
 
 1. 用 `agent_create_task` 创建一个任务，或用 `agent_create_tasks` 批量创建多个任务。
 2. 创建每个新任务时必须提供 `task`；`task` 可以是简短描述，也可以是工作区内的任务文件地址。`resources` 用于补充参考资源，`notes` 用于补充边界说明。旧任务可继续使用 `prompt/inputFiles`。
 3. 调用 `agent_open_task_chats`。服务会逐个打开聊天窗口并将任务设为 `running`；全部窗口打开后，无依赖任务可并行执行。
-4. 需要统一收口时调用 `agent_wait_for_tasks`；只查看进度时调用 `agent_poll_tasks`。
+4. 子 Agent 完成后调用 `agent_complete_task` 写入结果；主 Agent 需要统一收口时调用 `agent_wait_for_tasks`，只查看进度时调用 `agent_poll_tasks`。
 5. 调用 `agent_summarize_results` 汇总结果，再逐项审查。
 6. 通过则调用 `agent_mark_task_reviewed`；不通过时读取 [rework.md](rework.md)。
 

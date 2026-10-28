@@ -177,3 +177,12 @@ HARD-GATE 测试：将 SKILL.md 中的每条红线列出，验证是否无法绕
 
 本轮证据仅达到场景决策层，不证明 VS Code 自动技能路由或 MCP 运行时调用成功。修改后更新了可复用用例 `references/tests/evals.json`；既有触发率和 Token 成本评分未在本轮重跑。
 
+## 2026-10-27：账本与执行链一致性复核
+
+| 用例 ID | 结果 | 关键断言 |
+| --- | --- | --- |
+| `phase4-multiwindow-completion-chain` | PASS | worker 在主 Agent 等待前调用 `agent_complete_task`；随后汇总并审核 |
+| `phase4-mode-switch-executor-neutral-task` | PASS（4/4） | 切换时保留账本和 taskId；任务内容不绑定执行者；同一 pending 任务可打开；不依赖更新 notes |
+
+复核确认：通用 MCP 工具允许省略 `resultFile` 并推断路径，页面开发工作流则明确要求显式指定；两者是通用工具能力与页面工作流约束的层级关系，不互斥。以上仍为场景决策证据，未调用 MCP 运行时工具。
+

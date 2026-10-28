@@ -4,7 +4,7 @@
 
 | 工具 | 角色 | 说明 |
 | --- | --- | --- |
-| `agent_create_task` | 主 Agent | 创建单个编排任务。 |
+| `agent_create_task` | 主 Agent | 创建单个编排任务；`resources`、`notes`、`resultFile` 对通用工具调用可选，页面工作流必须显式提供 `resultFile`。 |
 | `agent_create_tasks` | 主 Agent | 批量创建多个编排任务。 |
 | `agent_list_tasks` | 主 Agent | 列出工作区任务，可按状态过滤。 |
 | `agent_get_task` | 主 Agent | 获取单个任务详情。 |
@@ -26,7 +26,7 @@
 | `task` | 是 | 子任务简短描述或任务文件地址。 |
 | `resources` | 否 | 参考资源文件，路径必须位于 `workspaceRoot` 内。 |
 | `notes` | 否 | 补充说明、边界和暂不处理项。 |
-| `resultFile` | 否 | 结果文件；未传时从输入推断并写入 `docs/design|prod/<需求目录>/results/task-<uuid>.md`，无法推断时写入 `docs/results/task-<uuid>.md`。 |
+| `resultFile` | 否 | 通用工具调用未传时会尝试推断；页面工作流必须显式指定当前设计目录的结果文件。 |
 | `visualDir` | 否 | 视觉产物目录，建议位于当前设计目录的 `assets/` 下；非视觉任务可省略。 |
 
 ## 常用工具参数
