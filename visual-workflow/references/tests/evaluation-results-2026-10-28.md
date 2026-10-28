@@ -23,7 +23,9 @@
 | visual-workflow 触发语义分类 | 13 / 13 应触发 | 100% | 场景决策通过；自动触发未验证 |
 | visual-workflow 非触发识别 | 4 / 4 | 100% | 单点样式、纯 DOM、Figma 画布编辑和 Figma 生成不误入本技能 |
 | 三模式及边界行为（VW01–VW17） | 17 / 17 | 100% | 场景决策通过 |
-| skill-routing 路由（ID 1–21） | 21 / 21 | 100% | 含视觉方案、实现、验收、非触发和歧义性能澄清 |
+| skill-routing 嵌套子技能路由（ID 1–21） | 21 / 21 | 100% | 5 条应触发（React 性能/技能查找），16 条非触发（含全部视觉请求）；自动触发未验证 |
+| skill-routing 应触发识别 | 5 / 5 | 100% | 仅命中 `skills/skill-routing/skills/` 下性能实践或技能查找 |
+| skill-routing 非触发识别 | 16 / 16 | 100% | Figma/视觉及其他根目录技能不由此路由器处理 |
 | browser-verification 行为（B01–B14） | 14 / 14 | 100% | 浏览器定位、DOM/截图、交互证据等门禁保留 |
 | browser-verification 压力（P01–P13、P16） | 14 / 14 | 100% | 滚动、抽样、未命中 tab 和风险边界场景决策通过 |
 | 浏览器行为/压力断言 | 120 / 120 | 100% | 按根技能及 scrolling/sampling references 核对 |
@@ -35,13 +37,17 @@
 ### 评估用例记录
 
 - visual-workflow：`references/tests/evals.json` 的 VW01–VW17；隔离 Agent 按共享标准和对应模式判定。
-- skill-routing：`skills/skill-routing/references/tests/evals.json` 的 ID 1–21；一般代码 Review 不触发，模糊“页面慢”先问明原因，Figma 视觉验收进入 verification 并在采集页面时调用 browser-verification。
+- skill-routing：`skills/skill-routing/references/tests/evals.json` 的 ID 1–21；仅处理嵌套目录的 React 性能与技能查找。视觉/Figma 请求和其他根目录技能请求均预期不触发；一般代码 Review 不触发，模糊“页面慢”先问明原因。
 - browser-verification：`skills/browser-verification/references/tests/behavior-evals.json` 的 B01–B14，以及 `pressure-evals.json` 中实际存在的 P01–P13、P16；滚动失败和模板覆盖同时读取 `references/common/scrolling.md` 与 `sampling.md`。
 - page-development-workflow：`references/tests/evals.json` 的 `trigger-figma-list-page`、`phase5-independent-visual-business`、`phase5-visual-scope-and-blocker`。
 
 ### VW15 真实图片限制
 
 VW15 的历史 fixture 路径指向 `yqa-g-h5-safety` 工作区中的样例截图和设计图，但本轮文件搜索未找到两张图片，因此没有调用图像对比工具。VW15 的场景决策断言通过，不等于实际图片重放通过；若以后素材恢复，应按该用例重新执行图像对比。
+
+### skill-routing 范围变更
+
+早期视觉工作流整合评估曾按旧路由范围将 Figma/视觉请求分发到视觉技能。用户随后明确限定 `skill-routing` 只处理其 `skills/` 子目录；因此原 21/21 结果不再作为当前范围证据。按新 eval 预期复测后，React 性能与技能查找用例命中，视觉/Figma 请求不触发，21/21 场景决策通过。
 
 ## 规则红线
 

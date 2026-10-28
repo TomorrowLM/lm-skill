@@ -9,13 +9,15 @@ metadata:
 
 # Apifox CLI
 
+本文件是 `api-contract` 的内部执行说明，不作为独立顶层入口。由统一入口按需读取；不再次加载 `api-contract`。
+
 用 Apifox CLI 完成用户请求；不要凭记忆拼 payload，优先让 CLI 的 `--help`、`cli-schema`、`cli-schema validate`、`agentHints.nextSteps` 驱动下一步。
 
 ## 新会话检查
 
 - 首次处理 Apifox CLI 任务时，先轻量确认 CLI 可用：`apifox --version`、`apifox --help`。
 - 如果 `apifox` 不存在或无法输出版本，先安装 CLI：`npm i -g apifox-cli@latest --registry=https://registry.npmmirror.com/`。
-- 安装后执行 `apifox login --with-token <TOKEN>` 登录。API 访问令牌可在 Apifox 客户端或网页端「用户头像 → 账号设置 → API 访问令牌」创建。
+- 安装后由用户直接在终端执行 `apifox login --with-token <TOKEN>` 登录。API 访问令牌可在 Apifox 客户端或网页端「用户头像 → 账号设置 → API 访问令牌」创建；不得让用户通过聊天、问答工具或日志提供令牌。
 - 不要每次默认升级；只有命令返回版本过低/unknown command/参数缺失疑似旧版导致，或用户任务依赖新能力时，才建议升级。
 
 ## 基础用法
@@ -37,7 +39,7 @@ apifox <command> <subcommand> --help
 
 ## 登录与项目
 
-- 未登录时让用户提供 API 访问令牌，执行：`apifox login --with-token <TOKEN>`。
+- 未登录时请用户直接在终端执行 `apifox login --with-token <TOKEN>`；助手不读取或转发令牌。
 - Apifox CLI 的鉴权凭证存在 `~/.apifox/config.toml`；不要把 token 打印到日志、提交到仓库或写进普通聊天摘要。
 - 如果用户未指定项目，先查看当前工作区是否存在 `.apifox/settings.json`；如其中有常用默认 `projectId`，优先使用该项目。
 - 项目 ID 可推荐用户从「项目设置 - 基本设置 - 项目 ID」获取；或先执行 `apifox project list`，给用户确认需执行命令的目标项目。
@@ -81,7 +83,7 @@ apifox <command> <subcommand> --help
 
 ## 必须询问用户
 
-- 登录 token、本地配置写入、私有部署地址。
+- 登录状态、本地配置写入、私有部署地址；登录 token 仅由用户在终端输入，不在聊天中询问。
 - 创建/切换 AI 分支、导入源分支资源到 AI 分支。
 - 删除、归档、覆盖导入、批量更新等破坏性操作。
 - 将 AI 分支改动 merge / merge-request 回源分支。
@@ -91,7 +93,7 @@ apifox <command> <subcommand> --help
 
 | 现象 | 处理 |
 |------|------|
-| 未登录 | `apifox login --with-token <TOKEN>` |
+| 未登录 | 用户直接在终端执行 `apifox login --with-token <TOKEN>`，不回传 token |
 | 不知道项目 | `apifox project list` |
 | 不知道命令参数 | `apifox <command> --help` |
 | 参数或 schema 错误 | 先跑 `cli-schema get` / `cli-schema validate` |

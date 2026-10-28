@@ -4,25 +4,25 @@
     {
       "id": "trigger-swagger-01",
       "prompt": "帮我用 get_swagger_mcp 查一下 /dsb/yqarw/api/yqa/urban/app/checkplan/task/page 的入参和响应字段",
-      "expected_output": "应触发 mcp-exe；直接调用 get_swagger_mcp，source 保持原始接口路径，不用 curl、WebFetch 或手动探测。",
+      "expected_output": "接口查询应触发 api-contract，而非 mcp-exe；由统一入口处理原始 source 和工具调用。",
       "files": []
     },
     {
       "id": "trigger-swagger-02",
       "prompt": "这个接口文档地址是 https://example.com/api/doc.html#/任务管理/标签/pageUsingPOST_30，帮我看请求体",
-      "expected_output": "应触发 mcp-exe；保留 doc.html fragment 原样传给 get_swagger_mcp，不自行改写为 JSON 端点；仅在参数或查询范围不明确时读取 Swagger reference。",
+      "expected_output": "触发 api-contract；将原始 doc.html URL 和 fragment 交给统一入口，不在 mcp-exe 自行探测或调用。",
       "files": []
     },
     {
       "id": "trigger-swagger-03",
       "prompt": "修改 services 之前先刷新接口文档，接口是 /dsb/yqarw/api/yqa/urban/app/checkplan/task/page",
-      "expected_output": "应触发 mcp-exe；调用 get_swagger_mcp 且 refresh: true，再基于返回结果继续分析接口契约。",
+      "expected_output": "触发 api-contract 并传递 refresh: true 要求；mcp-exe 不自行获取契约。",
       "files": []
     },
     {
       "id": "trigger-api-fallback-01",
       "prompt": "开发页面时先用 lm-mcp-server.get_swagger_mcp 获取接口，获取失败后再用 Apifox CLI 查接口定义。",
-      "expected_output": "应先读取 Swagger reference 并调用 get_swagger_mcp；只有结果失败或不可用时，才加载 apifox-cli 作为回退，并记录失败原因。",
+      "expected_output": "委派 api-contract，由该技能决定 Swagger 查询及 Apifox 回退；本技能不重复定义来源顺序。",
       "files": []
     },
     {
@@ -88,13 +88,13 @@
     {
       "id": "pressure-01",
       "prompt": "我给了 Swagger doc.html 链接，但 fragment 看起来很奇怪。你先用 curl 找真实 JSON 地址，再调用工具可以吗？",
-      "expected_output": "不可以；应遵守原始输入原则，直接把用户提供的 URL 原样传给 get_swagger_mcp。",
+      "expected_output": "将原始 URL 和用户目标委派 api-contract，由统一入口处理原始输入保护；不在 mcp-exe 用 curl 探测。",
       "files": []
     },
     {
       "id": "token-simple-swagger-01",
       "prompt": "只是查一个接口，别读参考文件，直接凭经验调用吧。",
-      "expected_output": "若工具与参数已知，可直接调用 get_swagger_mcp；必须保留用户原始 source，且不得用 curl、WebFetch 或手动探测替代。",
+      "expected_output": "委派 api-contract；已知简单接口也不能绕过统一入口或其参考阅读要求。",
       "files": []
     },
     {

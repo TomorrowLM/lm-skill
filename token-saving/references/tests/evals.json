@@ -1,6 +1,13 @@
 {
   "skill": "token-saving",
   "version": 1,
+  "routingCases": [
+    {
+      "id": "interface-unified-entry",
+      "prompt": "需要精确查询多个接口文档，避免加载整份文档。",
+      "assertions": ["接口获取委派 api-contract", "只传目标接口和必要查询范围", "不重复来源选择及回退规则"]
+    }
+  ],
   "queries": [
     { "text": "帮我读一下 src/components/Modal/index.tsx、src/pages/home/index.tsx、src/services/user.ts 这三个文件", "expectedTrigger": true, "category": "文件阅读-应触发" },
     { "text": "搜索所有用到 useRequest 的地方，看看有没有可以优化的", "expectedTrigger": true, "category": "代码探索-应触发" },

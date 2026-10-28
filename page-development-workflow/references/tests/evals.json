@@ -28,7 +28,7 @@
       "id": "interface-source-swagger-then-apifox",
       "prompt": "开发一个订单编辑页面，接口契约默认先用 lm-mcp-server.get_swagger_mcp 获取，失败后再用 Apifox CLI。",
       "expectedTrigger": true,
-      "assertions": ["先使用 get_swagger_mcp", "仅在查询失败或结果不可用时回退 Apifox", "记录接口来源和失败原因"]
+      "assertions": ["委派 api-contract 并传递原始 source 与目标", "来源顺序与回退由 api-contract 内部处理", "记录统一入口返回的接口来源和失败原因"]
     },
     {
       "id": "phase3-default-spec",

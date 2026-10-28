@@ -37,7 +37,7 @@
 
 ## 接口信息刷新规则
 
-修改 `services`、接口路径、请求参数、响应字段映射、API 类型或 Swagger/OpenAPI 相关代码前，默认先调用 `get_swagger_mcp`，传入对应接口 source 并设置 `refresh: true`；若 Swagger 查询失败或结果不足以确认接口契约，再加载 `apifox-cli` 使用 Apifox 获取契约，并记录回退原因；仅调整 UI 展示且不改变接口契约时可不刷新。
+修改 `services`、接口路径、请求参数、响应字段映射、API 类型或 Swagger/OpenAPI 相关代码前，加载 `api-contract`，传入对应接口原始 source 并要求 `refresh: true`；获取方式、失败回退和来源冲突由该技能统一处理。使用其返回的契约与来源记录，不直接调用来源工具；仅调整 UI 展示且不改变接口契约时可不刷新。
 
 ## 文档同步规则
 

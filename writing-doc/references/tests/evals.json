@@ -4,12 +4,12 @@
     {
       "id": "interface-contract-swagger-first",
       "prompt": "修改 service 的请求参数和响应类型，接口契约需要先刷新。",
-      "expected_output": "默认先调用 get_swagger_mcp，source 使用对应接口路径并设置 refresh: true。"
+      "expected_output": "加载 api-contract，传递对应接口原始 source 和 refresh: true 要求；不在文档技能直接调用来源工具。"
     },
     {
       "id": "interface-contract-apifox-fallback",
       "prompt": "get_swagger_mcp 返回 MODEL_NOT_FOUND，但需要继续确认接口契约后修改 service。",
-      "expected_output": "记录 Swagger 查询失败，再加载 apifox-cli 使用 Apifox 获取契约，并记录回退原因。"
+      "expected_output": "将实际 MODEL_NOT_FOUND 结果交给 api-contract，由其处理回退；文档技能记录返回的来源和原因，不直接加载旧顶层 apifox-cli。"
     },
     {
       "id": "coding-standards-image-preview-in-ui-interaction",

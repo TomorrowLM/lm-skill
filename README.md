@@ -1,6 +1,6 @@
 # lm-skill
 
-前端 AI 辅助开发技能库，按功能分为 7 个系列。
+前端 AI 辅助开发技能库，按功能分为 8 个系列。
 
 ---
 
@@ -94,9 +94,9 @@ docs/design/YYYY-MM-DD-<topic>-design/
 
 ---
 
-## 四、Skill-routing 与视觉工作流（4 项）
+## 四、Skill-routing 技能路由（3 项）
 
-> 物理位置：路由器位于 `skill-routing/`；视觉工作流位于根目录；React/Next 子技能位于 `skill-routing/skills/`
+> 物理位置：路由器位于 `skill-routing/`；仅路由 `skill-routing/skills/` 下的子技能。
 
 > 子技能不一定会出现在顶层可用技能列表中。按路由命中后，应直接读取对应的 `skill-routing/skills/<skill-name>/SKILL.md`；列表未展示不代表技能不可用。
 
@@ -106,21 +106,31 @@ docs/design/YYYY-MM-DD-<topic>-design/
 |------|------|
 | `skill-routing` | **技能路由器**。根据用户意图在本地技能间选择、串联、分发 |
 | `find-skills` | **技能发现**。帮助发现和安装外部技能 |
-| `visual-workflow` | **视觉工作流**。基于视觉材料整理技术方案、实现 UI、执行视觉验证；包含 Figma 和无 Figma 三种模式 |
 | `vercel-react-best-practices` | **React/Next.js 性能优化**。Vercel 官方 70+ 条规则，8 个优先级类别 |
 
 ---
 
-## 五、MCP 工具链（2 项）
+## 五、视觉工作流（1 项）
 
-| 技能 | 位置 | 描述 |
-|------|------|------|
-| `mcp-builder` | 根目录 | **MCP 服务器构建**。系统化构建生产级 MCP 工具 |
-| `mcp-exe` | 根目录 | **MCP 工具执行**。发现工具、传递参数、处理结果。产出截图/图表到 `assets/` |
+> 物理位置：根目录 `visual-workflow/`
+
+| 技能 | 描述 |
+|------|------|
+| `visual-workflow` | **视觉工作流**。基于视觉材料整理技术方案、实现 UI、执行视觉验证；包含 Figma 和无 Figma 三种模式 |
 
 ---
 
-## 六、UI 组件库参考（2 项）
+## 六、接口与 MCP 工具链（3 项）
+
+| 技能 | 位置 | 描述 |
+|------|------|------|
+| `api-contract` | 根目录 | **接口统一入口**。契约获取优先 Swagger，失败或不完整时回退 Apifox；Apifox 管理和测试也由此路由。Swagger 参考位于 `api-contract/swagger/`，原 Apifox 技能完整移入 `api-contract/apifox-cli/`，不再作为顶层入口 |
+| `mcp-builder` | 根目录 | **MCP 服务器构建**。系统化构建生产级 MCP 工具 |
+| `mcp-exe` | 根目录 | **非接口 MCP 工具执行**。Figma、图表和 Agent 编排；接口任务委派 `api-contract`。产出截图/图表到 `assets/` |
+
+---
+
+## 七、UI 组件库参考（2 项）
 
 | 技能 | 位置 | 描述 |
 |------|------|------|
@@ -129,7 +139,7 @@ docs/design/YYYY-MM-DD-<topic>-design/
 
 ---
 
-## 七、效率与质量保障（4 项）
+## 八、效率与质量保障（4 项）
 
 | 技能 | 位置 | 描述 |
 |------|------|------|

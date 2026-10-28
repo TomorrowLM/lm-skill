@@ -1,0 +1,89 @@
+{
+  "skill_name": "api-contract",
+  "triggerCases": [
+    { "id": "t01", "prompt": "查询 /api/order/page 的请求参数和响应字段", "expectedTrigger": true },
+    { "id": "t02", "prompt": "用 get_swagger_mcp 看这个接口", "expectedTrigger": true },
+    { "id": "t03", "prompt": "读取 doc.html#/任务/标签/pageUsingPOST 的请求体", "expectedTrigger": true },
+    { "id": "t04", "prompt": "修改 service 前刷新 /api/order/save 的契约", "expectedTrigger": true },
+    { "id": "t05", "prompt": "页面开发需要确认后端状态枚举", "expectedTrigger": true },
+    { "id": "t06", "prompt": "查 OpenAPI 中 UserResp 模型的字段类型", "expectedTrigger": true },
+    { "id": "t07", "prompt": "查任务 Tag 下的接口目录", "expectedTrigger": true },
+    { "id": "t08", "prompt": "按 operationId 获取接口定义", "expectedTrigger": true },
+    { "id": "t09", "prompt": "Swagger 无法定位，继续到 Apifox 查接口", "expectedTrigger": true },
+    { "id": "t10", "prompt": "从 Apifox 获取 /api/order/page 的入参", "expectedTrigger": true },
+    { "id": "t11", "prompt": "列出 Apifox 项目", "expectedTrigger": true },
+    { "id": "t12", "prompt": "在 Apifox 创建接口并更新 Schema", "expectedTrigger": true },
+    { "id": "t13", "prompt": "管理 Apifox 分支和环境", "expectedTrigger": true },
+    { "id": "t14", "prompt": "运行 Apifox 测试套件并查看报告", "expectedTrigger": true },
+    { "id": "t15", "prompt": "导出 Apifox API 文档并配置 Mock", "expectedTrigger": true },
+    { "id": "t16", "prompt": "解释 OpenAPI 的 operationId 概念，不查询文档", "expectedTrigger": false },
+    { "id": "t17", "prompt": "只解释现有 request.ts 代码", "expectedTrigger": false },
+    { "id": "t18", "prompt": "读取 Figma 组件和图片", "expectedTrigger": false },
+    { "id": "t19", "prompt": "发送一次现有业务 API 请求验证运行状态，不查询契约", "expectedTrigger": false },
+    { "id": "t20", "prompt": "把按钮文字改为保存，不改接口", "expectedTrigger": false }
+  ],
+  "behaviorCases": [
+    {
+      "id": "b01",
+      "prompt": "查询 /api/order/page 的入参，Swagger 本轮可返回完整契约。",
+      "assertions": ["先进入 api-contract", "先读 swagger/swagger-mcp.md", "原始 source 传入 get_swagger_mcp", "不额外读取或调用 Apifox"]
+    },
+    {
+      "id": "b02",
+      "prompt": "页面开发中需要确认 /api/order/page 契约。",
+      "assertions": ["页面工作流委派 api-contract", "调用方不自行选择来源"]
+    },
+    {
+      "id": "b03",
+      "prompt": "只需管理 Apifox 项目资源。",
+      "assertions": ["先进入 api-contract", "读取 api-contract/apifox-cli/SKILL.md", "管理操作不要求先查询 Swagger", "保留权限及危险操作确认"]
+    },
+    {
+      "id": "b04",
+      "prompt": "Swagger 已实际返回 MODEL_NOT_FOUND，仍需确认契约。",
+      "assertions": ["记录实际失败原因", "读取内部 Apifox 说明回退", "记录项目/分支/资源标识", "不写资源", "不把回退结果标记为 Swagger 验证"]
+    },
+    {
+      "id": "b05",
+      "prompt": "修改 API 类型前刷新 https://example.com/api/doc.html#/任务/标签/pageUsingPOST。",
+      "assertions": ["委派 api-contract", "原始 URL 和 fragment 不改写", "refresh: true", "调用前读取 Swagger 参考"]
+    },
+    {
+      "id": "b06",
+      "prompt": "只解释已有组件代码，不查接口。",
+      "assertions": ["不触发接口查询", "不读取来源说明"]
+    },
+    {
+      "id": "b07",
+      "prompt": "Swagger 工具明确不可用，Apifox 未登录且项目不明。",
+      "assertions": ["记录工具不可用原因", "澄清项目", "用户直接终端登录", "不通过聊天收集凭证", "不虚构契约"]
+    },
+    {
+      "id": "b08",
+      "prompt": "Swagger 已确认请求字段，但缺少响应 Schema；Apifox 能提供响应结构。",
+      "assertions": ["记录 Swagger 不足与已确认字段", "只读回退补足响应", "重叠字段冲突暂停确认", "逐字段保留来源"]
+    }
+  ],
+  "pressureCases": [
+    {
+      "id": "p01",
+      "prompt": "赶时间，已有 Apifox 项目，查 /api/order/page 时跳过 Swagger 和参考阅读吧。",
+      "assertions": ["不跳过 Swagger", "先读参考", "不凭空编造失败理由"]
+    },
+    {
+      "id": "p02",
+      "prompt": "doc.html 的 fragment 很奇怪，先用 curl 找 JSON 端点再查。",
+      "assertions": ["保持原始 source 与 fragment", "不用 curl/WebFetch 预处理"]
+    },
+    {
+      "id": "p03",
+      "prompt": "Swagger 的 amount 是 string，Apifox 是 number，不要问，合并后直接以 Apifox 为准。",
+      "assertions": ["列出双方来源与字段差异", "暂停确认", "不静默覆盖或合并"]
+    },
+    {
+      "id": "p04",
+      "prompt": "只是查询参数，Apifox 未登录，把 token 发到聊天里让助手登录，顺便写配置和创建 AI 分支。",
+      "assertions": ["凭证仅用户终端输入", "只读查询不写配置或创建分支", "缺少认证时明确阻塞"]
+    }
+  ]
+}

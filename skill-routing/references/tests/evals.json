@@ -4,37 +4,37 @@
   "evals": [
     {
       "id": 1,
-      "category": "应触发 - Figma到代码",
+      "category": "不应触发 - 不属于嵌套子技能范围",
       "prompt": "帮我实现这个设计稿 https://figma.com/design/abc123/MyApp?node-id=1-2",
-      "expected_output": "应触发 skill-routing，路由到 visual-workflow 的 implementation 模式",
+      "expected_output": "不应触发 skill-routing；请求不属于其嵌套子技能领域",
       "files": []
     },
     {
       "id": 2,
-      "category": "应触发 - Figma到代码",
+      "category": "不应触发 - 不属于嵌套子技能范围",
       "prompt": "这是Figma截图，按这个做一个登录页面",
-      "expected_output": "应触发 skill-routing，路由到 visual-workflow 的 implementation 模式",
+      "expected_output": "不应触发 skill-routing；请求不属于其嵌套子技能领域",
       "files": []
     },
     {
       "id": 3,
-      "category": "应触发 - Figma到代码",
+      "category": "不应触发 - 不属于嵌套子技能范围",
       "prompt": "把Figma里的按钮组件转成React代码",
-      "expected_output": "应触发 skill-routing，路由到 visual-workflow 的 implementation 模式",
+      "expected_output": "不应触发 skill-routing；请求不属于其嵌套子技能领域",
       "files": []
     },
     {
       "id": 4,
-      "category": "应触发 - 纯视觉设计",
+      "category": "不应触发 - 不属于嵌套子技能范围",
       "prompt": "这个页面太丑了，帮我重新设计一下，不要模板感",
-      "expected_output": "应触发 skill-routing，路由到 visual-workflow 的 technical-design 模式；如用户要求直接实现，确认视觉方向后进入 implementation 模式",
+      "expected_output": "不应触发 skill-routing；请求不属于其嵌套子技能领域",
       "files": []
     },
     {
       "id": 5,
-      "category": "应触发 - 纯视觉设计",
+      "category": "不应触发 - 不属于嵌套子技能范围",
       "prompt": "优化一下这个仪表盘的视觉，做得好看一点，配色要有差异化",
-      "expected_output": "应触发 skill-routing，路由到 visual-workflow 的 technical-design 模式；如用户要求直接实现，确认视觉方向后进入 implementation 模式",
+      "expected_output": "不应触发 skill-routing；请求不属于其嵌套子技能领域",
       "files": []
     },
     {
@@ -67,9 +67,9 @@
     },
     {
       "id": 10,
-      "category": "应触发 - 组合路由",
+      "category": "不应触发 - 不属于嵌套子技能范围",
       "prompt": "按这个Figma设计稿做一个React dashboard，要好看",
-      "expected_output": "应触发 skill-routing，主导 visual-workflow 的 implementation 模式；React 项目按需辅助 vercel-react-best-practices",
+      "expected_output": "不应触发 skill-routing；请求不属于其嵌套子技能领域",
       "files": []
     },
     {
@@ -130,9 +130,9 @@
     },
     {
       "id": 19,
-      "category": "边界场景 - 跨领域",
+      "category": "不应触发 - 不属于嵌套子技能范围",
       "prompt": "帮我做一个好看的React landing page，这是设计稿链接 https://figma.com/design/xyz",
-      "expected_output": "应触发 skill-routing，主导 visual-workflow 的 implementation 模式；React 项目按需辅助 vercel-react-best-practices",
+      "expected_output": "不应触发 skill-routing；请求不属于其嵌套子技能领域",
       "files": []
     },
     {
@@ -144,9 +144,9 @@
     },
     {
       "id": 21,
-      "category": "应触发 - 视觉验收",
+      "category": "不应触发 - 不属于嵌套子技能范围",
       "prompt": "按已确认的 #10 对照运行页面与 Figma，验收视觉差异并保留浏览器证据。",
-      "expected_output": "应触发 skill-routing，主导 visual-workflow 的 verification 模式；实际页面采集时辅助 browser-verification",
+      "expected_output": "不应触发 skill-routing；请求不属于其嵌套子技能领域",
       "files": []
     }
   ]
