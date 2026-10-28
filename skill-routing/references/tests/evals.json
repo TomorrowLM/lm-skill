@@ -6,35 +6,35 @@
       "id": 1,
       "category": "应触发 - Figma到代码",
       "prompt": "帮我实现这个设计稿 https://figma.com/design/abc123/MyApp?node-id=1-2",
-      "expected_output": "应触发 skill-routing，路由到 skills/figma-implement-design 作为主导技能",
+      "expected_output": "应触发 skill-routing，路由到 visual-workflow 的 implementation 模式",
       "files": []
     },
     {
       "id": 2,
       "category": "应触发 - Figma到代码",
       "prompt": "这是Figma截图，按这个做一个登录页面",
-      "expected_output": "应触发 skill-routing，路由到 skills/figma-implement-design 作为主导技能",
+      "expected_output": "应触发 skill-routing，路由到 visual-workflow 的 implementation 模式",
       "files": []
     },
     {
       "id": 3,
       "category": "应触发 - Figma到代码",
       "prompt": "把Figma里的按钮组件转成React代码",
-      "expected_output": "应触发 skill-routing，路由到 skills/figma-implement-design 作为主导技能",
+      "expected_output": "应触发 skill-routing，路由到 visual-workflow 的 implementation 模式",
       "files": []
     },
     {
       "id": 4,
       "category": "应触发 - 纯视觉设计",
       "prompt": "这个页面太丑了，帮我重新设计一下，不要模板感",
-      "expected_output": "应触发 skill-routing，路由到 skills/frontend-design 作为主导技能",
+      "expected_output": "应触发 skill-routing，路由到 visual-workflow 的 technical-design 模式；如用户要求直接实现，确认视觉方向后进入 implementation 模式",
       "files": []
     },
     {
       "id": 5,
       "category": "应触发 - 纯视觉设计",
       "prompt": "优化一下这个仪表盘的视觉，做得好看一点，配色要有差异化",
-      "expected_output": "应触发 skill-routing，路由到 skills/frontend-design 作为主导技能",
+      "expected_output": "应触发 skill-routing，路由到 visual-workflow 的 technical-design 模式；如用户要求直接实现，确认视觉方向后进入 implementation 模式",
       "files": []
     },
     {
@@ -69,7 +69,7 @@
       "id": 10,
       "category": "应触发 - 组合路由",
       "prompt": "按这个Figma设计稿做一个React dashboard，要好看",
-      "expected_output": "应触发 skill-routing，主导技能 figma-implement-design，辅助技能 vercel-react-best-practices（React项目），frontend-design 仅在Figma未覆盖时",
+      "expected_output": "应触发 skill-routing，主导 visual-workflow 的 implementation 模式；React 项目按需辅助 vercel-react-best-practices",
       "files": []
     },
     {
@@ -111,7 +111,7 @@
       "id": 16,
       "category": "边缘场景 - 近义但不应触发",
       "prompt": "这个React组件代码写得怎么样？帮我review一下",
-      "expected_output": "应触发（如用户关注性能）或不触发（如只是一般代码审查）。关键判断：用户是否明确关注性能/bundle/渲染",
+      "expected_output": "不应触发 skill-routing，这是一般代码审查；只有用户明确关注性能、bundle 或渲染时才路由到 React 性能技能",
       "files": []
     },
     {
@@ -125,14 +125,14 @@
       "id": 18,
       "category": "边缘场景 - 模糊意图",
       "prompt": "这个页面加载很慢，帮我看看",
-      "expected_output": "需要判断：如果慢是因为React渲染性能→vercel-react-best-practices；如果是接口慢→不归本技能管。需要先澄清用户意图",
+      "expected_output": "先澄清页面慢的原因；确认是 React 渲染或资源/bundle 性能后才加载 vercel-react-best-practices，接口/网络慢不归本技能路由",
       "files": []
     },
     {
       "id": 19,
       "category": "边界场景 - 跨领域",
       "prompt": "帮我做一个好看的React landing page，这是设计稿链接 https://figma.com/design/xyz",
-      "expected_output": "应触发 skill-routing，主导 figma-implement-design（有Figma），辅助 vercel-react-best-practices（React），frontend-design 仅在Figma未覆盖时",
+      "expected_output": "应触发 skill-routing，主导 visual-workflow 的 implementation 模式；React 项目按需辅助 vercel-react-best-practices",
       "files": []
     },
     {
@@ -140,6 +140,13 @@
       "category": "边界场景 - 技能询问",
       "prompt": "skill-routing 这个技能是做什么的？",
       "expected_output": "不应触发 skill-routing 执行路由，用户只是询问技能概念，直接解释即可",
+      "files": []
+    },
+    {
+      "id": 21,
+      "category": "应触发 - 视觉验收",
+      "prompt": "按已确认的 #10 对照运行页面与 Figma，验收视觉差异并保留浏览器证据。",
+      "expected_output": "应触发 skill-routing，主导 visual-workflow 的 verification 模式；实际页面采集时辅助 browser-verification",
       "files": []
     }
   ]

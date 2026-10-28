@@ -16,8 +16,8 @@ Phase 4 的合流检查由主窗口执行。子任务只负责自身 spec 的实
 ## 按需加载实现技能
 
 - 内联任务涉及业务逻辑、Hook、组件或页面整合时，读取 `test-driven-development` 并执行红-绿-重构。
-- 内联 React / Next.js 任务先读取 `skill-routing` 判断是否需要专项技能；仅在渲染、性能或 bundle 问题时加载对应性能实践。
-- 设计稿未覆盖配色、间距或动效等视觉决策时，读取 `skill-routing` 路由到视觉设计技能。
+- UI 实现涉及 Figma、截图、原型或视觉方向时，读取 `visual-workflow` 的 `implementation` 模式；技术方案中的视觉输入和预期须已确认。
+- 内联 React / Next.js 任务先读取 `skill-routing` 判断是否需要 React 专项实践；仅在渲染、性能或 bundle 问题时加载对应技能。
 - 多窗口（MCP 子聊天）和子代理执行时，主窗口不预读实现技能；执行任务根据自身 spec 按需加载。
 
 > **技能加载的三层分工：**

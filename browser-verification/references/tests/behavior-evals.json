@@ -83,29 +83,5 @@
     "kind":"partial-browser-discovery",
     "prompt":"connect_browsers 发现两个 Chrome 实例，其中一个在 skipped 中报告 remote_debugging_not_enabled。用户要求总结所有 tab。",
     "assertions":["只报告已连接实例中的页面","将未授权实例记为 blocked/unverified","不声称已扫描全部浏览器","提示启用该实例远程调试后重新连接"]
-  },
-  {
-    "id":"B15",
-    "kind":"visual-module-replay",
-    "prompt":"对比当前页面截图和设计图，指出需要调整的样式，给出可以交给开发执行的建议。一级 Tab 改名、二级移除专项检查及任务信息移除一企一档入口已确认。仅使用已给图片，不操作页面。",
-    "fixtures":{
-      "workspace":"yqa-g-h5-safety",
-      "actual":"docs/design/2026-10-26-enterprise-detail-redesign-design/assets/screenshots/style-analysis-archive.png",
-      "design":"docs/design/2026-10-26-enterprise-detail-redesign-design/assets/figma/style-reference-archive.png"
-    },
-    "baselineObserved":"2026-10-27 无目标技能隔离基线实际读取两图并调用 uiDiffCheck；企业信息仅建议‘弱化卡片边界’，没有明确移除额外白卡；模块缺少设计期望、实际证据和结论的完整记录。",
-    "assertions":["先列整页模块及比较范围","企业信息额外白卡明确记为背景和包裹差异而非仅弱化边界","逐模块记录设计期望、实际观察、证据和独立结果列，使用通过/失败/未验证/阻塞/不适用","不恢复已确认排除项","不伪造实际CSS数值或相似度评分","整页和业务未验证项单列","不操作浏览器或修改源码"]
-  },
-  {
-    "id":"B16",
-    "kind":"visual-evidence-boundary",
-    "prompt":"修复后 URL 相同但用户切换了任务；前后截图业务数据不同，视口与 DPR 未知，MCP 没有 computed style。开发说源码写了 gap16，因此视觉回归通过。",
-    "assertions":["识别状态不一致并重新建立比较条件","不从截图宽度猜视口DPR","className和源码不冒充实际测量","只报告可比模块","业务与视觉结论独立"]
-  },
-  {
-    "id":"B17",
-    "kind":"visual-module-repair",
-    "prompt":"已确认750设计适配375 CSS视口。节点图标48、Tab高度57；SVG自带渐变底色，组件外层也有渐变。企业信息父容器gap24，组件自己又padding24；要求逐模块给出局部修复与回归顺序。",
-    "assertions":["图标目标24、Tab高度28.5且保留换算来源","识别重复背景","区分父gap与子padding","修一模块先局部验证再继续","最后回归模块间边界与底栏","不擅改业务流程"]
   }
 ]

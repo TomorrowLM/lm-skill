@@ -20,7 +20,7 @@ description: >-
 
 1. **先发现再选页** — 默认调用 `connect_browsers` 发现当前主机上已允许远程调试的 Chrome/Chromium 实例，再调用 `list_pages`；用户给出明确 CDP 地址或要求连接单个 endpoint 时才使用 `connect_browser(cdp_url)`。
 1a. **按完整 URL 精确匹配** — `list_pages` 的每项包含 `browserId`、`browserLabel` 和跨实例/contexts 的全局 `index`。按用户给出的完整 URL 选择目标，不得默认使用第一个 tab；后续工具始终沿用该项的 `index`，并在证据中记录浏览器标识。
-1a.1. **已有 tab 请求禁止新开或导航** — 用户要求读取、检查或截图“已打开的 tab”时，若完整 URL 未命中，或 `connect_browsers` 报告目标实例未启用远程调试/不可读，必须标记 `blocked`/`unverified` 并停止；不得调用 `open_browser_page`、`navigate_page` 或 `launch_login_browser` 伪造命中。只有用户或已确认的 `#10` 明确要求打开/导航时，才执行对应操作。
+1a.1. **已有 tab 请求禁止新开或导航** — 用户要求读取、检查或截图“已打开的 tab”时，若完整 URL 未命中，或 `connect_browsers` 报告目标实例未启用远程调试/不可读，必须标记 `blocked`/`unverified` 并停止；提示用户在可读的目标实例打开指定页面后重新枚举。不得调用 `open_browser_page`、`navigate_page` 或 `launch_login_browser` 伪造命中。只有用户或已确认的 `#10` 明确要求打开/导航时，才执行对应操作。
 1b. **不得干扰正常 Chrome** — `connect_browsers` 和 `connect_browser` 只附加到已允许远程调试的实例，不得退出、重启或覆盖用户 profile。只有验收范围明确需要新浏览器且用户授权时才调用 `launch_login_browser`，并使用独立 CDP 端口和临时 profile。
 1c. **启动后必须打印浏览器标识** — 启动成功后必须输出 `{ "browserLabel": "Chrome-{port}", "cdpUrl": "http://127.0.0.1:{port}" }`，并在后续证据中沿用该标识；不能只报告“已启动”。
 1d. **发现边界与会话隔离** — `connect_browsers` 只搜索当前 MCP 主机可发现且存在有效 `DevToolsActivePort` 的 Chrome/Chromium 用户目录；不会读取另一个聊天窗的 MCP 会话，也不扫描 Safari、Firefox、Edge 或 Brave。检查 `skipped`；存在未启用远程调试或权限错误时报告不完整，不能把已连接实例冒充为全部浏览器；明确告诉用户哪个实例未接入，并提示在该实例允许远程调试后重新连接。
@@ -123,7 +123,7 @@ Phase 6 证据汇总 — 截图、日志、清单落盘
 | `references/collection/collection.md` | 采集菜单、页面、Tab、Dialog/Drawer 和结构化清单时读取 |
 | `references/common/scrolling.md` | 涉及页面、表格、列表、懒加载或嵌套滚动时读取 |
 | `references/common/sampling.md` | 涉及重复卡片、列表行、按钮或模板变体时读取 |
-| `references/common/visual-comparison.md` | 对照 Figma/设计图、分析截图差异或回归样式修复时读取；按模块逐项对比，最后检查模块间布局 |
+| `visual-workflow` 的 `verification` 模式 | 对照 Figma/设计图或回归样式时读取视觉比较标准；本技能只负责浏览器页面、DOM、截图和交互证据 |
 | `references/automation/automation-testing.md` | 设计或执行自动化测试、回归测试、无人值守脚本时读取 |
 | `references/tests/` | 修改或评估本技能时读取触发、行为和压力测试用例；正常验证任务不读取 |
 
@@ -151,25 +151,24 @@ Phase 6 证据汇总 — 截图、日志、清单落盘
 - 业务页重定向到 `/login` → 提示用户并跳过当前页面，记录 `blocked`/`auth-required` 和重定向 URL
 - 页面不可达 → 提示用户检查本地服务是否启动、URL 是否正确
 
-## Phase 1：视觉验收
+## Phase 1：视觉证据采集
 
 ### 目标
 
-通过截图验证页面视觉表现符合预期。
+为视觉验证采集浏览器证据；本阶段只负责按浏览器证据规则定位页面并采集截图/DOM，不重复进行视觉判定。
 
 ### 步骤
 
-1. 对照设计图或回归样式时，先读取 `references/common/visual-comparison.md`，固定设计版本、实际业务状态、视口及截图来源。
+1. 对照设计图或回归样式时，调用 `visual-workflow` 的 `verification` 模式；本技能只执行页面来源、URL 匹配及浏览器采集门禁。
 2. 只要求截图分析时使用已有图片，不新增浏览器操作。真实页面验收才按 Phase 0 定位目标并通过 MCP 采集截图与 DOM，截图保存到 `assets/screenshots/`。
-3. 先建立整页模块清单，再逐个模块完成结构、背景、图片、尺寸、间距和状态对比；每项保留证据及独立结论，不凭整页印象打分。
-4. 最后检查共享边界、模块间距、固定底栏和遮挡；设计还原与业务流程分别给出结果，不把源码检查当作视觉通过。
+3. 将截图和 DOM 结果作为视觉验证的输入证据；候选视觉区域须依本技能的双重验证门禁与 DOM/状态证据核对。
+4. 本技能不判定设计差异或视觉通过；只报告采集完整性、页面状态和浏览器证据状态。
 
 ### 检查项
 
-- 布局是否错位、溢出
-- 颜色、字体、间距是否与设计稿一致
-- 空状态、加载态、错误态是否正确展示
-- 不同视口下的响应式表现
+- 采集是否覆盖 `#10` 指定的页面状态和视口
+- 截图视觉候选是否与 DOM/操作后状态证据对应
+- 证据不足时是否保留未验证/阻塞状态
 
 ## Phase 2：交互验证
 

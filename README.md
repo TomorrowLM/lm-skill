@@ -1,6 +1,6 @@
 # lm-skill
 
-前端 AI 辅助开发技能库，共 **32 项技能**，按功能分为 7 个系列。
+前端 AI 辅助开发技能库，按功能分为 7 个系列。
 
 ---
 
@@ -28,7 +28,7 @@ docs/design/YYYY-MM-DD-<topic>-design/
 │   └── <module>-spec.md                ←   拆分时，多份子任务规格
 │
 ├── assets/                             ← 静态资源（跨技能收敛）
-│   ├── figma/                          ←   figma-implement-design：设计稿、标注图、图标
+│   ├── figma/                          ←   visual-workflow：视觉参考、标注图、图标
 │   ├── screenshots/                    ←   webapp-testing / mcp-exe：浏览器截图
 │   └── diagrams/                       ←   mcp-exe：思维导图、流程图
 │
@@ -44,7 +44,7 @@ docs/design/YYYY-MM-DD-<topic>-design/
 | 技术方案文档 | `writing-doc` | `index.md` |
 | 实现计划 | `writing-plans` | `spec/implementation-plan.md` |
 | 子任务规格 | `writing-plans` | `spec/<module>-spec.md` |
-| Figma 设计稿 / 图标 | `figma-implement-design` | `assets/figma/` |
+| Figma 设计稿 / 图标 | `visual-workflow` | `assets/figma/` |
 | 浏览器截图 | `webapp-testing`、`mcp-exe` | `assets/screenshots/` |
 | 思维导图 / 流程图 | `mcp-exe` | `assets/diagrams/` |
 | 验证证据 | `verification-before-completion` | `evidence/phase5-verification.md` |
@@ -52,7 +52,7 @@ docs/design/YYYY-MM-DD-<topic>-design/
 | 子任务结果 | `subagent-driven-development`、`dispatching-parallel-agents` | `results/<id>-result.md` |
 | 业务代码（页面/组件/API） | `page-development-workflow`（Phase 4） | `src/pages/`、`src/services/` 等 |
 
-> **跨技能约束：** `mcp-exe`、`webapp-testing`、`figma-implement-design` 在页面开发工作流内必须输出到对应 `assets/` 子目录，不再散落到桌面/tmp。
+> **跨技能约束：** `mcp-exe`、`webapp-testing`、`visual-workflow` 在页面开发工作流内必须输出到对应 `assets/` 子目录，不再散落到桌面/tmp。
 
 ---
 
@@ -94,9 +94,9 @@ docs/design/YYYY-MM-DD-<topic>-design/
 
 ---
 
-## 四、Skill-routing 技能路由（5 项）
+## 四、Skill-routing 与视觉工作流（4 项）
 
-> 物理位置：`skill-routing/` 目录；子技能在 `skill-routing/skills/`
+> 物理位置：路由器位于 `skill-routing/`；视觉工作流位于根目录；React/Next 子技能位于 `skill-routing/skills/`
 
 > 子技能不一定会出现在顶层可用技能列表中。按路由命中后，应直接读取对应的 `skill-routing/skills/<skill-name>/SKILL.md`；列表未展示不代表技能不可用。
 
@@ -106,8 +106,7 @@ docs/design/YYYY-MM-DD-<topic>-design/
 |------|------|
 | `skill-routing` | **技能路由器**。根据用户意图在本地技能间选择、串联、分发 |
 | `find-skills` | **技能发现**。帮助发现和安装外部技能 |
-| `figma-implement-design` | **Figma 设计还原**。将 Figma 设计稿 1:1 转化为生产代码。产出到 `assets/figma/` |
-| `frontend-design` | **前端视觉设计**。有辨识度的美学方向、配色、排版指导 |
+| `visual-workflow` | **视觉工作流**。基于视觉材料整理技术方案、实现 UI、执行视觉验证；包含 Figma 和无 Figma 三种模式 |
 | `vercel-react-best-practices` | **React/Next.js 性能优化**。Vercel 官方 70+ 条规则，8 个优先级类别 |
 
 ---

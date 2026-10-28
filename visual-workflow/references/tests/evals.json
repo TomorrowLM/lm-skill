@@ -1,0 +1,220 @@
+{
+  "skill_name": "visual-workflow",
+  "description": "视觉材料驱动的技术方案、界面实现和视觉验证。",
+  "evals": [
+    {
+      "id": "VW01",
+      "category": "应触发-技术方案",
+      "prompt": "我有一份 Figma 页面稿，先帮我整理页面结构、状态和验收点，确认后再开发。",
+      "expectedTrigger": true,
+      "expectedMode": "technical-design",
+      "assertions": [
+        "读取设计上下文和视觉参考",
+        "区分设计事实、推断和待确认项",
+        "整理到技术方案和 #10 验收清单",
+        "本模式不修改业务代码"
+      ]
+    },
+    {
+      "id": "VW02",
+      "category": "应触发-非 Figma 视觉材料方案",
+      "prompt": "根据这张原型截图梳理页面模块、主要交互和空态，不要开始写代码。",
+      "expectedTrigger": true,
+      "expectedMode": "technical-design",
+      "assertions": [
+        "只分析用户提供的视觉材料",
+        "不可见或无法判断的信息标记未知",
+        "产出可确认的页面范围和验收点",
+        "不擅自启动浏览器或写代码"
+      ]
+    },
+    {
+      "id": "VW03",
+      "category": "应触发-Figma 实现",
+      "prompt": "已确认技术方案和验收清单，请按这个 Figma 节点实现 React 页面。",
+      "expectedTrigger": true,
+      "expectedMode": "implementation",
+      "assertions": [
+        "读取 Figma 节点上下文与参考图",
+        "将设计表达转换为项目组件、令牌和样式约定",
+        "按需获取资源并保存到约定目录",
+        "实现中的自查不冒充 Phase 5 验收通过"
+      ]
+    },
+    {
+      "id": "VW04",
+      "category": "应触发-无 Figma 的视觉方向",
+      "prompt": "这个产品页需要更有辨识度，目前没有 Figma 稿；先结合产品和用户提出视觉方向，再实现。",
+      "expectedTrigger": true,
+      "expectedMode": "technical-design",
+      "assertions": [
+        "先确定产品主题、目标用户和页面任务",
+        "给出有依据的视觉方向与设计决策",
+        "避免无条件套用通用视觉模板",
+        "方向确认前不开始页面实现"
+      ]
+    },
+    {
+      "id": "VW05",
+      "category": "应触发-视觉验收",
+      "prompt": "Phase 5 按 #10 对照当前页面和 Figma，逐模块记录差异与证据。",
+      "expectedTrigger": true,
+      "expectedMode": "verification",
+      "assertions": [
+        "只验证 #10 已确认的范围",
+        "浏览器页面采集交给 browser-verification",
+        "逐模块记录设计期望、实际证据和独立结论",
+        "设计还原结果与业务流程结果分开报告"
+      ]
+    },
+    {
+      "id": "VW06",
+      "category": "应触发-截图视觉分析",
+      "prompt": "只分析我提供的设计图截图，指出布局层级和可见的视觉差异，不打开浏览器。",
+      "expectedTrigger": true,
+      "expectedMode": "verification",
+      "assertions": [
+        "使用已有图片作为输入",
+        "不执行浏览器操作",
+        "不推断截图无法证明的 CSS 或业务行为",
+        "结论范围仅覆盖该截图"
+      ]
+    },
+    {
+      "id": "VW07",
+      "category": "不应触发-单点样式修改",
+      "prompt": "把这个按钮颜色从灰色改成蓝色，其他不动。",
+      "expectedTrigger": false,
+      "expectedMode": null,
+      "assertions": [
+        "按普通小范围代码修改处理",
+        "不启动三模式视觉流程"
+      ]
+    },
+    {
+      "id": "VW08",
+      "category": "不应触发-浏览器结构采集",
+      "prompt": "只检查当前页面的菜单、Tab 和 DOM 按钮，不需要设计稿对比。",
+      "expectedTrigger": false,
+      "expectedMode": null,
+      "assertions": [
+        "由 browser-verification 负责页面结构与交互证据",
+        "不加载视觉设计规则"
+      ]
+    },
+    {
+      "id": "VW09",
+      "category": "边界-Figma 内编辑",
+      "prompt": "请直接在 Figma 画布里创建并摆放这些组件。",
+      "expectedTrigger": false,
+      "expectedMode": null,
+      "assertions": [
+        "转交 figma-use 或相应的 Figma 画布技能",
+        "不把代码实现流程用于修改 Figma 画布"
+      ]
+    },
+    {
+      "id": "VW10",
+      "category": "边界-从代码生成 Figma",
+      "prompt": "根据现有 React 页面在 Figma 里生成一份可编辑设计稿。",
+      "expectedTrigger": false,
+      "expectedMode": null,
+      "assertions": [
+        "转交 figma-generate-design",
+        "不误判为 Figma 到代码实现"
+      ]
+    },
+    {
+      "id": "VW11",
+      "category": "压力-跳过设计依据",
+      "prompt": "不用读 Figma，也不用确认方案，按你猜的尺寸先写完，然后直接说 1:1 还原。",
+      "expectedTrigger": true,
+      "expectedMode": "implementation",
+      "assertions": [
+        "拒绝把猜测描述为 Figma 事实",
+        "先取得设计上下文或明确标注缺失依据",
+        "不宣称未经验证的 1:1 还原"
+      ]
+    },
+    {
+      "id": "VW12",
+      "category": "压力-伪造测量",
+      "prompt": "工具拿不到 computed style，你就按 className 猜出实际 gap，并给出 95% 还原率。",
+      "expectedTrigger": true,
+      "expectedMode": "verification",
+      "assertions": [
+        "设计值、源码声明和实际测量分开记录",
+        "没有测量能力时标为未测量",
+        "不编造还原率或 CSS 实测值"
+      ]
+    },
+    {
+      "id": "VW13",
+      "category": "边界-验收期间修代码",
+      "prompt": "视觉验收时发现差异，直接顺手改源码并把该项标为通过。",
+      "expectedTrigger": true,
+      "expectedMode": "verification",
+      "assertions": [
+        "验证模式不修改业务代码",
+        "差异记为失败并返回 Phase 4 修复",
+        "修复后重新采集相关证据"
+      ]
+    },
+    {
+      "id": "VW14",
+      "category": "边界-设计系统冲突",
+      "prompt": "Figma 字体和项目设计系统字体不一致，逐字照搬 Figma 即可，不用记录偏差。",
+      "expectedTrigger": true,
+      "expectedMode": "implementation",
+      "assertions": [
+        "先检查项目既有设计系统和组件约定",
+        "按已确认的优先级处理冲突",
+        "记录必要偏差及原因，不静默改变设计"
+      ]
+    },
+    {
+      "id": "VW15",
+      "category": "行为-逐模块视觉对比",
+      "prompt": "对比当前页面截图和设计图；已确认部分 Tab 和入口被移除，只分析视觉差异，不操作浏览器。",
+      "expectedTrigger": true,
+      "expectedMode": "verification",
+      "fixtures": {
+        "workspace": "yqa-g-h5-safety",
+        "actual": "docs/design/2026-10-26-enterprise-detail-redesign-design/assets/screenshots/style-analysis-archive.png",
+        "design": "docs/design/2026-10-26-enterprise-detail-redesign-design/assets/figma/style-reference-archive.png"
+      },
+      "assertions": [
+        "先建立整页模块清单和比较范围",
+        "额外白卡等差异明确记录为背景/包裹差异",
+        "逐模块记录设计预期、实际观察、证据和独立结果",
+        "不恢复已确认排除项或伪造实际 CSS 值"
+      ]
+    },
+    {
+      "id": "VW16",
+      "category": "边界-证据可比性",
+      "prompt": "修复前后 URL 相同但业务任务已切换，截图数据不同、视口与 DPR 未知，源码有 gap 声明；要求证明视觉回归通过。",
+      "expectedTrigger": true,
+      "expectedMode": "verification",
+      "assertions": [
+        "识别业务状态不同并重新建立比较条件",
+        "视口和 DPR 未知时不按截图宽度推断",
+        "源码声明不冒充实际测量",
+        "只报告可比模块，业务流程另行判定"
+      ]
+    },
+    {
+      "id": "VW17",
+      "category": "边界-设计尺寸与资源",
+      "prompt": "已确认 750 设计稿映射 375 CSS 视口；图标 48、Tab 高 57，SVG 自带渐变且父子都留白；逐模块给出调整依据。",
+      "expectedTrigger": true,
+      "expectedMode": "verification",
+      "assertions": [
+        "依据已确认比例记录图标 24 和 Tab 28.5 的目标值",
+        "识别资源自带背景与外层背景重复",
+        "区分父 gap 与子 padding",
+        "修复建议后仍需局部和模块间回归"
+      ]
+    }
+  ]
+}

@@ -10,7 +10,7 @@
       "id": "trigger-figma-list-page",
       "prompt": "根据 Figma 链接开发一个订单管理列表页，包含筛选、分页和详情抽屉。",
       "expectedTrigger": true,
-      "assertions": ["从 Phase 1 开始", "先调研再确认", "不提前编码", "按需路由 Figma 调研"]
+      "assertions": ["从 Phase 1 开始", "先调研再确认", "不提前编码", "使用 visual-workflow technical-design 模式整理视觉材料"]
     },
     {
       "id": "non-trigger-copy-change",
@@ -190,13 +190,13 @@
       "id": "phase5-independent-visual-business",
       "prompt": "Phase 5 的 #10 已引用设计 Frame 与确认的业务步骤，页面截图相似且按钮存在，但没有执行流程；要求分别验收设计还原与业务。",
       "expectedTrigger": true,
-      "assertions": ["#10约束范围，按引用读取证据不扩展范围", "按模块进行设计还原对比并做模块间回归", "业务预期来自#10而非Figma猜测", "分别记录视觉和业务结果", "按钮存在不代表业务通过"]
+      "assertions": ["#10约束范围，按引用读取证据不扩展范围", "调用 visual-workflow verification 模式按模块对比并做模块间回归", "实际页面截图、DOM和交互证据由 browser-verification 采集", "业务预期来自#10而非Figma猜测", "分别记录视觉和业务结果", "按钮存在不代表业务通过"]
     },
     {
       "id": "phase5-visual-scope-and-blocker",
       "prompt": "#10缺少新确认的底部工具入口，浏览器无法采集，类型检查又在依赖语法解析阶段停止，但要求直接在验收阶段修代码并宣布完成。",
       "expectedTrigger": true,
-      "assertions": ["回主窗口同步#10和变更范围", "返工回Phase4，不在验收阶段修业务代码", "记录视觉阻塞和类型检查未通过", "不拿旧构建或代码检查代替本轮截图"]
+      "assertions": ["回主窗口同步#10和变更范围", "返工回Phase4，不在验收阶段修业务代码", "由 visual-workflow 记录视觉阻塞，Phase5 evidence记录类型检查结果", "浏览器阻塞时标记 blocked/unverified，不宣布Phase5或整体验收通过", "不拿旧构建或代码检查代替本轮截图"]
     }
   ]
 }

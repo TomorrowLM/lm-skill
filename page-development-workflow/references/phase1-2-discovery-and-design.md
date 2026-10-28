@@ -17,7 +17,8 @@
 | 条件 | 动作 |
 | --- | --- |
 | 从零需求且无设计稿或接口文档 | 读取 `brainstorming`，先收敛需求。 |
-| Figma、截图、UI 或 React 实现取舍 | 读取 `skill-routing`，仅路由当前需要的设计、视觉或 React 子技能。 |
+| Figma、截图、原型或视觉方向影响页面范围/技术方案 | 读取 `visual-workflow` 的 `technical-design` 模式；需要 Figma MCP 时同时读取 `mcp-exe` 的 Figma 参考。 |
+| React / Next.js 实现取舍或性能关注 | 读取 `skill-routing`，只路由当前需要的 React 子技能。 |
 | 页面涉及接口契约 | 默认读取 `mcp-exe` 的 Swagger 参考并调用 `lm-mcp-server.get_swagger_mcp`；查询失败或结果不可用时，再读取 `apifox-cli` 并使用 Apifox 回退。 |
 | 用户明确要求管理 Apifox 项目资源 | 直接读取 `apifox-cli`；若只是获取页面接口契约，仍遵循先 `get_swagger_mcp`、后 Apifox 的顺序。 |
 
