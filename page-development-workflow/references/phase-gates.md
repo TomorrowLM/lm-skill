@@ -100,7 +100,7 @@
 
 ### 多窗口 MCP 子聊天附加检查项
 
-- [ ] 已读取 `mcp-exe/references/agent-orchestrator-mcp.md`。
+- [ ] 已读取 `mcp-exe/references/lm-agent-orchestrator.md`。
 - [ ] `agent_open_task_chats` → `agent_wait_for_tasks` → `agent_summarize_results` 按依赖批次执行；不适用的调用不强行执行。
 - [ ] 各任务结果已审查，不合格的已返工。
 - [ ] 已通过的任务已标记 `agent_mark_task_reviewed`。

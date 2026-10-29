@@ -15,7 +15,7 @@ description: >-
 
 | 目标 | 行动 |
 | --- | --- |
-| 获取或核对接口契约，包括用户提供 Apifox 线索的契约查询 | 先读取 [swagger/swagger-mcp.md](swagger/swagger-mcp.md)，调用 `lm-mcp-server.get_swagger_mcp`。 |
+| 获取或核对接口契约，包括用户提供 Apifox 线索的契约查询 | 先读取 [swagger/swagger-mcp.md](swagger/swagger-mcp.md)，调用 `lm-swagger.get_swagger_mcp`。 |
 | 修改 service、接口路径、请求参数、响应映射或 API 类型前刷新契约 | 走 Swagger 查询，设置 `refresh: true`；仅改 UI 且不改变契约时无需刷新。 |
 | Swagger 工具不可用、文档不可访问/解析、目标无法定位，或结构不足以形成契约 | 记录原因，再读取 [apifox-cli/SKILL.md](apifox-cli/SKILL.md)，只读获取所缺契约。 |
 | 明确的 Apifox 项目/资源管理、导入导出、分支、Mock、Runner 或测试任务 | 直接读取 [apifox-cli/SKILL.md](apifox-cli/SKILL.md)，执行原有流程；不为管理操作额外查询 Swagger。 |

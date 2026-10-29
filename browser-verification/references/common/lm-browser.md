@@ -1,19 +1,19 @@
-# front-automation-mcp（当前默认 MCP）
+# lm-browser（当前默认 MCP）
 
-路径：`/Users/zm/lm/lm-ai-future/front/mcp/front-automation-mcp`
+路径：`lm-ai-future/front/mcp/lm-browser`（相对仓库上级目录）
 
-启动：
+启动（在 `lm-ai-future` 仓库根目录执行）：
 
 ```bash
-uv run --directory front/mcp/front-automation-mcp python server.py
+uv run --directory front/mcp/lm-browser/python-core python server.py
 ```
 
 ## 外部处理限制
 
-- `front-automation-mcp` 是唯一浏览器自动化和采集执行层。
+- `lm-browser` 是唯一浏览器自动化和采集执行层。
 - 禁止在 MCP 工程外新增 Python 驱动、CDP/Playwright 自动化、DOM 后处理、路由或按钮硬编码、以及 JSON 拼装脚本。
 - 采集 JSON 必须来自 MCP 工具或 MCP 工程内部的 collector/serializer；外部调用方只保存 MCP 原始返回和工具已经生成的结构化结果。
-- 如果 MCP 能力不足，必须修改 `front-automation-mcp` 内部工具并重新通过 MCP 验证，不能在外部添加补偿脚本。
+- 如果 MCP 能力不足，必须修改 `lm-browser` 内部工具并重新通过 MCP 验证，不能在外部添加补偿脚本。
 
 调用顺序：
 

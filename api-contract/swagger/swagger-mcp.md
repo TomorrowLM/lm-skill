@@ -1,6 +1,6 @@
 # Swagger / OpenAPI — get_swagger_mcp
 
-`lm-mcp-server.get_swagger_mcp` 用于读取 Swagger/OpenAPI 文档，查询模型目录、指定模型或单个接口的请求与响应结构。
+`lm-swagger.get_swagger_mcp` 用于读取 Swagger/OpenAPI 文档，查询模型目录、指定模型或单个接口的请求与响应结构。
 
 ## 参数
 

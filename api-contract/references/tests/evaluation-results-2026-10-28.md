@@ -16,7 +16,7 @@
 
 | 用例 | 观察到的入口 | 原规则证据摘录 | 结果 |
 | --- | --- | --- | --- |
-| b01 | mcp-exe | 默认先使用 `lm-mcp-server.get_swagger_mcp` | 单入口要求失败 |
+| b01 | mcp-exe | 默认先使用 `lm-swagger.get_swagger_mcp` | 单入口要求失败 |
 | b02 | page-development-workflow → mcp-exe | 先读取 `mcp-exe` 并调用工具 | 单入口要求失败 |
 | b03 | apifox-cli | 通过 Apifox CLI 管理 Apifox 项目资源 | 单入口要求失败 |
 
@@ -56,7 +56,7 @@
 
 ## 内存文档工具执行
 
-隔离会话先读取工作区新入口与 Swagger 参考，并加载 MCP 执行技能，然后调用一次 `functions.mcp_lm-mcp-server_get_swagger_mcp`。
+隔离会话先读取工作区新入口与 Swagger 参考，并加载 MCP 执行技能，然后调用一次 `functions.mcp_lm-swagger_get_swagger_mcp`。
 
 - 输入：`document` 为 OpenAPI 3.0.3 内存对象，标题 `local-contract-fixture`，版本 `1.0.0`；`source` 为 `/api/order/page`，`operationId` 为 `getOrderPageFixture`。
 - 返回关键字段：`match: operationId`，`operation.path: /api/order/page`，`operation.method: get`，`response.code: 200`。

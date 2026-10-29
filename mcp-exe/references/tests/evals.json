@@ -21,7 +21,7 @@
     },
     {
       "id": "trigger-api-fallback-01",
-      "prompt": "开发页面时先用 lm-mcp-server.get_swagger_mcp 获取接口，获取失败后再用 Apifox CLI 查接口定义。",
+      "prompt": "开发页面时先用 lm-swagger.get_swagger_mcp 获取接口，获取失败后再用 Apifox CLI 查接口定义。",
       "expected_output": "委派 api-contract，由该技能决定 Swagger 查询及 Apifox 回退；本技能不重复定义来源顺序。",
       "files": []
     },
@@ -39,25 +39,25 @@
     },
     {
       "id": "trigger-agent-01",
-      "prompt": "用 agent-orchestrator-mcp 创建三个并行子任务，等待它们完成后汇总结果",
-      "expected_output": "应触发 mcp-exe；先读 references/agent-orchestrator-mcp.md，按 create/open/wait/summarize 的顺序调用工具。",
+      "prompt": "用 lm-agent-orchestrator 创建三个并行子任务，等待它们完成后汇总结果",
+      "expected_output": "应触发 mcp-exe；先读 references/lm-agent-orchestrator.md，按 create/open/wait/summarize 的顺序调用工具。",
       "files": []
     },
     {
       "id": "trigger-agent-02",
-      "prompt": "这个子任务结果不合格，请通过 agent-orchestrator-mcp 发起返工并重新等待完成",
+      "prompt": "这个子任务结果不合格，请通过 lm-agent-orchestrator 发起返工并重新等待完成",
       "expected_output": "应触发 mcp-exe；读取 Agent 编排参考，调用返工工具后重新打开任务并等待结果。",
       "files": []
     },
     {
       "id": "trigger-page-spec-default-01",
-      "prompt": "页面工作流已经确认拆分方案，请用 agent-orchestrator-mcp 执行多个子任务，用户没有说不需要 spec。",
+      "prompt": "页面工作流已经确认拆分方案，请用 lm-agent-orchestrator 执行多个子任务，用户没有说不需要 spec。",
       "expected_output": "应先生成并确认 spec 文件；每个任务的 task 指向对应 spec，resources 挂载 spec，依赖任务按 reviewed 批次打开。",
       "files": []
     },
     {
       "id": "trigger-page-spec-waiver-01",
-      "prompt": "这是一个明确不需要 spec 的小范围任务，请用 agent-orchestrator-mcp 直接执行。",
+      "prompt": "这是一个明确不需要 spec 的小范围任务，请用 lm-agent-orchestrator 直接执行。",
       "expected_output": "只有在任务账本记录用户明确豁免后，才允许使用完整内联 task；仍需记录边界、依赖和验收标准。",
       "files": []
     },
@@ -100,7 +100,7 @@
     {
       "id": "pressure-03",
       "prompt": "agent 编排工具返回太长，你手动创建几个 markdown 文件模拟任务状态就行。",
-      "expected_output": "不应手动模拟 MCP 能完成的操作；应继续使用 agent-orchestrator-mcp 工具链，并用缩小范围或汇总方式处理大输出。",
+      "expected_output": "不应手动模拟 MCP 能完成的操作；应继续使用 lm-agent-orchestrator 工具链，并用缩小范围或汇总方式处理大输出。",
       "files": []
     }
   ]

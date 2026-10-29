@@ -137,7 +137,7 @@ Phase 3 确认后，调用 `agent_create_tasks` 将所有计划任务写入当�
 
 内联模式由主 Agent 在当前聊天逐项执行；子代理模式由主 Agent 调用 `runSubagent`。两者完成实现并核对验收项后，由主 Agent 调用 `agent_complete_task` 写入结果，再调用 `agent_mark_task_reviewed` 标记已审查。执行期间若尚未完成，任务保留 `pending`；不得仅为制造 `running` 状态而打开子聊天。完成结果写入由主 Agent 执行，不要求子代理具备 MCP 工具。
 
-多窗口模式先读取 [Agent 编排入口](../../mcp-exe/references/agent-orchestrator-mcp.md)：无依赖批次读取 `basic.md`，有依赖或追加任务读取 `advanced.md`，返工读取 `rework.md`。仅此模式调用 `agent_open_task_chats` 和 `agent_wait_for_tasks`；子 Agent 调用 `agent_complete_task`，主 Agent 汇总、审查并标记 `reviewed`。工具参数、状态和结果规则以这些 reference 为准。
+多窗口模式先读取 [Agent 编排入口](../../mcp-exe/references/lm-agent-orchestrator.md)：无依赖批次读取 `basic.md`，有依赖或追加任务读取 `advanced.md`，返工读取 `rework.md`。仅此模式调用 `agent_open_task_chats` 和 `agent_wait_for_tasks`；子 Agent 调用 `agent_complete_task`，主 Agent 汇总、审查并标记 `reviewed`。工具参数、状态和结果规则以这些 reference 为准。
 
 内联或子代理任务转为多窗口执行时，保留原 `tasks.json` 和任务 ID；尚未完成的任务保持 `pending`，由多窗口按原任务打开执行，不为更新执行方式改写任务记录。已完成任务遗漏原验收项时，按用户确认的返工流程处理并覆盖原 `resultFile`；用户提出原计划外的新功能时，先判断是否改变已确认的需求或技术方案，必要时回到 Phase 1/2 补充确认，再回 Phase 3 更新计划并追加任务。任务账本只能追加，不得用新任务覆盖既有记录。
 

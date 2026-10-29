@@ -2,7 +2,7 @@
 name: mcp-exe
 description: >-
   当需要调用已注册 MCP 工具完成 Figma 设计稿读取、图表生成、Agent 编排、多工具结果处理时使用。
-  用户提到设计稿 MCP、agent-orchestrator-mcp、创建/等待/汇总/返工子任务等场景必须触发。
+  用户提到设计稿 MCP、lm-agent-orchestrator、创建/等待/汇总/返工子任务等场景必须触发。
   不适用于接口契约查询（含 get_swagger_mcp）或 Apifox 操作，此类任务使用 api-contract；也不适用于普通终端命令、浏览器检索、文件编辑或无需 MCP 的代码修改。
 ---
 
@@ -28,7 +28,7 @@ description: >-
 | 接口文档、`get_swagger_mcp`、模型/Tag 查询或 Apifox 操作 | 委派 `api-contract`；不在此定义来源选择、参数或回退流程。 |
 | Figma 设计稿 | 先读 [references/figma-mcp.md](references/figma-mcp.md)，再规划或调用 Figma MCP。 |
 | 图表生成或导出 | 先读 [references/chart-generation.md](references/chart-generation.md)，再选择并调用 MCP 工具。 |
-| Agent 编排、等待、汇总或返工 | 先读 [references/agent-orchestrator-mcp.md](references/agent-orchestrator-mcp.md)，再按场景只读其链接的基础、返工或高级 reference。 |
+| Agent 编排、等待、汇总或返工 | 先读 [references/lm-agent-orchestrator.md](references/lm-agent-orchestrator.md)，再按场景只读其链接的基础、返工或高级 reference。 |
 
 如果已知服务器和工具名，直接调用，不重复询问用户。工具输出过大时优先用查询参数缩小范围。
 

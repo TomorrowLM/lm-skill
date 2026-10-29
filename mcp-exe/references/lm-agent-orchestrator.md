@@ -1,4 +1,4 @@
-# Agent 编排 — agent-orchestrator-mcp
+# Agent 编排 — lm-agent-orchestrator
 
 将复杂任务拆分为独立子任务时使用。先按场景读取一个最小 reference，不预加载其他分支。
 
