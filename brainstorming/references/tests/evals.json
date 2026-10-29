@@ -140,6 +140,13 @@
       "expectedTrigger": false,
       "expected_output": "不应触发 brainstorming；这是概念说明，不涉及实现决策。",
       "files": []
+    },
+    {
+      "id": "bg-21",
+      "prompt": "这个 TSX 时间字段目前只显示日期；请在原位置改为显示年月日时分秒，沿用文件里已经导入的 dayjs，空值仍显示 --。",
+      "expectedTrigger": false,
+      "expected_output": "不触发完整 brainstorming 审批流程；目标、位置和回退文案明确且风险低，沿用现有模式直接修改，并做最小适用验证，不要求用户再次确认或强制比较多个方案。",
+      "files": []
     }
   ]
 }
