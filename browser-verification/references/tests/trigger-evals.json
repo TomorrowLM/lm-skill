@@ -18,5 +18,7 @@
   {"id":"T17","query":"根据已提供的 HTML 静态分析按钮","expectedTrigger":false},
   {"id":"T18","query":"查询数据库中某个用户的权限","expectedTrigger":false},
   {"id":"T19","query":"验证一个没有浏览器页面的接口响应","expectedTrigger":false},
-  {"id":"T20","query":"只对一张产品截图做审美点评，不打开页面","expectedTrigger":false}
+  {"id":"T20","query":"只对一张产品截图做审美点评，不打开页面","expectedTrigger":false},
+  {"id":"T21","query":"连接已经打开的 Chrome 标签页，读取这个后台页面的 DOM 和路由","expectedTrigger":true},
+  {"id":"T22","query":"解释 CDP remote debugging 的概念，不连接浏览器也不读取页面","expectedTrigger":false}
 ]

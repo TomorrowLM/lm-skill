@@ -1,7 +1,7 @@
 ---
 name: browser-verification
 description: >-
-  当需要对前端页面进行浏览器端验证时使用，包括视觉验收截图、交互验证、DOM、路由与可访问性检查；网络请求或控制台检查仅在当前允许的 lm-browser 工具明确支持时执行，否则标记未验证/阻塞。
+  当需要对前端页面进行浏览器端验证时使用，包括视觉验收截图、交互验证、DOM、路由与可访问性检查；也适用于连接或读取已打开的浏览器标签页、排查 lm-browser/CDP 连接与目标 tab 选择。网络请求或控制台检查仅在当前允许的 lm-browser 工具明确支持时执行，否则标记未验证/阻塞。
   用户提到"验证页面""检查页面""验收""截图对比""浏览器验证""页面验收"等场景必须触发。
   当任务要求 AI 结合截图识别页面结构、对照 DOM、通过 MCP 采集或避免漏识别元素时同样触发。
   页面采集默认使用项目内最新的 lm-browser；旧 Chrome MCP 仅保存在 references/cache 中。
@@ -18,9 +18,12 @@ description: >-
 
 以下规则无例外，即使用户要求“只要结构”“手动推断”“相信工具返回”或“跳过截图”：
 
-1. **先发现再选页** — 默认调用 `connect_browsers` 发现当前主机上已允许远程调试的 Chrome/Chromium 实例，再调用 `list_pages`；用户给出明确 CDP 地址或要求连接单个 endpoint 时才使用 `connect_browser(cdp_url)`。
-1a. **按完整 URL 精确匹配** — `list_pages` 的每项包含 `browserId`、`browserLabel` 和跨实例/contexts 的全局 `index`。按用户给出的完整 URL 选择目标，不得默认使用第一个 tab；后续工具始终沿用该项的 `index`，并在证据中记录浏览器标识。
-1a.1. **已有 tab 请求禁止新开或导航** — 用户要求读取、检查或截图“已打开的 tab”时，若完整 URL 未命中，或 `connect_browsers` 报告目标实例未启用远程调试/不可读，必须标记 `blocked`/`unverified` 并停止；提示用户在可读的目标实例打开指定页面后重新枚举。不得调用 `open_browser_page`、`navigate_page` 或 `launch_login_browser` 伪造命中。只有用户或已确认的 `#10` 明确要求打开/导航时，才执行对应操作。
+1. **串行连接再选页** — 用户提供完整 URL 时调用 `connect_browsers(target_url=完整URL)` 并等待完整结果；不得与 `list_pages` 或任何页面级工具并发。未提供 URL 时先等待 `connect_browsers()` 完成，再按需调用 `list_pages`。用户给出明确 CDP 地址或要求连接单个 endpoint 时才使用 `connect_browser(cdp_url)`。
+1a. **优先使用精确目标诊断** — `connect_browsers(target_url)` 返回 `targetDiagnostic` 时，`matched` 使用 `matches` 中的全局 `index`、`browserId` 和 `browserLabel`，无需为单页读取再列出所有标签。`ambiguous` 只能检查返回的匹配项；有多个同 URL 页面且无法凭已有证据区分时，询问用户，不得新开重复页或任选一页。
+1a.1. **区分连接结果** — `attach_failed` 表示已发现远程调试端点但 CDP 附加失败，不得描述成“没有可调试浏览器”；查看 `skipped`，按 MCP 的有界重试结束后仍失败则报告阻塞。`url_mismatch`、`connected_instances_empty` 和 `no_debuggable_instances` 也必须分别按实际含义报告，不能拿别的标签或新页面代替目标。
+1a.2. **校验页面索引新鲜度** — 全局 `index` 只对当前标签集合有效。每次页面级工具返回后检查 `pageUrl`/route；与目标不一致时立即停止该页操作，重新调用 `connect_browsers(target_url=完整URL)` 获取新匹配，再继续。不得用 `navigate_page` 把错误索引导航成目标页面。
+1a.3. **仅在无精确诊断时列页** — `list_pages` 的每项包含 `browserId`、`browserLabel` 和跨实例/contexts 的全局 `index`。仅在没有可用 `targetDiagnostic` 且确需枚举页面时，才按完整 URL 精确匹配；不得默认使用第一个 tab。
+1a.4. **已有 tab 请求禁止新开或导航** — 用户要求读取、检查或截图“已打开的 tab”时，若完整 URL 未命中，或 `connect_browsers` 报告目标实例未启用远程调试/不可读，必须标记 `blocked`/`unverified` 并停止；提示用户在可读的目标实例打开指定页面后重新枚举。不得调用 `open_browser_page`、`navigate_page` 或 `launch_login_browser` 伪造命中。只有用户或已确认的 `#10` 明确要求打开/导航时，才执行对应操作。
 1b. **不得干扰正常 Chrome** — `connect_browsers` 和 `connect_browser` 只附加到已允许远程调试的实例，不得退出、重启或覆盖用户 profile。只有验收范围明确需要新浏览器且用户授权时才调用 `launch_login_browser`，并使用独立 CDP 端口和临时 profile。
 1c. **启动后必须打印浏览器标识** — 启动成功后必须输出 `{ "browserLabel": "Chrome-{port}", "cdpUrl": "http://127.0.0.1:{port}" }`，并在后续证据中沿用该标识；不能只报告“已启动”。
 1d. **发现边界与会话隔离** — `connect_browsers` 只搜索当前 MCP 主机可发现且存在有效 `DevToolsActivePort` 的 Chrome/Chromium 用户目录；不会读取另一个聊天窗的 MCP 会话，也不扫描 Safari、Firefox、Edge 或 Brave。检查 `skipped`；存在未启用远程调试或权限错误时报告不完整，不能把已连接实例冒充为全部浏览器；明确告诉用户哪个实例未接入，并提示在该实例允许远程调试后重新连接。
@@ -135,11 +138,11 @@ Phase 6 证据汇总 — 截图、日志、清单落盘
 
 ### 步骤
 
-1. 默认调用 `connect_browsers`，检查 `browsers` 与 `skipped`；有明确 CDP 地址时可改用 `connect_browser(cdp_url)`。
-2. 调用 `list_pages`，按完整 URL 精确匹配目标，并记录 `browserId`、`browserLabel`、全局 `index`。
-3. 用户要求检查已打开 tab 时，命中后直接使用该 `page_index`；未命中则标记 `blocked`，不得调用 `open_browser_page` 或 `navigate_page`。仅当用户或 `#10` 明确要求导航时才调用 `navigate_page`。
+1. 用户提供完整 URL 时调用 `connect_browsers(target_url=完整URL)`；等待工具返回，检查 `connected`、`skipped` 和 `targetDiagnostic`。没有完整 URL 时调用 `connect_browsers()`，等待完成后才调用 `list_pages`。
+2. `targetDiagnostic.status=matched` 时直接使用唯一 `matches` 项的 `index`、`browserId`、`browserLabel`；`ambiguous` 只检查匹配项，不能分辨则询问用户。只有没有可用 `targetDiagnostic` 且确实需要枚举页面时才调用 `list_pages`，并按完整 URL 精确匹配。
+3. 用户要求检查已打开 tab 时，目标未命中或连接失败则标记 `blocked`/`unverified`，不得调用 `open_browser_page` 或 `navigate_page`。仅当用户或 `#10` 明确要求打开/导航时才执行相应操作。
 4. 调用 `wait_until_ready`；截图或 DOM 采集前调用 `scroll_to_top` 并确认 `atTop=true`、`windowScrollY=0`、`remainingScrolledContainers=0`。
-5. 使用 `page_snapshot`/`inspect_dom` 采集内容；需保存截图时调用 `page_screenshot` 并记录返回的 `screenshotPath`。核对返回 URL/route 与目标一致后，才将截图和 DOM 摘要写入 evidence。
+5. 使用 `page_snapshot`/`inspect_dom` 采集内容；每次页面级工具返回都核对 `pageUrl`/route 与目标一致。不一致时重新按完整 URL 解析索引，不得导航错误标签补救。需保存截图时调用 `page_screenshot` 并记录返回的 `screenshotPath`；确认目标一致后才将截图和 DOM 摘要写入 evidence。
 
 ### MCP 连接失败排查
 

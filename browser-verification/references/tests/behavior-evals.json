@@ -75,13 +75,20 @@
     "id":"B13",
     "kind":"existing-tab-url-match",
     "prompt":"用户提供完整 URL，明确要求读取已打开的 tab，不得新开或导航；Chrome 有多个远程调试实例。",
-    "baselineObserved":"历史基线曾把默认 CDP 端点的空页面当作目标缺失，并尝试 open_browser_page 创建新 tab。",
-    "assertions":["先 connect_browsers 再 list_pages","按完整 URL 精确匹配并记录 browserId、browserLabel 和全局 page_index","命中后在同一 page_index 上等待稳定并采集 DOM/截图","不调用 open_browser_page 或 navigate_page","未命中则标记 blocked 并请求用户打开目标 tab，不拿首个页面替代","MCP 未提供网络/控制台工具时标记未验证，不调用其他浏览器工具"]
+    "baselineObserved":"历史基线曾把默认 CDP 端点的空页面当作目标缺失并新开重复 tab；也曾在 connect_browsers 尚未返回时调用 list_pages，得到 browser is not connected。",
+    "assertions":["调用 connect_browsers(target_url=完整 URL) 后等待该工具完成，不与 list_pages 或页面工具并发","优先使用 targetDiagnostic.matches 返回的精确索引，并记录 browserId、browserLabel 和 page_index","每次页面级操作后核对 pageUrl/route；与目标不符时停止并重新解析索引，不导航去伪造命中","命中后在同一新鲜 page_index 上等待稳定并采集 DOM/截图","不调用 open_browser_page 或 navigate_page","未命中则标记 blocked 并请求用户打开目标 tab，不拿首个页面替代","MCP 未提供网络/控制台工具时标记未验证，不调用其他浏览器工具"]
   },
   {
     "id":"B14",
     "kind":"partial-browser-discovery",
     "prompt":"connect_browsers 发现两个 Chrome 实例，其中一个在 skipped 中报告 remote_debugging_not_enabled。用户要求总结所有 tab。",
     "assertions":["只报告已连接实例中的页面","将未授权实例记为 blocked/unverified","不声称已扫描全部浏览器","提示启用该实例远程调试后重新连接"]
+  },
+  {
+    "id":"B15",
+    "kind":"stale-page-index",
+    "prompt":"连接诊断刚返回目标 URL 的 page_index；下一次页面工具却返回 chrome://whats-new，或标签页集合在两次调用间发生变化。",
+    "baselineObserved":"历史基线继续沿用旧索引读取了错误页面，没有先核对 pageUrl。",
+    "assertions":["停止读取错误页面内容","重新调用 connect_browsers(target_url=完整 URL) 获取新索引","只在页面 URL/route 与目标再次精确匹配后继续","不调用 navigate_page/open_browser_page 修正错误索引"]
   }
 ]
