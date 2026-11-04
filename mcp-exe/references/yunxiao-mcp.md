@@ -109,9 +109,11 @@ https://<your-org>.devops.aliyuncs.com/ai/mcp
 
 ### 1. 获取组织 ID（organizationId）
 
+当前已知组织 ID：`5ec7de0a405cdab50f3fd8e0`
+
 - 已知时直接用。
-- `get_current_organization_info` 工具获取。
 - 从云效 URL 获取：`https://devops.aliyun.com/organization/<organizationId>/...`
+- `get_current_organization_info` 工具获取。`
 
 ### 2. 获取项目 ID（spaceId）
 
