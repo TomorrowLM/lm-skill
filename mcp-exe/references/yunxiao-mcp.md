@@ -6,22 +6,33 @@
 
 ## 配置方式
 
-### 方式一：url 模式（推荐用于 VS Code Copilot）
+### 方式一：http 模式（推荐用于 VS Code Copilot）
+
+> 配置名必须是 `"http"` 而非 `"url"`——VS Code Copilot 原生支持 `http` 类型 MCP server。
 
 ```jsonc
 {
   "yunxiao": {
-    "type": "url",
+    "type": "http",
     "url": "https://openapi-rdc.aliyuncs.com/ai/mcp?toolsets=project-management",
     "headers": {
-      "Authorization": "Bearer <YOUR_TOKEN>"
+      "Authorization": "Bearer ${env:YUNXIAO_ACCESS_TOKEN}"
     }
   }
 }
 ```
 
-**优点**：token 直接在 headers 传递，不依赖子进程环境变量；无需本地 npx 启动，避免启动超时或版本问题。
-**注意**：VS Code Copilot 对 url 类型 MCP 支持有限——实测（2026-11-04）url 模式可正常列出 46 个工具，但需重启 VS Code 后生效。如工具仍不可用，检查 `settings.json` 中 `chat.mcp.disabledTools` 是否列了 `yunxiao`。
+**优势**：
+- token 通过 `${env:YUNXIAO_ACCESS_TOKEN}` 从系统环境变量读取，不留明文在配置文件中
+- 无需本地 npx 启动，避免启动超时或版本问题
+
+**环境变量设置**（macOS/Linux，写入 `~/.zshrc`）：
+
+```bash
+export YUNXIAO_ACCESS_TOKEN="pt-xxxxxxxxxxxxxxxx"
+```
+
+**注意**：VS Code 从终端继承环境变量；修改 shell 配置后需重启 VS Code 窗口才能生效。
 
 ### 方式二：npx / stdio 模式（备选）
 
@@ -95,6 +106,17 @@ https://<your-org>.devops.aliyuncs.com/ai/mcp
 }
 ```
 
+### 问题：个别工具报 "disabled by the user"（HTTP 模式）
+
+**现象**：`_get_work_item`、`_search_projects` 等部分工具持续 disabled，但 `_search_workitems` 等可用。
+
+**根因**（2026-11-04 实测）：VS Code Copilot HTTP MCP 模式下，服务端注册了 ~165 个工具，客户端可能不完整加载。特别是 `_get_work_item` 虽在 `project-management` toolset 中，但 HTTP 模式下可能被过滤。同一 server 的不同工具禁用状态不一致。
+
+**绕过方案**：
+- 用可用的 `_search_workitems` 按标题搜索定位工作项（需 `spaceId` + `category`）
+- `_search_workitems` 的 `subject` / `subjectDescription` **只搜标题文本，不搜序列号**（如 `IFRD-10790`）
+- 如果知道标题关键词，这是最快路径；如果只知道序列号，需要先找到所属项目的 `spaceId`，再翻页定位
+
 ### 推荐 settings.json 配置
 
 ```jsonc
@@ -105,6 +127,19 @@ https://<your-org>.devops.aliyuncs.com/ai/mcp
   }
 }
 ```
+
+### 工具报 "disabled by the user" 的排查流程
+
+此错误是 **VS Code 客户端侧禁用**，不是云效返回的 401/403：
+
+1. **确认 mcp.json 是当前活动 Profile 的**：`Cmd+Shift+P` → "MCP: Open User Configuration"。默认用户级和 Profile 级是两个独立文件，VS Code 只读活动 Profile 的。
+2. **确认 `type` 是 `"http"` 而非 `"url"`**：VS Code Copilot 原生支持 `http` 类型。
+3. **确认工具在 MCP 面板已启用**：`Cmd+Shift+P` → "MCP: List Servers" → 确认 yunxiao 为 Enabled → 如显示 Disabled，Restart。
+4. **检查工具级勾选**：`Cmd+Shift+P` → "Chat: Open Customizations" → Tools 标签页 → 确保 `_get_work_item`、`_search_workitems` 等已勾选。工具选择持久化到当前 Profile。
+5. **检查 disabledTools**：settings.json 中如有 `"yunxiao": []`（即使是空数组），删除该项。
+6. **验证环境变量**：终端 `echo $YUNXIAO_ACCESS_TOKEN` 有值后，重启 VS Code 窗口。
+
+> 💡 **兜底方案**：如果 MCP 工具仍不可用，curl 直接调用 API 已验证可用（参考下方"curl 备用方案"）。差异在于 curl 绕过了 VS Code 的工具权限层和 MCP 配置。
 
 ## 使用流程
 
@@ -134,7 +169,19 @@ get_work_item:
 
 > **实测**：`get_work_item` 同时接受内部 ID（如 `ad606472e1e6c956583fa7e832`）和序列号（如 `IFRD-10831`）。直接传序列号是最快的查询方式。
 
-**按编号在项目内搜索**（需先知道 spaceId）：
+#### 前置判断：ID 是需求还是任务？
+
+`search_workitems` 按 `category` 分池搜索，**需求和任务不在同一个池子里**。只知道序列号不知道类别时，需要分别搜 `"Req"` 和 `"Task"` 两个池。从云效 URL 可快速判断：
+
+| URL 路径 | category |
+|----------|----------|
+| `/projex/project/<id>/req/<id>` | `"Req"`（需求） |
+| `/projex/project/<id>/task/<id>` | `"Task"`（任务） |
+| `/projex/project/<id>/bug/<id>` | `"Bug"`（缺陷） |
+
+> **如果不知道 ID 和类别**：提供标题关键词即可。`search_workitems` 的 `subject` 参数按标题文本模糊匹配，不需要类别判断，有 `spaceId` 就能搜到。
+
+**搜索工作项**
 
 `search_workitems` 的 `subject` 参数按**标题文本**匹配，**不搜索序列号（serialNumber）**。如果只知道 `IFRD-xxx` 但不知道所在项目，无法用 `search_workitems` 搜到；应优先用 `get_work_item` + 序列号。
 
@@ -142,9 +189,11 @@ get_work_item:
 search_workitems:
   organizationId: "<ORG_ID>"
   spaceId: "<SPACE_ID>"
-  category: "Req"  // Req=需求, Task=任务, Bug=缺陷
+  category: "Req"  // ⚠️ 必须是 "Req"/"Task"/"Bug"，不能写 "Requirement"！
   subject: "检查记录"  // 按标题关键词搜索，非序列号
 ```
+
+> **⚠️ category 参数值陷阱**：云效 API 的 `category` 使用缩写 `"Req"`（不是 `"Requirement"`）、`"Task"`、`"Bug"`。写成全称 `"Requirement"` 会静默返回空结果，不报错。这是多次搜索失败的常见根因。
 
 **按内部 ID 获取**（如果已知）：
 
