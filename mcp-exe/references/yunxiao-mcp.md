@@ -119,25 +119,52 @@ https://<your-org>.devops.aliyuncs.com/ai/mcp
 
 ### 3. 查询工作项
 
-**按编号搜索**：
+**⭐ 推荐：直接用序列号获取（最快）**
 
-```
-search_workitems:
-  organizationId: "5ec7de0a405cdab50f3fd8e0"
-  spaceId: "e4cc4abdc9380fbaf7ac3fb415"
-  category: "Req"  // Req=需求, Task=任务, Bug=缺陷
-  subject: "IFRD-10659"
-```
-
-**按 ID 直接获取**（需先知道内部 ID）：
+`get_work_item` 的 `workItemId` 参数可以直接传序列号（如 `IFRD-10831`），无需先搜索再拿内部 ID。
 
 ```
 get_work_item:
-  organizationId: "5ec7de0a405cdab50f3fd8e0"
+  organizationId: "<ORG_ID>"
+  workItemId: "IFRD-10831"
+```
+
+> **实测**：`get_work_item` 同时接受内部 ID（如 `ad606472e1e6c956583fa7e832`）和序列号（如 `IFRD-10831`）。直接传序列号是最快的查询方式。
+
+**按编号在项目内搜索**（需先知道 spaceId）：
+
+`search_workitems` 的 `subject` 参数按**标题文本**匹配，**不搜索序列号（serialNumber）**。如果只知道 `IFRD-xxx` 但不知道所在项目，无法用 `search_workitems` 搜到；应优先用 `get_work_item` + 序列号。
+
+```
+search_workitems:
+  organizationId: "<ORG_ID>"
+  spaceId: "<SPACE_ID>"
+  category: "Req"  // Req=需求, Task=任务, Bug=缺陷
+  subject: "检查记录"  // 按标题关键词搜索，非序列号
+```
+
+**按内部 ID 获取**（如果已知）：
+
+```
+get_work_item:
+  organizationId: "<ORG_ID>"
   workItemId: "ad606472e1e6c956583fa7e832"
 ```
 
-### 4. 常用工具速查
+### 4. 从 URL 提取参数
+
+**项目页面 URL** 格式：
+
+```
+https://devops.aliyun.com/projex/project/<spaceId>/req/<internalWorkItemId>
+```
+
+例如 `https://devops.aliyun.com/projex/project/e4cc4abdc9380fbaf7ac3fb415/req/ad606472e1e6c956583fa7e832`
+
+- `spaceId` = `e4cc4abdc9380fbaf7ac3fb415`
+- `workItemId` (内部) = `ad606472e1e6c956583fa7e832`
+
+### 5. 常用工具速查
 
 | 工具 | 用途 |
 |------|------|
