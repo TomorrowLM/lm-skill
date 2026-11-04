@@ -6,7 +6,24 @@
 
 ## 配置方式
 
-### 方式一：npx / stdio 模式（推荐用于 VS Code）
+### 方式一：url 模式（推荐用于 VS Code Copilot）
+
+```jsonc
+{
+  "yunxiao": {
+    "type": "url",
+    "url": "https://openapi-rdc.aliyuncs.com/ai/mcp?toolsets=project-management",
+    "headers": {
+      "Authorization": "Bearer <YOUR_TOKEN>"
+    }
+  }
+}
+```
+
+**优点**：token 直接在 headers 传递，不依赖子进程环境变量；无需本地 npx 启动，避免启动超时或版本问题。
+**注意**：VS Code Copilot 对 url 类型 MCP 支持有限——实测（2026-11-04）url 模式可正常列出 46 个工具，但需重启 VS Code 后生效。如工具仍不可用，检查 `settings.json` 中 `chat.mcp.disabledTools` 是否列了 `yunxiao`。
+
+### 方式二：npx / stdio 模式（备选）
 
 ```jsonc
 {
@@ -25,24 +42,8 @@
 }
 ```
 
-**优点**：兼容性好，通过 npx 自动下载运行，无需 Docker。
 **要求**：Node.js >= 20.0.0。
-
-### 方式二：官方托管远程端点
-
-```jsonc
-{
-  "yunxiao": {
-    "url": "https://openapi-rdc.aliyuncs.com/ai/mcp?toolsets=project-management",
-    "headers": {
-      "Authorization": "Bearer <YOUR_TOKEN>"
-    },
-    "type": "url"
-  }
-}
-```
-
-**注意**：部分客户端（如 VS Code Copilot）对 `url` 类型的 MCP Server 支持有限，可能默认禁用所有工具。优先使用方式一。
+**注意**：实测（2026-11-04）macOS VS Code Copilot 下 stdio 模式工具全部报 "disabled by the user"（疑似 npx 启动超时），建议优先使用 url 模式。如必须用 stdio 模式，确保终端能先手动成功运行 `npx -y alibabacloud-devops-mcp-server --toolsets=project-management`。
 
 ### 方式三：Region 站点
 
