@@ -33,17 +33,17 @@
 ## 启动会话
 
 ```bash
-# 已识别当前功能文档目录时，保存到该目录的 .superpowers/<会话ID>
+# 已识别当前功能文档目录时，保存到该目录的 .brainstorm/<会话ID>
 scripts/start-server.sh \
   --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
   --session-name event-acceptance-tab-count
 
 # 需要完全控制目录时，直接指定最终存放路径
 scripts/start-server.sh \
-  --screen-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design/.superpowers/custom-session
+  --screen-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design/.brainstorm/custom-session
 
 # 返回：{"type":"server-started","port":52341,"url":"http://localhost:52341",
-#           "screen_dir":"/path/to/project/docs/design/YYYY-MM-DD-<topic>-design/.superpowers/event-acceptance-tab-count-20260811-143205"}
+#           "screen_dir":"/path/to/project/docs/design/YYYY-MM-DD-<topic>-design/.brainstorm/event-acceptance-tab-count-20260811-143205"}
 ```
 
 保存响应中的 `screen_dir`。告诉用户打开该 URL。
@@ -52,15 +52,15 @@ scripts/start-server.sh \
 
 **目录命名规则：** 功能文档目录（设计文件夹）必须使用时间前缀命名，格式为 `docs/design/YYYY-MM-DD-<topic>-design/`，其中 `YYYY-MM-DD` 为需求创建日期、`<topic>` 为英文 kebab-case 功能名，例如 `docs/design/YYYY-MM-DD-<topic>-design/`。识别现有目录时优先匹配该格式；需要新建设计目录时同样遵守此格式。
 
-**无法确定时必须询问：** 如果没有功能文档目录、存在多个候选目录，或候选文档与当前任务明显不匹配，先让用户确认存放目录。不要自行回退到项目根目录、`docs/design/.superpowers/`、`<project>/.superpowers/` 或 `/tmp`。
+**无法确定时必须询问：** 如果没有功能文档目录、存在多个候选目录，或候选文档与当前任务明显不匹配，先让用户确认存放目录。不要自行回退到项目根目录、`docs/design/.brainstorm/`、`<project>/.brainstorm/` 或 `/tmp`。
 
-**语义化会话名称：** 使用 `--feature-dir` 时必须同时传入 `--session-name`。从当前任务提炼简短、可辨识的英文 kebab-case 名称，例如 `event-acceptance-tab-count`；无法确定任务名称时先询问用户。最终目录格式为 `<功能文档目录>/.superpowers/<任务名称>-<YYYYMMDD-HHMMSS>`，禁止使用纯 PID、纯时间戳或无意义编号。
+**语义化会话名称：** 使用 `--feature-dir` 时必须同时传入 `--session-name`。从当前任务提炼简短、可辨识的英文 kebab-case 名称，例如 `event-acceptance-tab-count`；无法确定任务名称时先询问用户。最终目录格式为 `<功能文档目录>/.brainstorm/<任务名称>-<YYYYMMDD-HHMMSS>`，禁止使用纯 PID、纯时间戳或无意义编号。
 
 **目录选择优先级：** 用户明确指定的最终目录 `--screen-dir` > 唯一匹配的功能文档目录 `--feature-dir` > 询问用户。`--project-dir` 仅用于用户明确要求保存到项目级公共目录的场景，不作为自动兜底。
 
-**查找连接信息：** 服务器将启动 JSON 写入 `$SCREEN_DIR/.server-info`。如果后台启动时没有捕获 stdout，在已确认的功能文档目录下检查 `<功能文档目录>/.superpowers/`，找到本次会话目录后读取该文件。
+**查找连接信息：** 服务器将启动 JSON 写入 `$SCREEN_DIR/.server-info`。如果后台启动时没有捕获 stdout，在已确认的功能文档目录下检查 `<功能文档目录>/.brainstorm/`，找到本次会话目录后读取该文件。
 
-**注意：** `--feature-dir` 会将原型持久化到功能文档目录的 `.superpowers/<任务名称>-<YYYYMMDD-HHMMSS>` 中，不会因服务器重启而丢失。提醒用户将 `.superpowers/` 添加到 `.gitignore`（如果尚未添加）。
+**注意：** `--feature-dir` 会将原型持久化到功能文档目录的 `.brainstorm/<任务名称>-<YYYYMMDD-HHMMSS>` 中，不会因服务器重启而丢失。提醒用户将 `.brainstorm/` 添加到 `.gitignore`（如果尚未添加）。
 
 **按平台启动服务器：**
 
@@ -304,7 +304,7 @@ scripts/start-server.sh \
 scripts/stop-server.sh $SCREEN_DIR
 ```
 
-如果会话使用了 `--feature-dir`，原型文件会持久化在功能文档目录的 `.superpowers/<任务名称>-<YYYYMMDD-HHMMSS>` 中以供日后参考。只有 `/tmp` 会话会在停止时被删除。
+如果会话使用了 `--feature-dir`，原型文件会持久化在功能文档目录的 `.brainstorm/<任务名称>-<YYYYMMDD-HHMMSS>` 中以供日后参考。只有 `/tmp` 会话会在停止时被删除。
 
 ## 参考
 
