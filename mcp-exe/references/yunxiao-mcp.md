@@ -193,6 +193,41 @@ https://devops.aliyun.com/projex/project/<spaceId>/req/<internalWorkItemId>
 ### npx 模式报 Node 版本错
 → 确认 `node --version` >= 20.0.0。如版本过低，升级 Node 或用 Docker 方式。
 
+### 401 未授权（常见于 Windows）
+
+**根因**：Windows 上 npx 子进程可能未正确继承 `mcp.json` 中 `env` 配置的环境变量，导致 `YUNXIAO_ACCESS_TOKEN` 未传入。
+
+**方案一：改 `url` 模式**（推荐）— token 直接写在 `headers`，不依赖子进程环境变量：
+
+```jsonc
+"yunxiao": {
+  "url": "https://openapi-rdc.aliyuncs.com/ai/mcp?toolsets=project-management",
+  "headers": {
+    "Authorization": "Bearer <YOUR_TOKEN>"
+  },
+  "type": "url"
+}
+```
+
+注意：确保 VS Code `settings.json` 的 `disabledTools` 中不列 `yunxiao`。
+
+**方案二：设系统环境变量**后在终端验证：
+
+```powershell
+set YUNXIAO_ACCESS_TOKEN=pt-xxxxx
+npx -y alibabacloud-devops-mcp-server --toolsets=project-management
+```
+
+能启动说明 token 有效，env 传递问题需要排查 MCP 客户端。
+
+**其他排查**：
+| 原因 | 排查 |
+|------|------|
+| Token 复制带换行/空格 | 检查 `%YUNXIAO_ACCESS_TOKEN%` 两端有多余字符 |
+| 公司代理/防火墙 | 直连 `https://openapi-rdc.aliyuncs.com` 看是否可达 |
+| TLS 证书问题 | 浏览器访问该 URL 看有无证书警告 |
+| npx 缓存旧版本 | 加 `@latest` 锁定：`alibabacloud-devops-mcp-server@latest` |
+
 ### curl 备用方案（当 MCP 工具不可用时）
 
 ```bash
