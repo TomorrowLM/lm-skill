@@ -7,6 +7,18 @@
 3. `search_workitems` 仅用于按标题搜索，不能搜索序列号；必须提供 `organizationId`、`spaceId` 和 `category`。
 4. 只有 MCP 查询工具在完成激活后仍不可用时，才使用 [PowerShell 备用流程](powershell-fallback.md)。若 MCP 返回认证或组织权限错误，先按[配置与排错说明](setup.md)处理，不要把业务错误当成工具不可用。
 
+### 激活路径
+
+云效 MCP 工具按 VS Code Copilot 的分层懒加载机制分三层注入，初始只暴露 `_create_work_item` 等创建类工具：
+
+| 层级 | 激活器 | 暴露的工具 |
+|------|--------|-----------|
+| 初始 | — | `_create_work_item`、`_create_effort_record` 等创建类 |
+| 第 1 层 | `activate_fallback_mcp_alibabacloud-_delete_version_1` | 返回下一层入口 |
+| 第 2 层 | `activate_fallback_mcp_alibabacloud-_delete_version_2` | `_get_work_item`、`_search_workitems`、`_get_project`、`_get_sprint` 等查询类 |
+
+激活是链式的：先调用第 1 层激活器，成功后调用第 2 层，查询工具才可用。不要跳过任何一层，也不要用创建工具代替查询。
+
 ## 按编号查询
 
 `get_work_item` 的 `workItemId` 可直接传任务序列号（如 `IFRD-10914`）或内部 ID。组织 ID 可使用 `5ec7de0a405cdab50f3fd8e0`，也可通过 `get_current_organization_info` 获取。
