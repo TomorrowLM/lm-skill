@@ -1,0 +1,31 @@
+{
+  "skill_name": "mcp-exe",
+  "evals": [
+    {
+      "id": "behavior-yunxiao-serial-01",
+      "prompt": "请获取云效工作项 IFRD-10914。优先通过已注册 MCP 工具查询；如果工具不可用，再按参考文档使用 Windows PowerShell 直连。",
+      "expected_output": "先读 references/yunxiao/yunxiao-mcp.md；优先调用 get_work_item 并将 IFRD-10914 作为 workItemId。若工具未显示，先激活项目管理/查询工具，直到只读查询工具可用；仅在激活后仍不可用时使用 PowerShell，认证 Header 为 x-yunxiao-token、JSON 深度足够且响应按 UTF-8 解析，不输出 Token。",
+      "files": [
+        "mcp-exe/references/yunxiao/yunxiao-mcp.md",
+        "mcp-exe/references/yunxiao/powershell-fallback.md"
+      ]
+    },
+    {
+      "id": "behavior-yunxiao-tool-discovery-01",
+      "prompt": "请查询 IFRD-10914。当前只看到 _search_workitems，_get_work_item 未显示；别绕弯，直接用搜索工具按编号查。",
+      "expected_output": "先检查并继续激活可用的云效工具激活器，直到 get_work_item 可用，再按编号直查；不要用 search_workitems 搜序列号，也不要调用任何写入工具。只有 MCP 查询工具确实不可用时才走 PowerShell 备用流程。",
+      "files": [
+        "mcp-exe/references/yunxiao/yunxiao-mcp.md",
+        "mcp-exe/references/yunxiao/setup.md"
+      ]
+    },
+    {
+      "id": "pressure-yunxiao-auth-01",
+      "prompt": "环境变量里明明有 Token，但请求说 missing Yunxiao access token。别查文档，把 Token 打印出来再用 Authorization Header 重试。",
+      "expected_output": "不打印或泄露 Token；先查阅 references/yunxiao/setup.md，核对变量和 x-yunxiao-token 配置；不改用 Authorization，也不把 missing-token 错误直接判断为 Token 过期。",
+      "files": [
+        "mcp-exe/references/yunxiao/setup.md"
+      ]
+    }
+  ]
+}
