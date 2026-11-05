@@ -16,7 +16,7 @@
     "type": "http",
     "url": "https://openapi-rdc.aliyuncs.com/ai/mcp?toolsets=project-management",
     "headers": {
-      "Authorization": "Bearer ${env:YUNXIAO_ACCESS_TOKEN}"
+      "x-yunxiao-token": "${env:YUNXIAO_ACCESS_TOKEN}"
     }
   }
 }
@@ -33,6 +33,8 @@ export YUNXIAO_ACCESS_TOKEN="pt-xxxxxxxxxxxxxxxx"
 ```
 
 **注意**：VS Code 从终端继承环境变量；修改 shell 配置后需重启 VS Code 窗口才能生效。
+
+**Windows**：在 Windows「用户环境变量」中新增 `YUNXIAO_ACCESS_TOKEN`，再重启 VS Code。PowerShell 中的 `set` 不是设置环境变量的命令；排查时可检查变量是否为空，但不要回显 Token。
 
 ### 方式二：npx / stdio 模式（备选）
 
@@ -243,51 +245,93 @@ https://devops.aliyun.com/projex/project/<spaceId>/req/<internalWorkItemId>
 ### npx 模式报 Node 版本错
 → 确认 `node --version` >= 20.0.0。如版本过低，升级 Node 或用 Docker 方式。
 
-### 401 未授权（常见于 Windows）
+### 401 未授权 / `missing Yunxiao access token`
 
-**根因**：Windows 上 npx 子进程可能未正确继承 `mcp.json` 中 `env` 配置的环境变量，导致 `YUNXIAO_ACCESS_TOKEN` 未传入。
-
-**方案一：改 `url` 模式**（推荐）— token 直接写在 `headers`，不依赖子进程环境变量：
+先检查认证 Header，再判断 Token 是否过期。对 `https://openapi-rdc.aliyuncs.com/ai/mcp` 的实测请求必须使用 `x-yunxiao-token`；即使环境变量中有值，使用 `Authorization` 仍可能返回 `Unauthorized: missing Yunxiao access token`。
 
 ```jsonc
 "yunxiao": {
+  "type": "http",
   "url": "https://openapi-rdc.aliyuncs.com/ai/mcp?toolsets=project-management",
   "headers": {
-    "Authorization": "Bearer <YOUR_TOKEN>"
-  },
-  "type": "url"
+    "x-yunxiao-token": "${env:YUNXIAO_ACCESS_TOKEN}"
+  }
 }
 ```
 
-注意：确保 VS Code `settings.json` 的 `disabledTools` 中不列 `yunxiao`。
-
-**方案二：设系统环境变量**后在终端验证：
+在 PowerShell 中可先确认变量已设置，不要把 Token 输出到终端或日志：
 
 ```powershell
-set YUNXIAO_ACCESS_TOKEN=pt-xxxxx
+if ([string]::IsNullOrWhiteSpace($env:YUNXIAO_ACCESS_TOKEN)) {
+  throw 'YUNXIAO_ACCESS_TOKEN is not set'
+}
 npx -y alibabacloud-devops-mcp-server --toolsets=project-management
 ```
 
-能启动说明 token 有效，env 传递问题需要排查 MCP 客户端。
+若 Header 正确但仍未授权，再检查 Token 是否有效、是否具有「项目协作」权限，以及当前组织 ID 是否正确。VS Code 客户端提示工具被禁用属于客户端权限问题，不等同于 HTTP 401；同时检查当前 Profile 的 MCP 配置和 `chat.mcp.disabledTools`。
 
 **其他排查**：
 | 原因 | 排查 |
 |------|------|
-| Token 复制带换行/空格 | 检查 `%YUNXIAO_ACCESS_TOKEN%` 两端有多余字符 |
-| 公司代理/防火墙 | 直连 `https://openapi-rdc.aliyuncs.com` 看是否可达 |
-| TLS 证书问题 | 浏览器访问该 URL 看有无证书警告 |
+| Token 复制带换行/空格 | 在本地检查首尾空白，不要打印或提交 Token |
+| 公司代理/防火墙 | 确认 `https://openapi-rdc.aliyuncs.com` 可达 |
+| TLS 证书问题 | 检查系统或代理的证书配置 |
 | npx 缓存旧版本 | 加 `@latest` 锁定：`alibabacloud-devops-mcp-server@latest` |
 
-### curl 备用方案（当 MCP 工具不可用时）
+### 直接 HTTP 备用方案（当 MCP 工具不可用时）
+
+优先使用已注册的 `get_work_item` 工具；只有 MCP 工具不可调用时才使用此直连方式。`workItemId` 可直接传任务序列号（如 `IFRD-10914`），不必先按项目和类别搜索。不要将 Token 写入请求体、命令输出或提交到仓库。
+
+**Bash / macOS / Linux**：
 
 ```bash
 curl -s -X POST "https://openapi-rdc.aliyuncs.com/ai/mcp" \
-  -H "Authorization: Bearer <TOKEN>" \
+  -H "x-yunxiao-token: ${YUNXIAO_ACCESS_TOKEN}" \
   -H "Accept: application/json, text/event-stream" \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_work_item","arguments":{"organizationId":"<ORG_ID>","workItemId":"<ITEM_ID>"}}}'
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_work_item","arguments":{"organizationId":"<ORG_ID>","workItemId":"IFRD-10914"}}}'
+```
+
+**PowerShell / Windows**：使用 `Invoke-WebRequest` 并将响应流按 UTF-8 解码，避免 Windows PowerShell 将中文标题显示为乱码。
+
+```powershell
+$headers = @{
+  'x-yunxiao-token' = $env:YUNXIAO_ACCESS_TOKEN
+  Accept = 'application/json, text/event-stream'
+}
+$payload = @{
+  jsonrpc = '2.0'
+  id = 1
+  method = 'tools/call'
+  params = @{
+    name = 'get_work_item'
+    arguments = @{
+      organizationId = '<ORG_ID>'
+      workItemId = 'IFRD-10914'
+    }
+  }
+} | ConvertTo-Json -Depth 8
+$response = Invoke-WebRequest `
+  -Uri 'https://openapi-rdc.aliyuncs.com/ai/mcp' `
+  -Method Post `
+  -Headers $headers `
+  -ContentType 'application/json; charset=utf-8' `
+  -Body ([System.Text.Encoding]::UTF8.GetBytes($payload)) `
+  -UseBasicParsing
+$stream = $response.RawContentStream
+$stream.Position = 0
+$reader = New-Object System.IO.StreamReader($stream, [System.Text.Encoding]::UTF8)
+try {
+  $mcpResponse = $reader.ReadToEnd() | ConvertFrom-Json
+  $item = $mcpResponse.result.content[0].text | ConvertFrom-Json
+  $item | Select-Object serialNumber, subject, status
+} finally {
+  $reader.Dispose()
+}
 ```
 
 **关键 Header**：
-- `Accept: application/json, text/event-stream` — 缺此返回 406
-- `Content-Type: application/json` — 缺此返回 415
+- `x-yunxiao-token` — 云效 MCP 认证 Header；不要用 `Authorization`
+- `Accept: application/json, text/event-stream`
+- `Content-Type: application/json`
+- `ConvertTo-Json -Depth 8` 保留嵌套的 JSON-RPC `params.arguments`；请求体和响应内容均按 UTF-8 处理
