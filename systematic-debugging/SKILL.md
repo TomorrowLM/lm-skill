@@ -2,6 +2,8 @@
 name: systematic-debugging
 description: >-
   遇到 bug、测试失败、构建失败、异常行为、性能退化或修复无效时使用；在提出修复方案、改代码或加 workaround 之前执行。用于阻止猜测式修复，要求先复现、收集证据、定位根因、评估影响面。不用于已明确根因且用户只要求按指定内容改的机械修改。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # 系统化调试

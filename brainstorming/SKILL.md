@@ -1,6 +1,8 @@
 ---
 name: brainstorming
 description: "在创建功能、构建组件、添加或修改行为、修复 bug、重构代码，或落实代码审查建议前使用；实现前先探索用户意图、约束和设计。纯只读代码审查、解释、总结、检索或运行已有检查且不修改代码时不使用。"
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # 头脑风暴：将想法转化为设计

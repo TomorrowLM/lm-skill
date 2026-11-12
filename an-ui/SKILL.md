@@ -1,6 +1,8 @@
 ---
 name: an-ui
 description: pc端公共组件库，基于 Ant Design 封装的高级组件集合，包含表单、表格、抽屉、弹窗等
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # an-ui Skill

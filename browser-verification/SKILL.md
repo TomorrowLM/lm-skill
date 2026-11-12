@@ -8,6 +8,8 @@ description: >-
   也由 page-development-workflow Phase 5 引用，用于 UI 手动验收。
   同时适用于页面结构采集、交互测试、回归验证和后续自动化流程设计；测试或自动化执行必须沿用同一套截图、DOM、风险和证据闭环。
   不适用于纯代码修改、纯后端接口测试、不需要浏览器的任务。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # 浏览器页面验证

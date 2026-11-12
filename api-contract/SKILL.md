@@ -5,6 +5,8 @@ description: >-
   或使用 get_swagger_mcp、Apifox CLI 管理接口、项目、环境、Mock、分支及运行接口测试时使用。
   页面开发、service 与 API 类型变更需要获取接口契约时也使用。
   不适用于纯概念解释、仅分析已有代码、普通业务请求执行、Figma 或其他非接口 MCP 操作。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # 接口契约与 Apifox 统一入口

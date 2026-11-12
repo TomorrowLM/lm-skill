@@ -1,6 +1,8 @@
 ---
 name: test-driven-development
 description: 在实现或修复业务逻辑、状态流、数据转换、接口契约等可验证行为时使用；纯文案、样式和低风险展示格式调整不要求走红绿流程，除非涉及业务规则或计算边界。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # 测试驱动开发（TDD）

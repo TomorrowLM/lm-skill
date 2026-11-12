@@ -1,6 +1,8 @@
 ---
 name: requesting-code-review
 description: "使用 CodeReview 子代理对代码变更及其影响面进行独立审查，发现正确性、安全性、架构和维护性问题。适用于子代理任务完成、重要功能实现、合并到 main 前、重构前或复杂 Bug 修复后。"
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # 请求代码审查

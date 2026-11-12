@@ -5,6 +5,8 @@ description: >-
   仅覆盖该目录中的 React/Next.js 性能实践和技能查找；其他目录的技能不由本技能路由。
   不触发：用户已明确指定技能名称、普通代码修改/修bug/改文案/加字段、解释代码含义、单文件小改动、
   项目配置调整、lint/format/构建问题、纯知识问答（React怎么用、TypeScript类型怎么写）。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # Skill Routing

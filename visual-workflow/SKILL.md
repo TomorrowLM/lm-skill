@@ -4,6 +4,8 @@ description: >-
   当用户基于 Figma、原型、截图、标注或视觉方向，需要整理页面技术方案、实现 UI，
   或对照设计材料验证页面视觉时使用。按任务选择技术方案、实现或验证模式；单点 CSS
   修改、纯浏览器结构检查和 Figma 画布内编辑不触发本技能。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # Visual Workflow
