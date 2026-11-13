@@ -49,3 +49,5 @@ try {
 ```
 
 `ConvertTo-Json -Depth 8` 保留 JSON-RPC 嵌套参数；请求和响应均按 UTF-8 处理。
+
+此备用请求仅用于读取工作项 JSON，不用于读取图片字节。图片附件按 [云效 MCP 图片附件读取流程](yunxiao-mcp.md#图片附件读取)处理；不要把附件下载 URL 填入此 JSON-RPC 请求，也不要将临时签名地址写入日志或答复。

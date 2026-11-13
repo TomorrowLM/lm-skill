@@ -26,6 +26,24 @@
       "files": [
         "mcp-exe/references/yunxiao/setup.md"
       ]
+    },
+    {
+      "id": "behavior-yunxiao-full-task-01",
+      "prompt": "获取 IFRD-11173，需求正文很乱，请整理后完整输出，不要只给摘要。",
+      "expected_output": "先读 references/yunxiao/yunxiao-mcp.md 并只读调用 get_work_item；输出可用任务元信息和完整、结构化的正文，保留约束、具体文案、验收标准及参考信息。可合并重复内容，但不删改语义；歧义标记待确认，不猜缺失字段。完成后默认写入当前业务项目根目录下 docs/design/YYYY-MM-DD-<topic>-design/prod/index.md；若文件已存在，先读取并保留已有内容。",
+      "files": [
+        "mcp-exe/SKILL.md",
+        "mcp-exe/references/yunxiao/yunxiao-mcp.md"
+      ]
+    },
+    {
+      "id": "behavior-yunxiao-image-01",
+      "prompt": "读取这个云效需求；正文里的图片也要识别，并把图片地址及图片对应的需求内容一并写进结果。",
+      "expected_output": "从正文/附件标识调用只读 get_workitem_file，按需下载新鲜返回的地址并用视觉工具识别；输出稳定 embedUrl、图片可见内容及其对应需求点。绝不输出临时签名 URL。若新地址仍不可访问，明确标记图片未读取并请求用户上传，不猜图像内容；不得调用创建附件或删除工作项工具。",
+      "files": [
+        "mcp-exe/SKILL.md",
+        "mcp-exe/references/yunxiao/yunxiao-mcp.md"
+      ]
     }
   ]
 }
