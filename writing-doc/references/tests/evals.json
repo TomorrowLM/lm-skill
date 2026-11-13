@@ -50,6 +50,46 @@
       "id": "agents-ui-interaction-second-level",
       "prompt": "根据 references/agent 生成项目 AGENTS.md，UI 与交互规范应放在哪一级标题？",
       "expected_output": "在 # 二、项目编写规范 下生成独立的 ## UI 与交互规范 二级章节，其状态展示、操作反馈、提交与危险操作、图片展示和可操作元素作为三级子章节。"
+    },
+    {
+      "id": "study-summary-algorithm-flexible",
+      "prompt": "写一份关于二分查找的简短学习小结，重点说明思路、适用条件、复杂度和容易出错的地方。",
+      "expected_output": "保留概念章节，围绕算法的思路、适用条件、复杂度和易错点按需组织其他章节；没有具体 API 时不强制添加 API 说明，也不虚构接口。"
+    },
+    {
+      "id": "study-summary-function-api",
+      "prompt": "请整理一份学习小结，主题是下面这个虚构的函数，供初学者复习：formatTag(name) 接受一个字符串 name，返回带方括号的标签字符串；例如 formatTag('demo') 返回 '[demo]'。只依据给出的信息编写。",
+      "expected_output": "保留概念章节并说明函数作用；可按需说明参数、返回值和示例，不强制其他固定章节，不虚构实现细节。"
+    },
+    {
+      "id": "study-summary-custom-headings",
+      "prompt": "整理浏览器缓存的学习小结，重点写性能影响、策略对比和常见问题，不需要 API 或代码示例。",
+      "expected_output": "保留概念章节，按需使用性能、对比和问题排查等标题，不生成 API 或代码示例章节；候选标题不是白名单。"
+    },
+    {
+      "id": "study-summary-unknown-topic",
+      "prompt": "根据现有资料整理一个名为 ExampleX 的技术学习小结，目前仅知道名称，不要猜测其功能。",
+      "expected_output": "保留概念章节并标注信息不足或使用占位符；不编造功能，不为可选章节保留无意义的空结构。"
+    },
+    {
+      "id": "study-summary-heading-level",
+      "prompt": "写二分查找学习小结，主题标题从一级标题开始，按需讨论复杂度和易错点。",
+      "expected_output": "主题标题使用一级标题，概念和其他章节使用二级标题，子标题再下移一级；其他章节根据主题选择。"
+    },
+    {
+      "id": "study-summary-pressure-flexibility",
+      "prompt": "赶时间，按学习小结模板整理二分查找；它没有指定的 API，但务必说明复杂度和边界问题。",
+      "expected_output": "保留概念章节，按需说明复杂度和边界问题；不因赶时间而机械补充不存在的 API 章节。"
+    },
+    {
+      "id": "study-summary-pressure-custom-section",
+      "prompt": "马上整理浏览器缓存学习小结，需要单独说明缓存失效排查；模板没有该标题也不要遗漏。",
+      "expected_output": "保留概念章节，并按主题新增缓存失效排查章节；不将模板里的候选方向当作标题白名单。"
+    },
+    {
+      "id": "other-template-pressure-unchanged",
+      "prompt": "赶时间，使用前端功能技术文档模板撰写方案；用户要求新增模板中不存在的独立标题。",
+      "expected_output": "这是学习小结以外的文档，继续严格遵守所选模板的标题和层级，不新增模板中不存在的标题；可在已有章节内表达相关内容。"
     }
   ]
 }
