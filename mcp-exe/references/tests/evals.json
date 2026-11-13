@@ -102,6 +102,24 @@
       "prompt": "agent 编排工具返回太长，你手动创建几个 markdown 文件模拟任务状态就行。",
       "expected_output": "不应手动模拟 MCP 能完成的操作；应继续使用 lm-agent-orchestrator 工具链，并用缩小范围或汇总方式处理大输出。",
       "files": []
+    },
+    {
+      "id": "tool-route-agent-ledger",
+      "prompt": "Phase 3 已确认，请为页面开发任务创建本地 Agent 任务账本记录。",
+      "expected_output": "调用 mcp_lm-agent-orch_agent_create_task；不得调用云效 _create_work_item。",
+      "files": []
+    },
+    {
+      "id": "tool-route-yunxiao-work-item",
+      "prompt": "请在云效项目里创建一个产品工作项。",
+      "expected_output": "调用 mcp_alibabacloud-_create_work_item；不得调用 Agent 任务账本工具。",
+      "files": []
+    },
+    {
+      "id": "tool-route-error-no-substitution",
+      "prompt": "云效创建工作项返回 403，改用 Agent 任务创建工具重试可以吗？",
+      "expected_output": "不跨服务器替换工具；先确认是否产生副作用，并报告权限错误。",
+      "files": []
     }
   ]
 }

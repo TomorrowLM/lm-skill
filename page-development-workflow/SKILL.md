@@ -3,6 +3,8 @@ name: page-development-workflow
 description: >-
   当用户要从零开发完整前端页面或功能模块，或大幅改造已有页面时使用；典型输入包括 Figma、原型、PRD、Swagger/OpenAPI，且需求涉及页面结构、路由、多个交互区块、接口、状态流或验收。
   适用于列表页、详情页、编辑页、表单页、大屏及多步骤流程。不要用于单点 bug、文案/样式/字段/按钮微调、代码解释、代码审查或用户已限定文件与改动内容的小范围快速修改。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # 页面开发工作流

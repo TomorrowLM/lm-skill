@@ -5,6 +5,8 @@ metadata:
   requires:
     bins: ["apifox"]
   cliHelp: "apifox --help"
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # Apifox CLI

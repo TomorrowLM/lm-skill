@@ -1,6 +1,8 @@
 ---
 name: subagent-driven-development
 description: 当已有计划包含多个边界清晰的子任务，并需要新子智能体分别实现、交接和收口时使用；不适用于单任务、仅并行调查或主会话直接执行。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # 子智能体驱动开发

@@ -6,6 +6,8 @@ description: >-
   但还没有基于真实智能体行为验证它；技能描述触发不准（误触发/漏触发）。
   不适用于：项目级约定、一次性解决方案、应由自动化强制执行的机械规则，或 AI 已经
   掌握的通用标准实践。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # Writing Skills

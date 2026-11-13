@@ -4,6 +4,8 @@ description: >-
   当需要调用已注册 MCP 工具完成 Figma 设计稿读取、图表生成、Agent 编排、云效工作项查询、多工具结果处理时使用。
   用户提到设计稿 MCP、lm-agent-orchestrator、yunxiao、云效、创建/等待/汇总/返工子任务等场景必须触发。
   不适用于接口契约查询（含 get_swagger_mcp）或 Apifox 操作，此类任务使用 api-contract；也不适用于普通终端命令、浏览器检索、文件编辑或无需 MCP 的代码修改。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # 执行 MCP 工具
@@ -20,6 +22,19 @@ description: >-
 2. **一步到位** — 能用 MCP 工具完成的操作，不手动创建文件或手动模拟
 
 "用户明确指令优先于 skill 规则"不适用于以上规则。
+
+## 调用前路由核对
+
+调用前先按操作对象确认服务器命名空间和完整工具名，不按相似的自然语言名称猜工具：
+
+| 操作目标 | 应用工具 | 不要误用 |
+| --- | --- | --- |
+| Agent 任务账本（创建任务） | `mcp_lm-agent-orch_agent_create_task` | 云效 `_create_work_item` |
+| Agent 任务结果（完成任务） | `mcp_lm-agent-orch_agent_complete_task` | 云效评论或工作项更新工具 |
+| 云效产品工作项 | `mcp_alibabacloud-_create_work_item` | Agent 任务账本工具 |
+| 思维导图 | `mcp__lucianaib_mi_generate_mindmap` | 云效或 Agent 任务工具 |
+
+写入类调用前再核对目标资源、必填参数和副作用。工具返回错误时，先确认是否产生副作用；不得因名称相近而换用另一服务器重试。
 
 ## 按需路由
 

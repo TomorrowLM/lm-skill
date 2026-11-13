@@ -1,6 +1,8 @@
 ---
 name: gitnexus-impact-analysis
 description: "当用户想知道修改某段代码会影响什么、需要在编辑前做安全分析时使用。例如：'改 X 安全吗？'、'谁依赖了这个？'、'会影响哪些？'"
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # GitNexus 影响分析

@@ -1,6 +1,8 @@
 ---
 name: token-saving
 description: 仅在任务明显需要跨文件、跨网页、长日志、多轮上下文、接口文档、Figma 还原或多子代理协作时使用；不适用于单文件、单次错误定位、单一小改动、单一文案或单一函数修正。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # Token Saving

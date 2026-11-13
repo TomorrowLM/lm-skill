@@ -1,6 +1,8 @@
 ---
 name: writing-doc
 description: 当需要编写或补全前端技术方案、页面级实现方案、页面功能总结或学习小结时使用。适用于把需求、状态流转、组件职责、业务规则和技术知识整理成可评审、可追踪的中文文档。
+disable-model-invocation: true
+user-invocable: true
 ---
 
 ## 核心原则

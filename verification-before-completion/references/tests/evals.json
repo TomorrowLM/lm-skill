@@ -1,0 +1,26 @@
+{
+  "skill_name": "verification-before-completion",
+  "evals": [
+    {
+      "id": "changed-files-first",
+      "expectedTrigger": false,
+      "prompt": "只改了一个 Vue 文件，请只检查改动文件，不要跑全仓 lint。",
+      "expected_output": "不应自动加载验证技能；普通定点检查可直接完成，不默认启动全仓检查。",
+      "files": []
+    },
+    {
+      "id": "manual-shared-contract-direct-consumers",
+      "expectedTrigger": true,
+      "prompt": "/verification-before-completion 检查公共组件 props 类型改动的验证范围。",
+      "expected_output": "检查改动文件及直接调用方；按风险运行必要构建，不机械扫描全仓。",
+      "files": []
+    },
+    {
+      "id": "manual-full-check-explicit-gate",
+      "expectedTrigger": true,
+      "prompt": "/verification-before-completion 这次改了构建配置，项目 CI 要求全量 build 和 typecheck。",
+      "expected_output": "遵循明确项目门禁，运行对应全量检查并记录范围和结果。",
+      "files": []
+    }
+  ]
+}
