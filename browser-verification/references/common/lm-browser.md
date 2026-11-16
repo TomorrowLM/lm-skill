@@ -15,26 +15,30 @@ uv run --directory front/mcp/lm-browser/python-core python server.py
 - 采集 JSON 必须来自 MCP 工具或 MCP 工程内部的 collector/serializer；外部调用方只保存 MCP 原始返回和工具已经生成的结构化结果。
 - 如果 MCP 能力不足，必须修改 `lm-browser` 内部工具并重新通过 MCP 验证，不能在外部添加补偿脚本。
 
+调用前先明确 `existing-tab` 或 `new-tab`；仅给 URL 不足以推断打开方式，意图不明时先询问且不调用浏览器工具。
+
 调用顺序：
 
 ```text
-connect_browsers（或 connect_browser(cdp_url)）→ list_pages
-→ 按完整 URL 精确匹配 browserId/browserLabel/global index
+existing-tab：connect_browsers(target_url) → 使用精确诊断匹配；仅无诊断时 list_pages
+new-tab：用户明确选择并提供完整 URL → connect_browsers() → open_browser_page(url)
 → wait_until_ready → scroll_to_top(atTop=true)
 → page_snapshot/inspect_dom/page_screenshot
 → 核对 URL、route、readiness 和截图路径 → evidence
 → 有交互时复采 URL/DOM/截图并记录状态变化
 ```
 
+每个连接/页面调用都必须串行等待结果。新开页后核对完整 URL/route；已有页未命中或不可读时停止并报告，不得自动改为新开页或导航已有页。只有用户明确要求导航时，才在目标页匹配后调用 `navigate_page`。
+
 `connect_browsers` 扫描当前 MCP 主机上可发现的 Chrome/Chromium 默认用户目录和运行进程声明的自定义 `--user-data-dir`，只连接存在有效 `DevToolsActivePort` 的实例。它不会启动浏览器或新建页面。`skipped` 中的 `remote_debugging_not_enabled`、`profile_access_denied` 或 `connection_failed` 表示发现不完整，必须作为 `blocked`/`unverified` 证据记录，指出未接入的实例并提示用户授权远程调试或修复目录权限后重试。此工具不扫描 Safari、Firefox、Edge 或 Brave。
 
-`list_pages` 返回的 `index` 是所有已连接实例和 browser context 的全局索引，可传给 `page_snapshot`、`inspect_dom`、`page_screenshot` 及交互工具；`browserId`/`browserLabel` 用于保留来源。用户要求检查已打开页面时，先按完整 URL 精确匹配；未命中就停止并报告，不得改用第一个 tab，也不得调用 `open_browser_page` 或 `navigate_page`。只有用户或已确认的验收步骤明确要求进入新 route 时，才导航。
+`list_pages` 返回的 `index` 是所有已连接实例和 browser context 的全局索引，可传给 `page_snapshot`、`inspect_dom`、`page_screenshot` 及交互工具；`browserId`/`browserLabel` 用于保留来源。`existing-tab` 未命中就停止并报告，不得改用第一个 tab，也不得调用 `open_browser_page` 或 `navigate_page`。`new-tab` 必须由用户明确选择，不得从 URL 推断。
 
-本 MCP 同时服务三种模式：
+本 MCP 是三种验证模式共用的浏览器执行层：
 
-- 结构采集：建立菜单、页面、Tab、Dialog、Drawer、权限按钮和表格操作清单。
-- 交互测试：只执行已获准的低风险代表性交互，并验证 route、激活态、主内容、截图和 DOM。
-- 自动化设计/执行：只使用已完成双重验证的 route、定位方式、Tab 层级、occurrence 和风险策略；未验证节点只能进入待补证据队列。
+- 默认视觉与交互验收：见 `../modes/visual-interaction/verification.md`。
+- 按需结构采集：见 `../modes/collection/collection.md`。
+- 按需自动化回归：见 `../modes/automation/automation-testing.md`；仅使用已双重验证的 route、定位方式、Tab 层级、occurrence 和风险策略。
 
 当前工具按职责分组：
 

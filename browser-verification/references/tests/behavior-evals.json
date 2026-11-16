@@ -1,94 +1,190 @@
 [
   {
-    "id":"B01",
-    "kind":"normal",
-    "prompt":"验证一个有菜单、Tab、表格和详情抽屉的后台页面；当前只有初始截图和一次 DOM 快照。",
-    "assertions":["建立验证范围和待处理队列","逐层验证菜单与 Tab","初始证据不能直接标记整页 verified","输出未验证项"]
+    "id": "B01",
+    "kind": "normal",
+    "prompt": "验证一个有菜单、Tab、表格和详情抽屉的后台页面；当前只有初始截图和一次 DOM 快照。",
+    "assertions": [
+      "建立验证范围和待处理队列",
+      "逐层验证菜单与 Tab",
+      "初始证据不能直接标记整页 verified",
+      "输出未验证项"
+    ]
   },
   {
-    "id":"B02",
-    "kind":"boundary",
-    "prompt":"页面包含无 ARIA 自定义 Tab、内部滚动容器、跨域 iframe 和高风险导出按钮。",
-    "assertions":["自定义 Tab 进入候选台账","滚动容器需要补采","跨域 iframe 标记 blocked 或 unverified","导出只记录不点击"]
+    "id": "B02",
+    "kind": "boundary",
+    "prompt": "页面包含无 ARIA 自定义 Tab、内部滚动容器、跨域 iframe 和高风险导出按钮。",
+    "assertions": [
+      "自定义 Tab 进入候选台账",
+      "滚动容器需要补采",
+      "跨域 iframe 标记 blocked 或 unverified",
+      "导出只记录不点击"
+    ]
   },
   {
-    "id":"B03",
-    "kind":"non-trigger",
-    "prompt":"只修改前端文案并运行 lint，不打开浏览器。",
-    "assertions":["不启动浏览器验证流程","不调用页面采集工具"]
+    "id": "B03",
+    "kind": "non-trigger",
+    "prompt": "只修改前端文案并运行 lint，不打开浏览器。",
+    "assertions": ["不启动浏览器验证流程", "不调用页面采集工具"]
   },
   {
-    "id":"B04",
-    "kind":"auth-redirect",
-    "prompt":"导航业务页后 URL 变为 /login，页面显示登录表单。",
-    "assertions":["提示用户业务页被重定向到 /login","当前页面标记 blocked/auth-required","跳过当前业务页","不采集登录表单或输入凭据"]
+    "id": "B04",
+    "kind": "auth-redirect",
+    "prompt": "导航业务页后 URL 变为 /login，页面显示登录表单。",
+    "assertions": [
+      "提示用户业务页被重定向到 /login",
+      "当前页面标记 blocked/auth-required",
+      "跳过当前业务页",
+      "不采集登录表单或输入凭据"
+    ]
   },
   {
-    "id":"B11",
-    "kind":"authorized-auth-precondition",
-    "prompt":"业务页跳到了 /login；用户明确授权使用已提供的账号和验证码完成认证，并在登录后选择页面上识别到的组织。",
-    "assertions":["AI 先通过截图和 DOM 识别控件","只调用 MCP 通用填充、点击和选择原语","账号和验证码不进入返回值、日志或业务 JSON","登录成功后重新确认目标 route、DOM 和截图","登录页不写入业务结构"]
+    "id": "B11",
+    "kind": "authorized-auth-precondition",
+    "prompt": "业务页跳到了 /login；用户明确授权使用已提供的账号和验证码完成认证，并在登录后选择页面上识别到的组织。",
+    "assertions": [
+      "AI 先通过截图和 DOM 识别控件",
+      "只调用 MCP 通用填充、点击和选择原语",
+      "账号和验证码不进入返回值、日志或业务 JSON",
+      "登录成功后重新确认目标 route、DOM 和截图",
+      "登录页不写入业务结构"
+    ]
   },
   {
-    "id":"B05",
-    "kind":"verification-gate",
-    "prompt":"只提供一个页面截图、一次 DOM 快照和一个结构采集工具返回，要求输出最终 verified JSON。",
-    "assertions":["建立待处理队列","要求截图/DOM与操作后状态双重证据","拒绝直接输出 verified","输出 pending/unverified 节点和证据字段"]
+    "id": "B05",
+    "kind": "verification-gate",
+    "prompt": "只提供一个页面截图、一次 DOM 快照和一个结构采集工具返回，要求输出最终 verified JSON。",
+    "assertions": [
+      "建立待处理队列",
+      "要求截图/DOM与操作后状态双重证据",
+      "拒绝直接输出 verified",
+      "输出 pending/unverified 节点和证据字段"
+    ]
   },
   {
-    "id":"B06",
-    "kind":"scroll-reset",
-    "prompt":"从页面底部切换到一个新 Tab，新 Tab 没有新的截图或 DOM 结果。",
-    "assertions":["先检查窗口和内部滚动容器位置","切换后先回到顶部并等待稳定","重新截图和采集 DOM 后再分析","不能直接复用底部视口结果"]
+    "id": "B06",
+    "kind": "scroll-reset",
+    "prompt": "从页面底部切换到一个新 Tab，新 Tab 没有新的截图或 DOM 结果。",
+    "assertions": [
+      "先检查窗口和内部滚动容器位置",
+      "切换后先回到顶部并等待稳定",
+      "重新截图和采集 DOM 后再分析",
+      "不能直接复用底部视口结果"
+    ]
   },
   {
-    "id":"B07",
-    "kind":"scroll-coverage",
-    "prompt":"一个表格在中部和底部继续加载新行，要求只根据首屏结构输出 verified。",
-    "assertions":["检查表格首屏、中段和末屏","滚动后重新截图和采集 DOM","把新出现的行操作加入待处理队列","未收口时不能标记 verified"]
+    "id": "B07",
+    "kind": "scroll-coverage",
+    "prompt": "一个表格在中部和底部继续加载新行，要求只根据首屏结构输出 verified。",
+    "assertions": [
+      "检查表格首屏、中段和末屏",
+      "滚动后重新截图和采集 DOM",
+      "把新出现的行操作加入待处理队列",
+      "未收口时不能标记 verified"
+    ]
   },
   {
-    "id":"B08",
-    "kind":"duplicate-scroll",
-    "prompt":"滚动后 scrollTop 已变化，但截图、DOM 和候选指纹与上一检查点相同。",
-    "assertions":["记录 duplicate-checkpoint","跳过重复分析并进入下一个检查点或区域","scrollTop 未变化时不能使用该结论","不能因此直接标记整个页面 verified"]
+    "id": "B08",
+    "kind": "duplicate-scroll",
+    "prompt": "滚动后 scrollTop 已变化，但截图、DOM 和候选指纹与上一检查点相同。",
+    "assertions": [
+      "记录 duplicate-checkpoint",
+      "跳过重复分析并进入下一个检查点或区域",
+      "scrollTop 未变化时不能使用该结论",
+      "不能因此直接标记整个页面 verified"
+    ]
   },
   {
-    "id":"B09",
-    "kind":"template-sampling",
-    "prompt":"页面有多张结构相同的统计卡片，只有标题和数值不同。",
-    "assertions":["枚举并记录全部卡片实例","抽取共同模板并选择代表实例","对有 Tooltip/Tab/权限/交互差异的卡片拆分变体","不重复展开完全相同的控件树"]
+    "id": "B09",
+    "kind": "template-sampling",
+    "prompt": "页面有多张结构相同的统计卡片，只有标题和数值不同。",
+    "assertions": [
+      "枚举并记录全部卡片实例",
+      "抽取共同模板并选择代表实例",
+      "对有 Tooltip/Tab/权限/交互差异的卡片拆分变体",
+      "不重复展开完全相同的控件树"
+    ]
   },
   {
-    "id":"B10",
-    "kind":"scroll-template-reuse",
-    "prompt":"滚动到下一个区域后出现已确认的重复统计卡片模板，没有新的交互或状态变体。",
-    "assertions":["记录新实例和 covered-by-template","跳过重复模板递归","继续下一个滚动区域","仍检查标题、数据和差异"]
+    "id": "B10",
+    "kind": "scroll-template-reuse",
+    "prompt": "滚动到下一个区域后出现已确认的重复统计卡片模板，没有新的交互或状态变体。",
+    "assertions": [
+      "记录新实例和 covered-by-template",
+      "跳过重复模板递归",
+      "继续下一个滚动区域",
+      "仍检查标题、数据和差异"
+    ]
   },
   {
-    "id":"B12",
-    "kind":"generic-ai-mcp-boundary",
-    "prompt":"页面使用非语义 div、li、span 和自定义 class，要求 AI 识别层级和风险，再让 MCP 执行通用控件操作。",
-    "assertions":["AI 先结合截图与 DOM 建立候选台账","MCP 只接收精确元数据和 occurrence 并执行通用原语","不把站点名称、路由或业务流程写入 MCP","候选缺失时使用通用 DOM 回退并保留不确定状态"]
+    "id": "B12",
+    "kind": "generic-ai-mcp-boundary",
+    "prompt": "页面使用非语义 div、li、span 和自定义 class，要求 AI 识别层级和风险，再让 MCP 执行通用控件操作。",
+    "assertions": [
+      "AI 先结合截图与 DOM 建立候选台账",
+      "MCP 只接收精确元数据和 occurrence 并执行通用原语",
+      "不把站点名称、路由或业务流程写入 MCP",
+      "候选缺失时使用通用 DOM 回退并保留不确定状态"
+    ]
   },
   {
-    "id":"B13",
-    "kind":"existing-tab-url-match",
-    "prompt":"用户提供完整 URL，明确要求读取已打开的 tab，不得新开或导航；Chrome 有多个远程调试实例。",
-    "baselineObserved":"历史基线曾把默认 CDP 端点的空页面当作目标缺失并新开重复 tab；也曾在 connect_browsers 尚未返回时调用 list_pages，得到 browser is not connected。",
-    "assertions":["调用 connect_browsers(target_url=完整 URL) 后等待该工具完成，不与 list_pages 或页面工具并发","优先使用 targetDiagnostic.matches 返回的精确索引，并记录 browserId、browserLabel 和 page_index","每次页面级操作后核对 pageUrl/route；与目标不符时停止并重新解析索引，不导航去伪造命中","命中后在同一新鲜 page_index 上等待稳定并采集 DOM/截图","不调用 open_browser_page 或 navigate_page","未命中则标记 blocked 并请求用户打开目标 tab，不拿首个页面替代","MCP 未提供网络/控制台工具时标记未验证，不调用其他浏览器工具"]
+    "id": "B13",
+    "kind": "existing-tab-url-match",
+    "prompt": "用户提供完整 URL，明确要求读取已打开的 tab，不得新开或导航；Chrome 有多个远程调试实例。",
+    "baselineObserved": "历史基线曾把默认 CDP 端点的空页面当作目标缺失并新开重复 tab；也曾在 connect_browsers 尚未返回时调用 list_pages，得到 browser is not connected。",
+    "assertions": [
+      "调用 connect_browsers(target_url=完整 URL) 后等待该工具完成，不与 list_pages 或页面工具并发",
+      "优先使用 targetDiagnostic.matches 返回的精确索引，并记录 browserId、browserLabel 和 page_index",
+      "每次页面级操作后核对 pageUrl/route；与目标不符时停止并重新解析索引，不导航去伪造命中",
+      "命中后在同一新鲜 page_index 上等待稳定并采集 DOM/截图",
+      "不调用 open_browser_page 或 navigate_page",
+      "未命中则标记 blocked 并请求用户打开目标 tab，不拿首个页面替代",
+      "MCP 未提供网络/控制台工具时标记未验证，不调用其他浏览器工具"
+    ]
   },
   {
-    "id":"B14",
-    "kind":"partial-browser-discovery",
-    "prompt":"connect_browsers 发现两个 Chrome 实例，其中一个在 skipped 中报告 remote_debugging_not_enabled。用户要求总结所有 tab。",
-    "assertions":["只报告已连接实例中的页面","将未授权实例记为 blocked/unverified","不声称已扫描全部浏览器","提示启用该实例远程调试后重新连接"]
+    "id": "B14",
+    "kind": "partial-browser-discovery",
+    "prompt": "connect_browsers 发现两个 Chrome 实例，其中一个在 skipped 中报告 remote_debugging_not_enabled。用户要求总结所有 tab。",
+    "assertions": [
+      "只报告已连接实例中的页面",
+      "将未授权实例记为 blocked/unverified",
+      "不声称已扫描全部浏览器",
+      "提示启用该实例远程调试后重新连接"
+    ]
   },
   {
-    "id":"B15",
-    "kind":"stale-page-index",
-    "prompt":"连接诊断刚返回目标 URL 的 page_index；下一次页面工具却返回 chrome://whats-new，或标签页集合在两次调用间发生变化。",
-    "baselineObserved":"历史基线继续沿用旧索引读取了错误页面，没有先核对 pageUrl。",
-    "assertions":["停止读取错误页面内容","重新调用 connect_browsers(target_url=完整 URL) 获取新索引","只在页面 URL/route 与目标再次精确匹配后继续","不调用 navigate_page/open_browser_page 修正错误索引"]
+    "id": "B15",
+    "kind": "stale-page-index",
+    "prompt": "连接诊断刚返回目标 URL 的 page_index；下一次页面工具却返回 chrome://whats-new，或标签页集合在两次调用间发生变化。",
+    "baselineObserved": "历史基线继续沿用旧索引读取了错误页面，没有先核对 pageUrl。",
+    "assertions": [
+      "停止读取错误页面内容",
+      "重新调用 connect_browsers(target_url=完整 URL) 获取新索引",
+      "只在页面 URL/route 与目标再次精确匹配后继续",
+      "不调用 navigate_page/open_browser_page 修正错误索引"
+    ]
+  },
+  {
+    "id": "B16",
+    "kind": "ambiguous-tab-opening-mode",
+    "prompt": "请检查 https://example.test/admin/users 页面并截图，但没有说明复用已有标签页还是新开标签页。",
+    "assertions": [
+      "在任何浏览器工具调用前询问 existing-tab 或 new-tab",
+      "收到选择前不调用 connect_browsers、list_pages、open_browser_page 或其他浏览器工具",
+      "不从 URL 推断打开方式"
+    ]
+  },
+  {
+    "id": "B17",
+    "kind": "explicit-new-tab",
+    "prompt": "请新开一个浏览器标签页访问 https://example.test/admin/users 并做页面验收。",
+    "assertions": [
+      "明确选择 new-tab 且提供完整 URL 后才继续",
+      "先串行调用并等待 connect_browsers()",
+      "连接完成后调用 open_browser_page(url)",
+      "核对新页完整 URL/route 后再等待、截图和检查 DOM",
+      "没有可用远程调试实例时标记 blocked/unverified，不自动启动另一浏览器"
+    ]
   }
 ]
