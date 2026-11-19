@@ -1,112 +1,46 @@
 ---
 name: an-ui
-description: pc端公共组件库，基于 Ant Design 封装的高级组件集合，包含表单、表格、抽屉、弹窗等
+description: pc端公共组件库，基于 Ant Design 封装的高级组件集合，包含表单、表格、详情、文件列表、按钮及抽屉弹窗
 disable-model-invocation: true
 user-invocable: true
 ---
 
 # an-ui Skill
 
-pc端公共组件库，基于 Ant Design 二次封装，提供高级表单、高级表格、详情组件、抽屉弹窗等企业级组件。
+an-ui 是基于 Ant Design 的 PC 端组件库，提供配置式表单、数据表格、详情展示和常见业务容器组件。
 
-## When to Use This Skill
+## 何时使用
 
-Use this skill when you need to:
-- 使用 an-ui 的组件（FormPro、TablePro、ModalForm、DrawerForm 等）
-- 了解各组件的 props、API 和使用方式
-- 查找代码示例和最佳实践
-- 理解组件的配置模式和数据流
+在业务代码中选择或使用 an-ui 组件、查找组件 API 和示例、组合 an-ui 的表单与列表能力时使用本技能。
 
-## Component Reference
+## 组件作用与文档索引
 
-### 高级表单 — FormPro
+先根据任务选择下方对应的组件说明文件。只读取当前任务涉及的组件及其明确依赖，避免一次性加载所有 API 文档。
 
-基于 Antd Form 封装，通过 `FormFieldConfig[]` 配置快速生成表单。
+| 组件 | 作用 | 说明文件 |
+|---|---|---|
+| Button | 统一按钮样式与加载、禁用状态 | [[references/components/button|button]] |
+| FormPro | 通过字段配置生成表单，支持联动、远程选项、分组和重复字段 | [[references/components/form-pro|form-pro]] |
+| FilterForm | 带搜索、清空和折叠操作的筛选表单 | [[references/components/filter-form|filter-form]] |
+| TablePro | 带请求、列格式化、列设置能力的数据表格 | [[references/components/table-pro|table-pro]] |
+| EditableTable | 表格内直接编辑行数据 | [[references/components/editable-table|editable-table]] |
+| FilterList | 组合搜索表单、数据表格、分页请求和批量操作 | [[references/components/filter-list|filter-list]] |
+| ModalForm | 在弹窗中录入或编辑表单 | [[references/components/modal-form|modal-form]] |
+| DrawerPro | 带底部操作按钮的通用抽屉 | [[references/components/drawer-pro|drawer-pro]] |
+| DrawerForm | 在抽屉中录入或编辑表单 | [[references/components/drawer-form|drawer-form]] |
+| DescriptionsPro | 根据数据与字段配置展示只读详情 | [[references/components/descriptions-pro|descriptions-pro]] |
+| FileListView | 以图片或文件样式展示文件并处理下载 | [[references/components/file-list-view|file-list-view]] |
 
-**支持的表单项类型：** input、select、cascader、tree-select、radio、checkbox、switch、date-picker、time-picker、auto-complete、input-number、upload（含 OSS）、color、read-only、custom
+## 按需读取方式
 
-**核心特性：** hide/readOnly/disabled/required 支持布尔值和函数（表单联动）、templateOptions.request 支持远程加载选项、表单分组、动态表单
+1. 根据用户目标，从组件索引中选出直接相关的组件。
+2. 阅读对应组件说明文件，确认 props、ref 和配置约定。
+3. 说明文件链接到其他组件时，再读取那些依赖组件的相关章节。
+4. 示例和行为与文档不一致时，以当前组件源码及其类型定义为准，并据此修正文档。
 
-*详见 `references/an-ui.md` 高级表单章节*
+## 常用组合
 
-### 高级表格 — TablePro
-
-基于 Antd Table 封装，提供列设置、排序、扩展操作等功能。
-
-**核心特性：** 完全继承 AntdTable API、列设置面板、拖拽排序、工具条扩展
-
-*详见 `references/an-ui.md` 高级表格章节*
-
-### 可编辑表格 — EditableTable
-
-在 Antd Table 和 FormPro 基础上封装的可在表格内直接编辑的组件。
-
-**核心特性：** columns 同时支持 FormItem 和 AntdTable 属性、dataIndex 作为表单项 name
-
-*详见 `references/an-ui.md` 可编辑表格章节*
-
-### 弹窗表单 — ModalForm
-
-弹窗中的表单录入场景，提供 trigger 减少 state 使用。完全继承 FormPro 和 antd Modal API。
-
-*详见 `references/an-ui.md` 弹窗表单章节*
-
-### 抽屉 — DrawerPro
-
-在 antd Drawer 基础上增加底部按钮功能，提供 trigger。完全继承 AntdDrawer API。
-
-*详见 `references/an-ui.md` 抽屉章节*
-
-### 抽屉表单 — DrawerForm
-
-抽屉中的表单录入场景，提供 trigger。完全继承 FormPro 和 DrawerPro API。
-
-*详见 `references/an-ui.md` 抽屉表单章节*
-
-### 搜索列表 — FilterList
-
-搜索表单+表格整合，适用于搜索和列表展示场景，支持批量操作。
-
-*详见 `references/an-ui.md` 搜索列表章节*
-
-### 搜索表单 — FilterForm
-
-适用于搜索筛选场景，主要为 FilterList 内部使用。完全继承 FormPro API。
-
-*详见 `references/an-ui.md` 搜索表单章节*
-
-### 详情组件 — DescriptionsPro
-
-基于 antd Descriptions 二次封装，用于展示只读信息。完全继承 Descriptions API。
-
-*详见 `references/an-ui.md` 详情组件章节*
-
-## Reference Files
-
-- **`references/an-ui.md`** — 完整组件文档（9 个组件，含 API、示例代码）
-- **`references/index.md`** — 文档索引
-
-## Working with This Skill
-
-### 查看组件文档
-打开 `references/an-ui.md` 查看完整的组件说明和 API。
-
-### 查找具体组件
-在 Component Reference 中点击对应组件，按名称搜索即可快速定位。
-
-### 开发调试
-```bash
-# 组件库调试
-npm link @an/an-ui
-npm run dev
-
-# 业务项目调试
-npm link @an/an-ui
-```
-
-## Quick Tips
-
-- 表单配置使用 `FormFieldConfig[]`，每一项对应 Form.Item + 表单组件
-- `type` 字段指定表单组件类型，不传 type 则渲染为普通展示列
-- `templateOptions` 传递给表单组件的 props，支持 `request` 获取远程 options
-- `hide`/`readOnly`/`disabled`/`required` 支持函数签名为 `(value, extra) => boolean` 实现联动
+- 搜索列表页：优先使用 FilterList；深入配置时再查看 FilterForm、FormPro 和 TablePro。
+- 表单弹窗或抽屉：查看 ModalForm 或 DrawerForm，并按需查看 FormPro、DrawerPro。
+- 可编辑明细：查看 EditableTable，并按需查看 FormPro。
+- 详情页附件：查看 DescriptionsPro 与 FileListView。
