@@ -147,5 +147,4 @@ digraph brainstorming {
 
 关于 UI 主题的问题不一定是视觉问题。"在这个上下文中个性化是什么意思？"是一个概念问题——使用终端。"哪种向导布局更好？"是一个视觉问题——使用浏览器。
 
-如果他们同意使用伴侣，在继续之前阅读详细指南：
-`skills/brainstorming/visual-companion.md`
+如果用户同意使用视觉伴侣，先阅读同目录的 [视觉伴侣指南](visual-companion.md)。视觉 demo 保存到 `docs/design/YYYY-MM-DD-<topic>-design/assets/visual-demo/<demo-name>/`，启动时用 `--screen-dir` 指定该子目录。

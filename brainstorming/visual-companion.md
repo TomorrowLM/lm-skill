@@ -32,44 +32,42 @@
 
 ## 启动会话
 
-```bash
-# 已识别当前功能文档目录时，保存到该目录的 .brainstorm/<会话ID>
-scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
-  --session-name event-acceptance-tab-count
+视觉 demo 放在 `docs/design/YYYY-MM-DD-<topic>-design/assets/visual-demo/<demo-name>/`。启动时通过 `--screen-dir` 指定这个子目录。
 
-# 需要完全控制目录时，直接指定最终存放路径
-scripts/start-server.sh \
-  --screen-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design/.brainstorm/custom-session
+```bash
+FEATURE_DIR="/path/to/project/docs/design/YYYY-MM-DD-<topic>-design"
+SESSION_NAME="event-acceptance-tab-count"
+SCREEN_DIR="${FEATURE_DIR}/assets/visual-demo/${SESSION_NAME}"
+bash scripts/start-server.sh --screen-dir "$SCREEN_DIR"
 
 # 返回：{"type":"server-started","port":52341,"url":"http://localhost:52341",
-#           "screen_dir":"/path/to/project/docs/design/YYYY-MM-DD-<topic>-design/.brainstorm/event-acceptance-tab-count-20260811-143205"}
+#           "screen_dir":"/path/to/project/docs/design/YYYY-MM-DD-<topic>-design/assets/visual-demo/event-acceptance-tab-count"}
 ```
 
 保存响应中的 `screen_dir`。告诉用户打开该 URL。
 
-**功能文档目录识别：** 启动前先从当前会话上下文识别功能文档目录，包括用户附件、用户明确提供的路径、当前打开的需求文档，以及任务上下文引用的 `docs/design/<功能目录>` 或 `docs/prod/<功能目录>`。只有存在唯一且与当前任务匹配的目录时，才使用 `--feature-dir`。
+**功能文档目录识别：** 启动前先从当前会话上下文识别功能文档目录，包括用户附件、用户明确提供的路径、当前打开的需求文档，以及任务上下文引用的 `docs/design/<功能目录>` 或 `docs/prod/<功能目录>`。只有存在唯一且与当前任务匹配的目录时，才在其下创建 `assets/visual-demo/`。
 
 **目录命名规则：** 功能文档目录（设计文件夹）必须使用时间前缀命名，格式为 `docs/design/YYYY-MM-DD-<topic>-design/`，其中 `YYYY-MM-DD` 为需求创建日期、`<topic>` 为英文 kebab-case 功能名，例如 `docs/design/YYYY-MM-DD-<topic>-design/`。识别现有目录时优先匹配该格式；需要新建设计目录时同样遵守此格式。
 
-**无法确定时必须询问：** 如果没有功能文档目录、存在多个候选目录，或候选文档与当前任务明显不匹配，先让用户确认存放目录。不要自行回退到项目根目录、`docs/design/.brainstorm/`、`<project>/.brainstorm/` 或 `/tmp`。
+**无法确定时必须询问：** 如果没有功能文档目录、存在多个候选目录，或候选文档与当前任务明显不匹配，先让用户确认存放目录。不要自行回退到项目根目录、`.superpowers/`、`/tmp` 或其他未确认的位置。
 
-**语义化会话名称：** 使用 `--feature-dir` 时必须同时传入 `--session-name`。从当前任务提炼简短、可辨识的英文 kebab-case 名称，例如 `event-acceptance-tab-count`；无法确定任务名称时先询问用户。最终目录格式为 `<功能文档目录>/.brainstorm/<任务名称>-<YYYYMMDD-HHMMSS>`，禁止使用纯 PID、纯时间戳或无意义编号。
+**语义化目录名称：** 从当前任务提炼简短、可辨识的英文 kebab-case 名称，例如 `event-acceptance-tab-count`。需要区分多个会话时可附加时间戳。
 
-**目录选择优先级：** 用户明确指定的最终目录 `--screen-dir` > 唯一匹配的功能文档目录 `--feature-dir` > 询问用户。`--project-dir` 仅用于用户明确要求保存到项目级公共目录的场景，不作为自动兜底。
+**目录选择优先级：** 用户明确指定的最终目录 `--screen-dir` > 唯一匹配的功能文档目录下的 `assets/visual-demo/<名称>` > 询问用户。`--project-dir` 仅用于用户明确要求保存到项目级公共目录的场景，不作为自动兜底。
 
-**查找连接信息：** 服务器将启动 JSON 写入 `$SCREEN_DIR/.server-info`。如果后台启动时没有捕获 stdout，在已确认的功能文档目录下检查 `<功能文档目录>/.brainstorm/`，找到本次会话目录后读取该文件。
+**查找连接信息：** 服务器将启动 JSON 写入 `$SCREEN_DIR/.server-info`。如果后台启动时没有捕获 stdout，应直接在本次确认的 `$SCREEN_DIR` 中读取该文件。
 
-**注意：** `--feature-dir` 会将原型持久化到功能文档目录的 `.brainstorm/<任务名称>-<YYYYMMDD-HHMMSS>` 中，不会因服务器重启而丢失。提醒用户将 `.brainstorm/` 添加到 `.gitignore`（如果尚未添加）。
+**版本控制：** `assets/visual-demo/` 是供审阅和迭代的设计产物目录，不要默认将它加入 `.gitignore`；需要排除版本控制时先确认用户意图。
 
 **按平台启动服务器：**
+
+以下命令都使用前文设置的 `$SCREEN_DIR`，因此视觉文件始终落在 `assets/visual-demo/` 下。
 
 **Claude Code (macOS / Linux)：**
 ```bash
 # 默认模式即可——脚本会自动将服务器放到后台
-scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
-  --session-name event-acceptance-tab-count
+bash scripts/start-server.sh --screen-dir "$SCREEN_DIR"
 ```
 
 **Claude Code (Windows)：**
@@ -77,9 +75,7 @@ scripts/start-server.sh \
 # Windows 会自动检测并使用前台模式，这会阻塞工具调用。
 # 在 Bash 工具调用上设置 run_in_background: true，
 # 让服务器在会话轮次之间存活。
-scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
-  --session-name event-acceptance-tab-count
+bash scripts/start-server.sh --screen-dir "$SCREEN_DIR"
 ```
 通过 Bash 工具调用时，设置 `run_in_background: true`。然后在下一轮读取 `$SCREEN_DIR/.server-info` 获取 URL 和端口。
 
@@ -87,19 +83,14 @@ scripts/start-server.sh \
 ```bash
 # Codex 会回收后台进程。脚本会自动检测 CODEX_CI 并
 # 切换到前台模式。正常运行即可——不需要额外标志。
-scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
-  --session-name event-acceptance-tab-count
+bash scripts/start-server.sh --screen-dir "$SCREEN_DIR"
 ```
 
 **Gemini CLI：**
 ```bash
 # 使用 --foreground 并在 shell 工具调用上设置 is_background: true，
 # 让进程在轮次之间存活
-scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
-  --session-name event-acceptance-tab-count \
-  --foreground
+bash scripts/start-server.sh --screen-dir "$SCREEN_DIR" --foreground
 ```
 
 **其他环境：** 服务器必须在会话轮次之间持续在后台运行。如果你的环境会回收分离的进程，使用 `--foreground` 并通过平台的后台执行机制启动命令。
@@ -107,9 +98,8 @@ scripts/start-server.sh \
 如果浏览器无法访问该 URL（在远程/容器化环境中常见），绑定一个非回环主机：
 
 ```bash
-scripts/start-server.sh \
-  --feature-dir /path/to/project/docs/design/YYYY-MM-DD-<topic>-design \
-  --session-name event-acceptance-tab-count \
+bash scripts/start-server.sh \
+  --screen-dir "$SCREEN_DIR" \
   --host 0.0.0.0 \
   --url-host localhost
 ```
@@ -304,7 +294,7 @@ scripts/start-server.sh \
 scripts/stop-server.sh $SCREEN_DIR
 ```
 
-如果会话使用了 `--feature-dir`，原型文件会持久化在功能文档目录的 `.brainstorm/<任务名称>-<YYYYMMDD-HHMMSS>` 中以供日后参考。只有 `/tmp` 会话会在停止时被删除。
+视觉原型会持久化在功能文档目录的 `assets/visual-demo/<demo-name>/` 中以供日后审阅。使用 `stop-server.sh` 关闭服务器不会删除该目录；只有位于 `/tmp` 的会话会在停止时被删除。
 
 ## 参考
 
