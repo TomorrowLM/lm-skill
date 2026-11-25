@@ -1,20 +1,18 @@
 # References
 
-按任务选择参考资料；跨模式规则以根 `SKILL.md` 为准。
+当前技能使用 EGO Lite `ego-browser` 作为本机浏览器执行层。先读根目录 `SKILL.md`；具体命令/API 以每次执行 `ego-browser skill` 返回的已安装版本指南为准。
 
-默认使用视觉与交互验收。结构采集用于发现未知页面结构；自动化回归只用于重复运行已验证的稳定用例。浏览器调用前必须明确复用已有 Tab 还是新开 Tab，不能仅凭 URL 推断。
+| 路径 | 用途 | 何时读取 |
+| --- | --- | --- |
+| `ego-taskspace.md` | TaskSpace 生命周期、Profile 与登录态、handoff、会话风险 | 新建/恢复 Agent 工作区或页面要求登录时 |
+| EGO Lite `ego-browser` 技能的 `references/install.md` | 安装与通用启动排查 | `ego-browser` 命令不可用或初始化失败时 |
+| EGO Lite `ego-browser` 技能的 `references/install-windows.md` | Windows 安装、PATH 与运行时检查 | Windows 上安装或命令排查时 |
+| EGO Lite `ego-browser` 技能的 `references/clearing-state.md` | Cookie、缓存和站点存储影响范围 | 用户明确授权清理站点状态前 |
+| `tests/evals.json` | 当前 EGO Lite 工作流的触发、行为和压力评测 | 修改或评估本技能时 |
+| `tests/behavior-evals.json`、`tests/pressure-evals.json`、`tests/trigger-evals.json` | 旧版 lm-browser 流程的历史用例，保留用于审计 | 用户明确要求查看旧版验证记录时 |
+| `archive/browser-verification-SKILL-pre-ego-2026-11-25.md` | 归档的旧版技能入口 | 用户明确要求查看旧版技能时 |
+| `archive/references-README-pre-ego-2026-11-25.md` | 归档的旧版参考资料索引 | 用户明确要求查看旧版索引时 |
+| `common/`、`modes/`、`templates/` | 旧版 lm-browser 工作资料；当前 EGO 流程不引用 | 用户明确要求迁移或查阅旧资料时 |
 
-| 路径                                       | 用途                                    | 何时读取                           |
-| ------------------------------------------ | --------------------------------------- | ---------------------------------- |
-| `common/lm-browser.md`                     | 浏览器连接、工具能力和证据闭环          | 首次使用 lm-browser 或页面证据工具 |
-| `common/scrolling.md`                      | 页面和内部容器滚动、视口复位            | 页面、表格或列表需要滚动时         |
-| `common/sampling.md`                       | 重复卡片、行和模板变体抽样              | 存在重复模板时                     |
-| `modes/collection/collection.md`           | 菜单、页面、Tab、弹层和控件结构采集     | 需要发现或盘点页面结构时           |
-| `modes/collection/output-format.md`        | 产品视角 JSON 与 HTML 清单格式          | 需要生成结构采集结果时             |
-| `modes/visual-interaction/verification.md` | 默认视觉与交互验收，以及 Figma 协作边界 | 页面视觉、交互或设计对比验收时     |
-| `modes/automation/automation-testing.md`   | 固定测试用例、自动化回归和无人值守流程  | 需要重复运行稳定的回归用例时       |
-| `archive/chrome-mcp.md`                    | 旧 Chrome MCP 工具说明                  | 用户明确要求查阅历史工具文档时     |
-| `archive/legacy-mcp.md`                    | 旧浏览器 MCP 档案入口                   | 用户明确要求使用旧 MCP 时          |
-| `tests/`                                   | 触发、行为和压力评测 JSON               | 修改或评估本技能时                 |
+涉及 Figma 或设计稿的视觉差异判定仍由 `visual-workflow` 负责；页面开发验收范围仍由 `page-development-workflow` Phase 5 规定。
 
-`archive/` 下的旧工具说明只作历史参考，不是默认执行路径。
